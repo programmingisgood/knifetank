@@ -1,0 +1,461 @@
+PFont font = loadFont("Arial-MT",15);
+
+ArrayList cannons;
+ArrayList bullets;
+ArrayList targets;
+ArrayList walls;
+
+int points = 0;
+int bulletCounter = 0;
+int hitCounter = 0;
+float accuracy;
+int seconds = 0;
+int sc = 0;
+int speed = 10;
+boolean playing = false;
+boolean win = false;
+
+class Wall {
+  float x;
+  float y;
+  float d = 70;
+  boolean on;
+  Wall(float X, float Y, boolean ON) {
+    x = X;
+    y = Y;
+    on = ON;
+  }
+  float top()    { return y - d/2; }
+  float bottom() { return y + d/2; }
+  float left()   { return x - d/2; }
+  float right()  { return x + d/2; }
+
+  boolean intersect(PVector p1, PVector p2) {
+    return false;
+  }
+  void show() {
+    noStroke();
+    if (on) {
+      fill(255,255,0);
+    }
+    else {
+      fill(255,0,255);
+    }
+    rect(x-d/2,y-d/2,d,d);
+    for (int i=0;i<bullets.size();i++) {
+      PVector l = new PVector((bullets.get(i)).loc.x,(bullets.get(i)).loc.y);
+      PVector dir = new PVector((bullets.get(i)).dir.x,(bullets.get(i)).dir.y);
+      if (l.x>=x-d/2&&l.x<=x+d/2&&l.y >=y-d/2&&l.y<=y+d/2) {
+        on = !on;
+        if (dir.x == 0) {
+          (bullets.get(i)).flipy(); 
+        }
+        else if (dir.y == 0) {
+          (bullets.get(i)).flipx(); 
+        }
+        else {
+          float dx = 0;
+          if (dir.x > 0) {
+            dx = l.x - (x-d/2);
+          }
+          else {
+            dx = l.x - (x+d/2);
+          }
+          float dy = dx*dir.y/dir.x;         
+
+          float yy = l.y - dy;
+          if (yy==y-d/2 || yy == y+d/2) {
+            (bullets.get(i)).flipx();
+            (bullets.get(i)).flipy();
+          } 
+          else if (yy>y-d/2 && yy < y+d/2) {
+            (bullets.get(i)).flipx();
+          }
+          else {
+            (bullets.get(i)).flipy(); 
+          }
+        }
+      }  
+    }
+  }
+}
+
+class Bullet
+{
+  PVector loc = new PVector();
+  PVector dir = new PVector();
+  float angle;
+  Cannon c;
+  int age = 0;
+  boolean alive;
+  Bullet(Cannon c, float x, float y)
+  {
+    this.c = c;
+    loc.x = x;
+    loc.y = y;
+    PVector center = new PVector(c.loc.x,c.loc.y);
+    PVector turret = new PVector(c.cX,c.cY);
+    dir = PVector.sub(turret, center);
+    alive = true;
+  }
+  void run()
+  {
+    noStroke();
+    fill(200);
+    ellipse(loc.x,loc.y,10,10);
+    loc.add(new PVector(dir.x/4,dir.y/4));
+    if (loc.x < 0 || loc.x > width)
+      flipx();
+    if (loc.y < 0 || loc.y > height)
+      flipy();
+    age++;
+    if (age>100)  alive = false;
+  }
+  void flipx()
+  {
+    dir.x = -dir.x;
+  }
+  void flipy()
+  {
+    dir.y = -dir.y;
+  }
+}
+
+class Target
+{
+  float x;
+  float y;
+  float d = 70;
+  int lives;
+  boolean alive;
+  Target(float X, float Y, int LIVES)
+  {
+    x = X;
+    y = Y;
+    this.lives = LIVES;
+    alive = true;
+  }
+  void show()
+  {
+    noStroke();
+    fill(255,0,0);
+    ellipse(x+d/2,y+d/2,d,d);
+    for (int i=0;i<bullets.size();i++)
+    {
+      if (!bullets.get(i).alive) continue;
+
+      PVector l = new PVector((bullets.get(i)).loc.x,(bullets.get(i)).loc.y);
+      if (l.x>=x&&l.x<=x+75&&l.y >=y&&l.y<=y+75) {
+        lives--;
+        hitCounter++;
+        bullets.remove((bullets.get(i)));
+        if (lives <= 0) { 	
+          points++;
+          alive = false;
+        }  
+      }  
+    }
+    for (int i=0;i<cannons.size();i++)
+    {
+      fill(255);
+      Cannon c = cannons.get(i);
+      PVector l = new PVector((cannons.get(i)).loc.x,(cannons.get(i)).loc.y);
+      if (l.x>=x&&l.x<=x+75&&l.y >=y&&l.y<=y+75)
+      {
+        playing = false;
+      }  
+    }
+
+  }
+}
+class Cannon {
+  float d;
+  float r;
+  float cX;
+  float cY;
+  PVector loc = new PVector();
+  Cannon(float x, float y) {
+    d = 80;
+    r = d/2;
+    loc.x = x;
+    loc.y = y;
+  }
+  float top()    { return loc.y - d/2; }
+  float bottom() { return loc.y + d/2; }
+  float left()   { return loc.x - d/2; }
+  float right()  { return loc.x + d/2; }
+
+  void show() {
+    smooth();
+
+    float angle = atan2(mouseY-loc.y,mouseX-loc.x);
+
+    cX = (r * cos(angle)) + loc.x;
+    cY = (r * sin(angle)) + loc.y;
+
+    fill(0,0,200);
+    noStroke();
+    ellipse(loc.x,loc.y,d,d);
+    strokeWeight(1);
+    stroke(255);
+    line(loc.x,loc.y,cX,cY);
+  }  
+  
+  void moveUp(float dy) {
+    for (int i=0;i<walls.size();++i) {
+      Wall wall = walls.get(i);
+      float minx = wall.left()   - d/2;
+      float maxx = wall.right()  + d/2;
+      float miny = wall.bottom() + d/2;
+      float maxy = wall.bottom() + d/2 + dy;
+      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+        dy = top() - wall.bottom();
+      }
+    }
+    loc.y -= dy
+  }
+
+  void moveDown(float dy) {
+    for (int i=0;i<walls.size();++i) {
+      Wall wall = walls.get(i);
+      float minx = wall.left() - d/2;
+      float maxx = wall.right() + d/2;
+      float miny = wall.top() - d/2 - dy;
+      float maxy = wall.top() - d/2;
+      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+        dy = wall.top() - bottom();
+      }
+    }
+    loc.y += dy
+  }
+
+  void moveLeft(float dx) {
+    for (int i=0;i<walls.size();++i) {
+      Wall wall = walls.get(i);
+      float minx = wall.right()  + d/2;
+      float maxx = wall.right()  + d/2 + dx;
+      float miny = wall.top()    - d/2;
+      float maxy = wall.bottom() + d/2;
+      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+        dx = left() - wall.right();
+      }
+    }
+    loc.x -= dx
+  }
+  void moveRight(float dx) {
+    for (int i=0;i<walls.size();++i) {
+      Wall wall = walls.get(i);
+      float minx = wall.left()   - d/2 - dx;
+      float maxx = wall.left()   - d/2;
+      float miny = wall.top()    - d/2;
+      float maxy = wall.bottom() + d/2;
+      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+        dx = wall.left() - right();
+      }
+    }
+    loc.x += dx
+  }
+}
+
+void setup() {
+  cannons = new ArrayList();
+  bullets = new ArrayList();
+  targets = new ArrayList();
+  walls   = new ArrayList();
+  points = 0;
+  targetInterval = 150;
+  counter = 0;
+  bulletCounter = 0;
+  hitCounter = 0;
+  accuracy = 0;
+  seconds = 0;
+  sc = 0;
+  c = 0;
+  speed = 10;
+  size(500,500);
+  cursor(CROSS);
+  textFont(font);
+  for (int i=0; i < 5; ++i) {
+    walls.add(new Wall(random(50,425),random(50,425),true));
+    targets.add(new Target(random(50,425),random(50,425),1));
+  }
+  cannons.add(new Cannon(width/2,height/2));
+  win = false;
+  playing = true;
+  frameRate(50);
+  background(125);
+}
+
+void draw()
+{
+  if (playing)
+    play();
+  else
+    gameover();
+}
+
+
+void mousePressed()
+{
+  if (playing)
+  {
+    for (int k=0;k<cannons.size();k++)
+    {
+      bullets.add(new Bullet(getC(k),(getC(k)).cX,(getC(k)).cY));
+      bulletCounter++;
+    }
+  }
+
+}
+
+Cannon getC(int index)
+{
+  if (index < cannons.size())
+  {
+     return cannons.get(index);
+  }
+  else
+  {
+    return null;
+  }
+}
+
+void play()
+{
+  font = loadFont("Arial-MT",15);
+  textFont(font);
+  background(0);
+  sc++;
+  if (sc == 50)
+  {
+    seconds++;
+    sc=0;  
+  }
+  for(int k=0;k<bullets.size();k++)
+  {
+    if (bullets.get(k).alive)
+      (bullets.get(k)).run();  
+  }
+  for(int j=0;j<targets.size();j++)
+  {
+    if (targets.get(j).alive)
+      (targets.get(j)).show();  
+  }
+  for(int j=0;j<walls.size();j++)
+  {
+    (walls.get(j)).show();  
+  }
+  for(int i=0;i<cannons.size();i++)
+  {
+    (cannons.get(i)).show();
+  }  
+
+  for (int k=0;k<cannons.size();k++)
+  {
+    if ((cannons.get(k)).loc.x>width) 
+      (cannons.get(k)).loc.x=width;
+    else if ((cannons.get(k)).loc.x<0) 
+      (cannons.get(k)).loc.x=0;
+    else if ((cannons.get(k)).loc.y>height) 
+      (cannons.get(k)).loc.y=height;
+    else if ((cannons.get(k)).loc.y<0) 
+      (cannons.get(k)).loc.y=0;
+  }
+
+  textAlign(LEFT);
+  fill(255);
+  text("Time: " + seconds,5,15);
+  text("Points: " + points,5,30);
+  if (bulletCounter > 0)
+  {
+    accuracy = int((hitCounter/bulletCounter)*100);
+    int h = bulletCounter - hitCounter;
+    int p = int(h/bulletCounter);
+  }
+  else if (bulletCounter == 0)
+  {
+    accuracy = 0;
+  }
+  //text("Accuracy: " + accuracy + "%", 5, 50);
+  //text("Seconds: " + seconds, 5, 35);
+    
+  int enemiesAlive = 0;
+  for(int j=0;j<targets.size();j++) {
+    if (targets.get(j).alive)
+      enemiesAlive ++;
+  }
+  if (enemiesAlive ==0) {
+    win = true;
+    playing = false;
+  }
+}
+void gameover()
+{
+  int score = int(((points*seconds)*54.73)-((bulletCounter-hitCounter)*10));
+  background(0);
+  font = loadFont("Arial-MT",50);
+  textFont(font);
+  textAlign(CENTER);
+  fill(255,255,0);
+  if (win) {
+    text("You Won!!", width/2, height/2-50);
+  }
+  else{
+    text("You Lost!!", width/2, height/2-50);
+  }
+
+  text("Your score was: " + score, width/2, height/2-25);
+  text("Press 'r' to Play Again!" , width/2, height/2+10);
+}
+void keyPressed()
+{
+  if (!playing)
+  {
+    if (key == 'r')
+      setup();
+  }
+  else if (key == 'w') {
+    for (int k=0;k<cannons.size();k++) {
+      (cannons.get(k)).moveUp(speed);  
+    }  
+  }
+  else if (key == 's') { 
+    for (int k=0;k<cannons.size();k++) {
+      (cannons.get(k)).moveDown(speed);  
+    }
+  }
+  else if (key == 'a') {
+    for (int k=0;k<cannons.size();k++) {
+      (cannons.get(k)).moveLeft(speed);  
+    }
+  }
+  else if (key == 'd') {
+    for (int k=0;k<cannons.size();k++) {
+      (cannons.get(k)).moveRight(speed);  
+    }
+  }
+/* arrow key codes aren't registering on my MacBook Pro :( */
+  else if (keyPressed&&key==CODED) {
+    if (keyCode == UP) { 
+      for (int k=0;k<cannons.size();k++) {
+        (cannons.get(k)).moveUp(speed);  
+      }
+    } 
+    if (keyCode == DOWN) {
+      for (int k=0;k<cannons.size();k++) {
+        (cannons.get(k)).moveDown(speed);  
+      }
+    }
+    if (keyCode == LEFT) {
+      for (int k=0;k<cannons.size();k++) {
+        (cannons.get(k)).moveLeft(speed);  
+      }
+    }
+    if (keyCode == RIGHT){
+      for (int k=0;k<cannons.size();k++) {
+        (cannons.get(k)).moveRight(speed);  
+      }
+    }
+  }
+
+}  
