@@ -1,7 +1,9 @@
 <html>
+<head>
 <title>Knifetank!</title>
 <script type="text/javascript" src="processing/processing-0.9.1.js"></script>
 <script type="text/javascript" src="processing/init.js"></script>
+<audio src="music/sample.ogg" preload="true" id="mog"></audio>
 </head>
 <body>
 <h3>Knifetank</h3>
@@ -55,6 +57,12 @@ class Wall {
       PVector dir = new PVector((bullets.get(i)).dir.x,(bullets.get(i)).dir.y);
       if (l.x>=x-d/2&&l.x<=x+d/2&&l.y >=y-d/2&&l.y<=y+d/2) {
         on = !on;
+        var audioElement = document.getElementById('mog');
+        if (audioElement.volume < 0.5)
+          audioElement.volume = 0.5;
+        else
+          audioElement.volume = 0.1;
+
         if (dir.x == 0) {
           (bullets.get(i)).flipy(); 
         }
@@ -292,10 +300,17 @@ void setup() {
   playing = true;
   frameRate(50);
   background(125);
+
+  var audioElement = document.getElementById('mog');
+  audioElement.load();
+  audioElement.volume = 0.5;
+  audioElement.play();
+
 }
 
 void draw()
 {
+
   if (playing)
     play();
   else
