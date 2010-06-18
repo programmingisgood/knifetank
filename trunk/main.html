@@ -9,7 +9,9 @@
 <h3>Knifetank</h3>
 <script type="application/processing">
 PFont font = loadFont("Arial-MT",15);
-
+PImage bg;
+PImage tank;
+PImage ghostank;
 ArrayList cannons;
 ArrayList bullets;
 ArrayList targets;
@@ -117,7 +119,7 @@ class Bullet
   void run()
   {
     noStroke();
-    fill(200);
+    fill(100);
     ellipse(loc.x,loc.y,10,10);
     loc.add(new PVector(dir.x/4,dir.y/4));
     if (loc.x < 0 || loc.x > width)
@@ -141,7 +143,7 @@ class Target
 {
   float x;
   float y;
-  float d = 70;
+  float d = 120;
   int lives;
   boolean alive;
   Target(float X, float Y, int LIVES)
@@ -151,17 +153,25 @@ class Target
     this.lives = LIVES;
     alive = true;
   }
+
+  float top()    { return y - d/2; }
+  float bottom() { return y + d/2; }
+  float left()   { return x - d/2; }
+  float right()  { return x + d/2; }
+
   void show()
   {
-    noStroke();
-    fill(255,0,0);
-    ellipse(x+d/2,y+d/2,d,d);
+    //image(ghostank,x-d/2,y-d/2);
+    strokeWeight(1);
+    noFill();
+    stroke(0,0,255);
+    rect(x-d/2,y-d/2,d,d);
     for (int i=0;i<bullets.size();i++)
     {
       if (!bullets.get(i).alive) continue;
 
       PVector l = new PVector((bullets.get(i)).loc.x,(bullets.get(i)).loc.y);
-      if (l.x>=x&&l.x<=x+75&&l.y >=y&&l.y<=y+75) {
+      if (l.x>=left()&&l.x<=right()&&l.y >=top()&&l.y<=bottom()) {
         lives--;
         hitCounter++;
         bullets.remove((bullets.get(i)));
@@ -191,7 +201,7 @@ class Cannon {
   float cY;
   PVector loc = new PVector();
   Cannon(float x, float y) {
-    d = 80;
+    d = 120;
     r = d/2;
     loc.x = x;
     loc.y = y;
@@ -209,11 +219,18 @@ class Cannon {
     cX = (r * cos(angle)) + loc.x;
     cY = (r * sin(angle)) + loc.y;
 
-    fill(0,0,200);
-    noStroke();
-    ellipse(loc.x,loc.y,d,d);
+
+    translate(loc.x,loc.y);
+    rotate(angle-PI/2);
+    //image(tank,-d/2,-d/2);
+    rotate(-angle+PI/2);
+    translate(-loc.x,-loc.y);
+    
+    // show bounding box
+    noFill();
     strokeWeight(1);
-    stroke(255);
+    stroke(0,255,0);
+    rect(loc.x-d/2,loc.y-d/2,d,d);
     line(loc.x,loc.y,cX,cY);
   }  
   
@@ -288,7 +305,7 @@ void setup() {
   sc = 0;
   c = 0;
   speed = 10;
-  size(500,500);
+  size(720,500);
   cursor(CROSS);
   textFont(font);
   for (int i=0; i < 5; ++i) {
@@ -301,53 +318,38 @@ void setup() {
   frameRate(50);
   background(125);
 
+  //bg = loadImage("art_assets/bg.jpg");
+  tank = loadImage("art_assets/tank.gif");
+  ghostank = loadImage("art_assets/ghostank.gif");
+
   var audioElement = document.getElementById('mog');
   audioElement.load();
   audioElement.volume = 0.5;
   audioElement.play();
-
 }
 
 void draw()
 {
-
   if (playing)
     play();
   else
     gameover();
 }
 
-
-void mousePressed()
-{
-  if (playing)
-  {
-    for (int k=0;k<cannons.size();k++)
-    {
-      bullets.add(new Bullet(getC(k),(getC(k)).cX,(getC(k)).cY));
-      bulletCounter++;
-    }
-  }
-
-}
-
-Cannon getC(int index)
-{
-  if (index < cannons.size())
-  {
-     return cannons.get(index);
-  }
-  else
-  {
-    return null;
-  }
-}
-
 void play()
 {
   font = loadFont("Arial-MT",15);
   textFont(font);
-  background(0);
+  
+  //background(bg); // <--Background image. slow as balls. fails in Chrome.
+  background(255);
+  stroke(100,100,255);
+  for (int i=25;i<height; i+= 25) {
+    strokeWeight(1);
+    line(0,i,width,i);
+  }
+  stroke(255,100,100);
+  line(width*0.85,0,width*0.85,height);
   sc++;
   if (sc == 50)
   {
@@ -412,6 +414,31 @@ void play()
     playing = false;
   }
 }
+void mousePressed()
+{
+  if (playing)
+  {
+    for (int k=0;k<cannons.size();k++)
+    {
+      bullets.add(new Bullet(getC(k),(getC(k)).cX,(getC(k)).cY));
+      bulletCounter++;
+    }
+  }
+
+}
+
+Cannon getC(int index)
+{
+  if (index < cannons.size())
+  {
+     return cannons.get(index);
+  }
+  else
+  {
+    return null;
+  }
+}
+
 void gameover()
 {
   int score = int(((points*seconds)*54.73)-((bulletCounter-hitCounter)*10));
