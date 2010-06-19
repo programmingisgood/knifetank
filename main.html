@@ -3,13 +3,11 @@
 <title>Knifetank!</title>
 <script type="text/javascript" src="processing/processing-0.9.1.js"></script>
 <script type="text/javascript" src="processing/init.js"></script>
-<audio src="music/leveltwo02.wav" preload="true" id="track1"></audio>
+<audio src="music/leveltwo01.wav" preload="true" id="track1"></audio>
 <audio src="music/leveltwo02.wav" preload="true" id="track2"></audio>
 <audio src="music/leveltwo03.wav" preload="true" id="track3"></audio>
 <audio src="music/leveltwo04.wav" preload="true" id="track4"></audio>
 <audio src="music/leveltwo05.wav" preload="true" id="track5"></audio>
-<img id="art_assets/ghostank.gif">
-<h3>Knifetank</h3>
 <script type="application/processing">
 
 int numAudioFiles = 5;
@@ -19,8 +17,12 @@ boolean showBBs = true; // DEBUG: show bounding boxes.
 
 PFont font = loadFont("Arial-MT",15);
 PImage bg;
-PImage tank;
-PImage ghostank;
+PImage tank1;
+PImage tank2;
+PImage tank3;
+PImage ghostank1;
+PImage ghostank2;
+PImage ghostank3;
 ArrayList cannons;
 ArrayList bullets;
 ArrayList targets;
@@ -56,6 +58,7 @@ class Wall {
   }
   void show() {
     noStroke();
+    int hue = 200;
     if (on) {
       fill(255,255,0);
     }
@@ -63,6 +66,7 @@ class Wall {
       fill(255,0,255);
     }
     rect(x-d/2,y-d/2,d,d);
+
     for (int i=0;i<bullets.size();i++) {
       PVector l = new PVector((bullets.get(i)).loc.x,(bullets.get(i)).loc.y);
       PVector dir = new PVector((bullets.get(i)).dir.x,(bullets.get(i)).dir.y);
@@ -82,11 +86,11 @@ class Wall {
         // FIXME: use of currentTime is crashing. ss
         // Our game will run faster if we can pause/play/seek
         // instead of playing all tracks at the same time.
-        //next.play();
-        //next.currentTime = current.currentTime;  
+        next.play();
+        next.currentTime = prev.currentTime;  
         next.volume = 1;
         prev.volume = 0;
-        //prev.pause();
+        prev.pause();
 
         // reflect the bullet
         if (dir.x == 0) {
@@ -170,6 +174,8 @@ class Target
   int lives;
   boolean alive;
   float speed = 10;
+  int sprite = 0;
+
   Target(float X, float Y, int LIVES)
   {
     loc = new PVector();
@@ -186,11 +192,9 @@ class Target
 
   void show()
   {
+    float angle = 0;
 
-   float angle = 0;
-
-    // FIXME: Insert enemy AI here.
-    int r = int(random(10));
+    int r = -1;//int(random(10));
     switch(r) {
       case 1: moveLeft(speed);  angle = -PI/2; break;
       case 2: moveRight(speed); angle = PI/2;  break;
@@ -198,14 +202,29 @@ class Target
       case 4: moveDown(speed);  break; // angle = 0
 
     }
+     for (int i = 0; i < cannons.size(); ++i) {
+       Cannon c = cannons.get(i);
+       if (c.loc.x < loc.x) {
+         moveLeft(speed); angle = -PI/2; break;
+       }
+       if (c.loc.x > loc.x) {
+         moveRight(speed); angle = PI/2;  break;
+}
+       if (c.loc.y < loc.y) moveUp(speed);    angle = PI;    break;
+       if (c.loc.y > loc.y) moveDown(speed);  break; // angle = 0
+     }
 
     translate(loc.x,loc.y);
     rotate(angle);
-    image(ghostank,-d/2,-d/2);
+    switch (sprite) {
+      case 0: image(ghostank1,-d/2,-d/2); break;
+      case 1: image(ghostank2,-d/2,-d/2); break;
+      case 2: image(ghostank3,-d/2,-d/2); break;
+    }
+    sprite = (sprite+1)%3;
     rotate(-angle);
     translate(-loc.x,-loc.y);
-
-
+    
     if (showBBs) {
       strokeWeight(1);
       noFill();
@@ -214,13 +233,14 @@ class Target
     }
     for (int i=0;i<bullets.size();i++)
     {
-      if (!bullets.get(i).alive) continue;
+      Bullet b = bullets.get(i);
+      if (!b.alive) continue;
 
-      PVector l = new PVector((bullets.get(i)).loc.x,(bullets.get(i)).loc.y);
+      PVector l = new PVector(b.loc.x,b.loc.y);
       if (l.x>=left()&&l.x<=right()&&l.y >=top()&&l.y<=bottom()) {
         lives--;
         hitCounter++;
-        bullets.remove((bullets.get(i)));
+        bullets.remove(b);
         if (lives <= 0) { 
           points++;
           alive = false;
@@ -231,10 +251,11 @@ class Target
     {
       fill(255);
       Cannon c = cannons.get(i);
-      PVector l = new PVector((cannons.get(i)).loc.x,(cannons.get(i)).loc.y);
+      PVector l = new PVector(c.loc.x,c.loc.y);
       if (l.x>=loc.x&&l.x<=loc.x+75&&l.y >=loc.y&&l.y<=loc.y+75)
       {
-        playing = false;
+         //FIXME: This collision detection is a little soft.
+         playing = false;
       }  
     }
 
@@ -310,6 +331,7 @@ class Cannon {
   float cX;
   float cY;
   PVector loc = new PVector();
+  int sprite = 0;
   Cannon(float x, float y) {
     d = 120;
     r = d/2;
@@ -332,8 +354,15 @@ class Cannon {
 
     translate(loc.x,loc.y);
     rotate(angle-PI/2);
-    image(tank,-d/2,-d/2);
-    rotate(-angle+PI/2);
+    switch (sprite) {
+      case 0: image(tank1,-d/2,-d/2); break;
+      case 1: image(tank2,-d/2,-d/2); break;
+      case 2: image(tank3,-d/2,-d/2); break;
+    }
+
+    if (sc%10 == 0) {
+     sprite = (sprite+1)%3;
+    }    rotate(-angle+PI/2);
     translate(-loc.x,-loc.y);
     
     if (showBBs) {
@@ -425,7 +454,7 @@ void setup() {
   sc = 0;
   c = 0;
   speed = 10;
-  size(720,500);
+  size(960,640);
   cursor(CROSS);
   textFont(font);
   for (int i=0; i < 5; ++i) {
@@ -439,8 +468,12 @@ void setup() {
   background(125);
 
   //bg = loadImage("art_assets/bg.jpg");
-  tank = loadImage("art_assets/tank.gif");
-  ghostank = loadImage("art_assets/ghostank.gif");
+  tank1 = loadImage("art_assets/tank01.png");
+  tank2 = loadImage("art_assets/tank02.png");
+  tank3 = loadImage("art_assets/tank03.png");
+  ghostank1 = loadImage("art_assets/ghostank01.png");
+  ghostank2 = loadImage("art_assets/ghostank02.png");
+  ghostank3 = loadImage("art_assets/ghostank03.png");
 
   var audioElement = document.getElementById("track1");
   audioElement.load();
@@ -453,7 +486,7 @@ void setup() {
     audioElement.load();
     audioElement.loop = true;
     audioElement.volume = 0;
-    audioElement.play();
+    //audioElement.play();
 
 
   }
@@ -482,12 +515,14 @@ void play()
   }
   for(int k=0;k<bullets.size();k++)
   {
-    if (bullets.get(k).alive)
-      (bullets.get(k)).run();  
+    Bullet b = bullets.get(k);
+    if (b.alive)
+      b.run();  
   }
   for(int j=0;j<targets.size();j++)
   {
-    if (targets.get(j).alive)
+    Target t = targets.get(j);
+    if (t.alive)
       (targets.get(j)).show();  
   }
   for(int j=0;j<walls.size();j++)
@@ -497,18 +532,6 @@ void play()
   for(int i=0;i<cannons.size();i++)
   {
     (cannons.get(i)).show();
-  }  
-
-  for (int k=0;k<cannons.size();k++)
-  {
-    if ((cannons.get(k)).loc.x>width) 
-      (cannons.get(k)).loc.x=width;
-    else if ((cannons.get(k)).loc.x<0) 
-      (cannons.get(k)).loc.x=0;
-    else if ((cannons.get(k)).loc.y>height) 
-      (cannons.get(k)).loc.y=height;
-    else if ((cannons.get(k)).loc.y<0) 
-      (cannons.get(k)).loc.y=0;
   }
 
   textAlign(LEFT);
@@ -537,7 +560,8 @@ void play()
     win = true;
     playing = false;
   }
-    stroke(100,100,255,125);
+
+  stroke(100,100,255,125);
   for (int i=25;i<height; i+= 25) {
     strokeWeight(1);
     line(0,i,width,i);
@@ -553,23 +577,12 @@ void mousePressed()
   {
     for (int k=0;k<cannons.size();k++)
     {
-      bullets.add(new Bullet(getC(k),(getC(k)).cX,(getC(k)).cY));
+      Cannon c = cannons.get(k);
+      bullets.add(new Bullet(c,c.cX,c.cY));
       bulletCounter++;
     }
   }
 
-}
-
-Cannon getC(int index)
-{
-  if (index < cannons.size())
-  {
-     return cannons.get(index);
-  }
-  else
-  {
-    return null;
-  }
 }
 
 void gameover()
