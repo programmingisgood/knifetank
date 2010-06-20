@@ -67,7 +67,7 @@ OOOOOO##OO\
 OOO#OOOOOO\
 OOO#OOOOOO\
 OOO#OOOOOO\
-OOO#OOOOOO\
+OOOOOOOOOO\
 OOOOOOOOOO");
 
 class Wall {
@@ -75,10 +75,12 @@ class Wall {
   float y;
   float d = 70;
   boolean on;
-  Wall(float X, float Y, boolean ON) {
-    x = X;
-    y = Y;
-    on = ON;
+  boolean toggleable;
+  Wall(float X, float Y, boolean toggle) {
+    x = X+d/2;
+    y = Y+d/2;
+    toggleable = toggle;
+    on = true;
   }
   float top()    { return y - d/2; }
   float bottom() { return y + d/2; }
@@ -103,24 +105,27 @@ class Wall {
     for (int i=0;i<bullets.size();i++) {
       Bullet b = bullets.get(i);
       PVector l = new PVector(b.loc.x,b.loc.y);
-      PVector dir = new PVector(b.dir.x,b.dir.y);
       if (l.x>=x-d/2&&l.x<=x+d/2&&l.y >=y-d/2&&l.y<=y+d/2) {
-        on = !on;
+  
+        if (toggleable) {
+          on = !on;
 
-	// switch to the next audio track
-        var prev = getTrack(audioIndex);
-        audioIndex += 1;
-        if (audioIndex > numAudioFiles)
-          audioIndex = 1;
-        var next = getTrack(audioIndex);
-        next.volume = 0;
-        next.play();
-        next.currentTime = prev.currentTime;  
-        next.volume = 1;
-        prev.volume = 0;
-        prev.pause();
+          // switch to the next audio track
+          var prev = getTrack(audioIndex);
+          audioIndex += 1;
+          if (audioIndex > numAudioFiles)
+            audioIndex = 1;
+          var next = getTrack(audioIndex);
+          next.volume = 0;
+          next.play();
+          next.currentTime = prev.currentTime;  
+          next.volume = 1;
+          prev.volume = 0;
+          prev.pause();
+        }
 
         // reflect the bullet
+        PVector dir = new PVector(b.dir.x,b.dir.y);
         if (dir.x == 0) {
           (bullets.get(i)).flipy(); 
         }
@@ -198,18 +203,23 @@ class Bullet
 class Target
 {
   PVector loc;
+  PVector dest;
   float d = 70;
   int lives;
   boolean alive;
   float speed = 3;
   int sprite = 0;
   float angle = 0; // angle to which we rotate to draw the sprite. radians.
+  int lastDirChange = 0;
 
   Target(float X, float Y, int LIVES)
   {
     loc = new PVector();
     loc.x = X;
     loc.y = Y;
+    dest = new PVector();
+    dest.x = random(width);
+    dest.y = random(height);
     this.lives = LIVES;
     alive = true;
   }
@@ -221,50 +231,25 @@ class Target
 
   void show()
   {
-
-     // This switch moves enemies randomly (disabled)
-     int r = -1;//int(random(10));
-     switch(r) {
-       case 1: moveLeft(speed);  angle = -PI/2; break;
-       case 2: moveRight(speed); angle = PI/2;  break;
-       case 3: moveUp(speed);    angle = PI;    break;
-       case 4: moveDown(speed);  break; // angle = 0
-     }
-
      // This loop moves enemies "intelligently"
+     bool attack = false;
      for (int i = 0; i < cannons.size(); ++i) {
        Cannon c = cannons.get(i);
-       float oldx = loc.x;
-       float oldy = loc.y;
-       if (c.loc.x < left()) {
-         moveLeft(speed);
-         angle = PI/2;        
-         if (loc.x != oldx || loc.y != oldy) {
-            break;
-         }
-       }
-       if (c.loc.x > right()) {
-         moveRight(speed); 
-         angle = -PI/2;
-         if (loc.x != oldx || loc.y != oldy) {
-            break;   
-         }
-       }
-       if (c.loc.y < top()) {
-         moveUp(speed);  
-         angle = PI;
-         if (loc.x != oldx || loc.y != oldy) {
-            break;
-         }
-       }
-       if (c.loc.y > bottom()) {
-         moveDown(speed);
-         angle = 0;
-         if (loc.x != oldx || loc.y != oldy) {
-            break;
-         }
+       if (loc.dist(c.loc) < 300) {
+         dest.x = c.loc.x;
+         dest.y = c.loc.y;
+         attack = true;
        }
      }
+     boolean timeout = (seconds - lastDirChange > 3);
+     boolean arrived = loc.dist(dest) < d;
+     if (!attack && ( timeout || arrived )) {
+         dest.x = random(width);
+         dest.y = random(height);
+         lastDirChange = seconds;
+     }
+
+     moveToward(dest.x,dest.y); 
 
     translate(loc.x,loc.y);
     rotate(angle);
@@ -312,11 +297,43 @@ class Target
 
       if (c.loc.x>=minx && c.loc.x<=maxx && c.loc.y >= miny && c.loc.y <= maxy)
       {
-         //FIXME: This collision detection is a little soft.
          playing = false;
       }  
     }
 
+  }
+
+  void moveToward(float x, float y) {
+       float oldx = loc.x;
+       float oldy = loc.y;
+       if (x < left()) {
+         moveLeft(speed);
+         angle = PI/2;        
+         if (loc.x != oldx || loc.y != oldy) {
+            return;
+         }
+       }
+       if (x > right()) {
+         moveRight(speed); 
+         angle = -PI/2;
+         if (loc.x != oldx || loc.y != oldy) {
+            return;   
+         }
+       }
+       if (y < top()) {
+         moveUp(speed);  
+         angle = PI;
+         if (loc.x != oldx || loc.y != oldy) {
+            return;
+         }
+       }
+       if (y > bottom()) {
+         moveDown(speed);
+         angle = 0;
+         if (loc.x != oldx || loc.y != oldy) {
+            return;
+         }
+       }
   }
 
  void moveUp(float dy) {
@@ -327,7 +344,7 @@ class Target
       float miny = wall.bottom() + d/2;
       float maxy = wall.bottom() + d/2 + dy;
       if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dy = top() - wall.bottom();
+        dy = top() - wall.bottom() - 1;
       }
     }
     loc.y -= dy
@@ -345,7 +362,7 @@ class Target
       float miny = wall.top() - d/2 - dy;
       float maxy = wall.top() - d/2;
       if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dy = wall.top() - bottom();
+        dy = wall.top() - bottom() - 1;
       }
     }
     loc.y += dy
@@ -363,7 +380,7 @@ class Target
       float miny = wall.top()    - d/2;
       float maxy = wall.bottom() + d/2;
       if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dx = left() - wall.right();
+        dx = left() - wall.right() - 1;
       }
     }
     loc.x -= dx
@@ -380,7 +397,7 @@ class Target
       float miny = wall.top()    - d/2;
       float maxy = wall.bottom() + d/2;
       if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dx = wall.left() - right();
+        dx = wall.left() - right() - 1;
       }
     }
     loc.x += dx
@@ -477,7 +494,7 @@ class Cannon {
       float miny = wall.top() - d/2 - dy;
       float maxy = wall.top() - d/2;
       if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dy = wall.top() - bottom();
+        dy = wall.top() - bottom() - 1;
       }
     }
     loc.y += dy
@@ -497,7 +514,7 @@ class Cannon {
       float miny = wall.top()    - d/2;
       float maxy = wall.bottom() + d/2;
       if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dx = left() - wall.right();
+        dx = left() - wall.right() - 1;
       }
     }
     loc.x -= dx
@@ -516,7 +533,7 @@ class Cannon {
       float miny = wall.top()    - d/2;
       float maxy = wall.bottom() + d/2;
       if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dx = wall.left() - right();
+        dx = wall.left() - right() - 1;
       }
     }
     loc.x += dx
