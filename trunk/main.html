@@ -33,7 +33,6 @@ PImage turret3;
 PImage ghostank1;
 PImage ghostank2;
 PImage ghostank3;
-PImage ghosturret;
 ArrayList cannons;
 ArrayList bullets;
 ArrayList targets;
@@ -49,6 +48,7 @@ int sc = 0;
 int speed = 20;
 boolean playing = false;
 boolean win = false;
+float bleedTime = 1.0;
 
 class Map
 {
@@ -210,15 +210,13 @@ class Target
 {
   PVector loc;
   PVector dest;
-  float d = 80;
+  float d = 70;
   int lives;
   boolean alive;
   float speed = 3;
   int sprite = 0;
   float angle = 0; // angle to which we rotate to draw the sprite. radians.
   int lastDirChange = 0;
-  int timeOfDeath = 0;
-  float turretAngle = 0;
 
   Target(float X, float Y, int LIVES)
   {
@@ -239,12 +237,6 @@ class Target
 
   void show()
   {
-	 if (!alive) {
-		if (seconds - timeOfDeath > 15)
-		  alive = true;
-		else
-		  return;
-	}
      // This loop moves enemies "intelligently"
      bool attack = false;
      for (int i = 0; i < cannons.size(); ++i) {
@@ -253,9 +245,6 @@ class Target
          dest.x = c.loc.x;
          dest.y = c.loc.y;
          attack = true;
-
-	    turretAngle = atan2(c.loc.y-loc.y,c.loc.x-loc.x) -PI/2 + 0.2*sin(sc*0.8);
-
        }
      }
      boolean timeout = (seconds - lastDirChange > 3);
@@ -277,14 +266,8 @@ class Target
     }
     if (sc % 2 == 0) {
      sprite = (sprite+1)%3;
-     if (!attack)
-       turretAngle += PI/10;
     }
     rotate(-angle);
-    
-    rotate(turretAngle);
-    image(ghosturret,-40,-30);
-    rotate(-turretAngle);
     translate(-loc.x,-loc.y);
     
     if (showBBs) {
@@ -306,9 +289,8 @@ class Target
         if (lives <= 0) { 
           points++;
           alive = false;
-          timeOfDeath = seconds;
           //Spawn blood effect when enemy dies
-          bloods.add(new ParticleSystem(200, new Vector3D(loc.x,loc.y,0)));
+          bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
         }  
       }  
     }
@@ -445,6 +427,10 @@ class Cannon {
   float firing = 0;
   float tOffsetx = 23;
   float tOffsety = 20;
+  boolean stun = false;
+  float lastStunTime = 0;
+  float stunTime = 0;
+  float stunTimer = 2;
 
   // frame counts for turrent animation
   int tf1 = 8;
@@ -469,8 +455,9 @@ class Cannon {
 
     float angle = atan2(mouseY-loc.y,mouseX-loc.x);
 
-    cX = (r * cos(angle)) + loc.x;
-    cY = (r * sin(angle)) + loc.y;
+    //Changed this from using r to d as the tank was shooting itself with the short barrel
+    cX = (d * cos(angle)) + loc.x;
+    cY = (d * sin(angle)) + loc.y;
 
     translate(loc.x,loc.y);
     rotate(baseAngle-PI/2);
@@ -482,7 +469,7 @@ class Cannon {
     rotate(-baseAngle+PI/2);
     rotate(angle - PI/2);
 
-    if ( firing > firingFrames - tf1)
+    if (firing > firingFrames - tf1)
         image(turret2,-tOffsetx,-tOffsety);
     else if ( firing > firingFrames - tf1 - tf2)
         image(turret3,-tOffsetx,-tOffsety);
@@ -509,12 +496,51 @@ class Cannon {
       rect(loc.x-d/2,loc.y-d/2,d,d);
       line(loc.x,loc.y,cX,cY);
     }
-  }  
+    
+    updateStun();
+    
+    //Bullet to cannon test
+    for (int i=0;i<bullets.size();i++)
+    {
+      Bullet b = bullets.get(i);
+      if (!b.alive) continue;
+
+      PVector l = new PVector(b.loc.x,b.loc.y);
+      if (l.x>=left()&&l.x<=right()&&l.y >=top()&&l.y<=bottom()) {
+        stun = true;
+        lastStunTime = millis() / 1000.0;
+	stunTime = 0;
+        bullets.remove(b);
+        //Spawn blood effect when cannon hit with bullet
+	bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
+        }
+     }
+  }
+  
+  void updateStun()
+  {
+      if (stun)
+      {
+          stunTime += millis() / 1000.0 - lastStunTime;
+	  lastStunTime = millis() / 1000.0;
+	  if (stunTime >= stunTimer)
+	  {
+	      console.log("Stop stun!");
+	      stunTime = 0;
+	      stun = false;
+	  }
+      }
+  }
+  
   void fire() {
      firing = firingFrames;
   } 
   
  void moveUp(float dy) {
+    if (stun)
+    {
+        return;
+    }
     for (int i=0;i<walls.size();++i) {
       Wall wall = walls.get(i);
       float minx = wall.left()   - d/2;
@@ -535,6 +561,10 @@ class Cannon {
   }
 
   void moveDown(float dy) {
+     if (stun)
+    {
+        return;
+    }
     for (int i=0;i<walls.size();++i) {
       Wall wall = walls.get(i);
       float minx = wall.left() - d/2;
@@ -555,6 +585,10 @@ class Cannon {
   }
 
   void moveLeft(float dx) {
+     if (stun)
+    {
+        return;
+    }
     for (int i=0;i<walls.size();++i) {
       Wall wall = walls.get(i);
       float minx = wall.right()  + d/2;
@@ -574,6 +608,10 @@ class Cannon {
     baseAngle = PI;
   }
   void moveRight(float dx) {
+     if (stun)
+    {
+        return;
+    }
     for (int i=0;i<walls.size();++i) {
       Wall wall = walls.get(i);
       float minx = wall.left()   - d/2 - dx;
@@ -627,11 +665,9 @@ void setup() {
   turret1 = loadImage("art_assets/turret1.png");
   turret2 = loadImage("art_assets/turret2.png");
   turret3 = loadImage("art_assets/turret3.png");
-  ghostank1 = loadImage("art_assets/kt_enemy02.png");
-  ghostank2 = loadImage("art_assets/kt_enemy03.png");
-  ghostank3 = loadImage("art_assets/kt_enemy04.png");
-  ghostank4 = loadImage("art_assets/kt_enemy05.png");
-  ghosturret = loadImage("art_assets/kt_enemy01.png");
+  ghostank1 = loadImage("art_assets/ghostank01sm.png");
+  ghostank2 = loadImage("art_assets/ghostank02sm.png");
+  ghostank3 = loadImage("art_assets/ghostank03sm.png");
 
   var audioElement = getTrack(1);
   audioElement.load();
@@ -654,12 +690,10 @@ void generateMap(Map fromMap)
         c = fromMap.mapData.charAt(x);
 	if (c == "#")       // toggleable wall
 	{
-	    console.log("found wallz!");
 	    walls.add(new Wall((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,true));
 	}
         if (c == "X")       // non-toggleable wall
 	{
-	    console.log("found wallz!");
 	    walls.add(new Wall((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,false));
 	}
 	else if (c == "T")  // bad guy
@@ -675,8 +709,9 @@ void generateMap(Map fromMap)
 
 void draw()
 {
+  if (playing)
     play();
-  if (!playing)
+  else
     gameover();
 }
 
@@ -691,7 +726,6 @@ void play()
     seconds++;
     sc=0;  
   }
-
   for(int k=0;k<bullets.size();k++)
   {
     Bullet b = bullets.get(k);
@@ -702,7 +736,9 @@ void play()
   }
   for(int j=0;j<targets.size();j++)
   {
-    (targets.get(j)).show();  
+    Target t = targets.get(j);
+    if (t.alive)
+      (targets.get(j)).show();  
   }
   for(int j=0;j<walls.size();j++)
   {
@@ -729,20 +765,13 @@ void play()
   }
   //text("Accuracy: " + accuracy + "%", 5, 50);
   //text("Seconds: " + seconds, 5, 35);
-  int bulletsAlive = 0;
-  for(int j=0;j<bullets.size();j++) {
-	Bullet b = bullets.get(j);
-    if (b.alive)
-      bulletsAlive ++;
-  }   
- 
-  int wallsOn = 0;
-  for(int j=0;j<walls.size();j++) {
-	Wall w = walls.get(j);
-    if (w.toggleable && w.on)
-      wallsOn ++;
+    
+  int enemiesAlive = 0;
+  for(int j=0;j<targets.size();j++) {
+    if (targets.get(j).alive)
+      enemiesAlive ++;
   }
-  if (wallsOn == 0 && bulletsAlive == 0) {
+  if (enemiesAlive ==0) {
     win = true;
     playing = false;
   }
@@ -783,23 +812,23 @@ void mousePressed()
 
 void gameover()
 {
-	fill(0);
-	rect(width/2-100,height/2-50,200,100);
-	int score = int(((points*seconds)*54.73)-((bulletCounter-hitCounter)*10));
-	font = loadFont("Arial-MT",50);
-    textFont(font);
-    textAlign(CENTER);
-    fill(255,255,0);
-    String s1 = "";
+  int score = int(((points*seconds)*54.73)-((bulletCounter-hitCounter)*10));
+  background(0);
+  font = loadFont("Arial-MT",50);
+  textFont(font);
+  textAlign(CENTER);
+  fill(255,255,0);
+  String s1 = "";
   if (win) {
     s1 = "You Won!!";
   }
   else{
     s1 = "You got KNIFED!!";
   }
-  text(s1, width/2-s1.length()/2*5, height/2-25);
+  text(s1, width/2-s1.length()/2*5, height/2-50);
+  //text("Your score was: " + score, width/2-100, height/2-25);
   String s2 = "Press \'r\' to Play Again!";
-  text(s2, width/2-50, height/2+25);
+  text(s2, width/2-50, height/2-25);
 }
 void keyPressed()
 {
@@ -880,7 +909,8 @@ class Particle {
   Vector3D loc;  
   Vector3D vel;  
   Vector3D acc;  
-  float r;  
+  float r;
+  float startTimer = 60.0;
   float timer;  
   
   // One constructor  
@@ -889,16 +919,16 @@ class Particle {
     vel = v.copy();  
     loc = l.copy();  
     r = r_;  
-    timer = 100.0;  
+    timer = startTimer  
   }  
     
   // Another constructor (the one we are using here)  
   Particle(Vector3D l) {  
-    acc = new Vector3D(0,0.05,0);  
-    vel = new Vector3D(random(-1,1),random(-2,0),0);  
+    acc = new Vector3D(0,0,0);
+    vel = new Vector3D(random(-2,2),random(-2,2),0);  
     loc = l.copy();  
-    r = 10.0;  
-    timer = 100.0;  
+    r = 5.0;
+    timer = startTimer;
   }  
   
   
@@ -907,18 +937,18 @@ class Particle {
     render();  
   }  
   
-  // Method to update location  
+  // Method to update location
   void update() {  
     vel.add(acc);  
     loc.add(vel);  
     timer -= 1.0;  
   }  
   
-  // Method to display  
+  // Method to display
   void render() {  
     //ellipseMode(CENTER);  
-    noStroke();  
-    fill(#FF0000,timer);
+    noStroke();
+    fill(#FF0000, (timer / startTimer) * 127) + 127;
     rect(loc.x, loc.y, r, r);
     ellipse(loc.x,loc.y,r,r);  
   }  
@@ -940,17 +970,38 @@ class Particle {
 class ParticleSystem {  
   
   ArrayList particles;    // An arraylist for all the particles  
-  Vector3D origin;        // An origin point for where particles are birthed  
+  Vector3D origin;        // An origin point for where particles are birthed
+  float lastTime;
+  float currTime;
+  float overTime;
+  int num;
+  int numSpawned;
   
-  ParticleSystem(int num, Vector3D v) {  
-    particles = new ArrayList();              // Initialize the arraylist  
-    origin = v.copy();                        // Store the origin point  
-    for (int i = 0; i < num; i++) {  
-      particles.add(new Particle(origin));    // Add "num" amount of particles to the arraylist  
-     }  
-   }  
+  ParticleSystem(int setNum, float setOverTime, Vector3D v) {
+    num = setNum;
+    numSpawned = 0;
+    overTime = setOverTime;
+    particles = new ArrayList();              // Initialize the arraylist
+    origin = v.copy();                        // Store the origin point
+    currTime = 0;
+    lastTime = millis() / 1000.0;
+   }
    
-   void run() {  
+   void run() {
+	if (numSpawned < num)
+	{
+	     currTime += (millis() / 1000.0) - lastTime;
+	     lastTime = millis() / 1000.0;
+	     if (overTime == 0)
+	     {
+		 overTime = currTime;
+	     }
+	     int numToSpawn = ((currTime / overTime) * num) - numSpawned;
+	     numSpawned += numToSpawn;
+	     for (int i = 0; i < numToSpawn; i++) {
+	      addParticle();    // Add "num" amount of particles to the arraylist
+	     }
+	}
      // Cycle through the ArrayList backwards b/c we are deleting  
      for (int i = particles.size()-1; i >= 0; i--) {  
        Particle p = (Particle) particles.get(i);  
