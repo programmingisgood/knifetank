@@ -27,6 +27,9 @@ PFont font = loadFont("Arial-MT",15);
 PImage tank1;
 PImage tank2;
 PImage tank3;
+PImage turret1;
+PImage turret2;
+PImage turret3;
 PImage ghostank1;
 PImage ghostank2;
 PImage ghostank3;
@@ -60,7 +63,7 @@ class Map
 }
 
 Map map1 = new Map(
-"OOOOOO##OO\
+"OOOOOO#XOO\
 OTOOOO#OOO\
 OOOOOO#OOC\
 OTOOOO#OOO\
@@ -95,7 +98,10 @@ class Wall {
     stroke(0,0,0,255);
     strokeWeight(2);
     int hue = 200;
-    if (on) {
+    if (!toggleable) {
+      fill(125);
+    }
+    else if (on) {
       fill(255,255,0);
     }
     else {
@@ -165,12 +171,10 @@ class Bullet
   PVector loc = new PVector();
   PVector dir = new PVector();
   float angle;
-  Cannon c;
   int age = 0;
   boolean alive;
   Bullet(Cannon c, float x, float y)
   {
-    this.c = c;
     loc.x = x;
     loc.y = y;
     PVector center = new PVector(c.loc.x,c.loc.y);
@@ -189,7 +193,7 @@ class Bullet
     if (loc.y < 0 || loc.y > height)
       flipy();
     age++;
-    if (age>100)  alive = false;
+    if (age>300)  alive = false;
   }
   void flipx()
   {
@@ -284,8 +288,8 @@ class Target
         if (lives <= 0) { 
           points++;
           alive = false;
-	  //Spawn blood effect when enemy dies
-	  bloods.add(new ParticleSystem(200, new Vector3D(loc.x,loc.y,0)));
+          //Spawn blood effect when enemy dies
+          bloods.add(new ParticleSystem(200, new Vector3D(loc.x,loc.y,0)));
         }  
       }  
     }
@@ -420,11 +424,21 @@ class Cannon {
   int sprite = 0;
   float baseAngle = 0;
   float firing = 0;
+  float tOffsetx = 23;
+  float tOffsety = 20;
+
+  // frame counts for turrent animation
+  int tf1 = 8;
+  int tf2 = 5;
+  int tf3 = 5;
+  float firingFrames;
+ 
   Cannon(float x, float y) {
-    d = 70;
+    d = 75;
     r = d/2;
     loc.x = x;
     loc.y = y;
+    firingFrames = tf1 + tf2 + tf3;
   }
   float top()    { return loc.y - d/2; }
   float bottom() { return loc.y + d/2; }
@@ -447,17 +461,26 @@ class Cannon {
       case 2: image(tank3,-d/2,-d/2); break;
     }
     rotate(-baseAngle+PI/2);
-    switch (firing) {
-      //case 0: image(turret1,-d/2,-d/2); break;
-      //case 1: image(turret2,-d/2,-d/2); break;
-      //case 2: image(turret3,-d/2,-d/2); break;
-      //case 3: image(turret3,-d/2,-d/2); break;
-    }
-    if (firing > 0) --firing;
     rotate(angle - PI/2);
-    // draw the turret sprite here.
+
+    if ( firing > firingFrames - tf1)
+        image(turret2,-tOffsetx,-tOffsety);
+    else if ( firing > firingFrames - tf1 - tf2)
+        image(turret3,-tOffsetx,-tOffsety);
+    else if ( firing > 0)
+        image(turret2,-tOffsetx,-tOffsety);
+    else
+        image(turret1,-tOffsetx,-tOffsety);
     rotate(-angle+PI/2);
     translate(-loc.x,-loc.y);
+
+    if (firing == firingFrames - tf1) {
+      bullets.add(new Bullet(this,cX,cY));
+      bulletCounter++;
+    }
+
+    if (firing > 0) 
+      --firing;    
     
     if (showBBs) {
       // show bounding box
@@ -468,6 +491,9 @@ class Cannon {
       line(loc.x,loc.y,cX,cY);
     }
   }  
+  void fire() {
+     firing = firingFrames;
+  } 
   
  void moveUp(float dy) {
     for (int i=0;i<walls.size();++i) {
@@ -548,9 +574,6 @@ class Cannon {
     baseAngle = 0;
   }
 
-  void fire() {
-     firing = 3;
-  } 
 }
 
 void setup() {
@@ -579,9 +602,12 @@ void setup() {
   playing = true;
   frameRate(50);
 
-  tank1 = loadImage("art_assets/tank01sm.png");
-  tank2 = loadImage("art_assets/tank02sm.png");
-  tank3 = loadImage("art_assets/tank03sm.png");
+  tank1 = loadImage("art_assets/body1.png");
+  tank2 = loadImage("art_assets/body2.png");
+  tank3 = loadImage("art_assets/body3.png");
+  turret1 = loadImage("art_assets/turret1.png");
+  turret2 = loadImage("art_assets/turret2.png");
+  turret3 = loadImage("art_assets/turret3.png");
   ghostank1 = loadImage("art_assets/ghostank01sm.png");
   ghostank2 = loadImage("art_assets/ghostank02sm.png");
   ghostank3 = loadImage("art_assets/ghostank03sm.png");
@@ -605,15 +631,21 @@ void generateMap(Map fromMap)
     for (x=0; x<fromMap.mapData.length; x++)
     {
         c = fromMap.mapData.charAt(x);
-	if (c == "#")
+	if (c == "#")       // toggleable wall
 	{
+	    console.log("found wallz!");
 	    walls.add(new Wall((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,true));
 	}
-	else if (c == "T")
+        if (c == "X")       // non-toggleable wall
+	{
+	    console.log("found wallz!");
+	    walls.add(new Wall((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,false));
+	}
+	else if (c == "T")  // bad guy
 	{
             targets.add(new Target((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,1));
 	}
-	else if (c == "C")
+	else if (c == "C")  // good guy
 	{
 	    cannons.add(new Cannon((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist));
 	}
@@ -644,6 +676,8 @@ void play()
     Bullet b = bullets.get(k);
     if (b.alive)
       b.run();  
+    else
+      bullets.remove(b);
   }
   for(int j=0;j<targets.size();j++)
   {
@@ -696,31 +730,27 @@ void play()
   line(width*0.85,0,width*0.85,height);
   sc++;
 
-  for (int i=0;i<bloods.size();)
-  {
-    ParticleSystem b = bloods.get(i);
-    b.run();
-    if (b.dead())
-    {
-	bloods.remove(i);
-    }
-    else
-    {
-        i++;
-    }
-  }
+   for (int i=0;i<bloods.size();)
+   {
+     ParticleSystem b = bloods.get(i);
+     b.run();
+     if (b.dead())
+     {
+        bloods.remove(i);
+     }
+     else
+     {
+         i++;
+     }
+   }
+
+
 }
 void mousePressed()
 {
   if (playing)
   {
-    for (int k=0;k<cannons.size();k++)
-    {
-      Cannon c = cannons.get(k);
-      bullets.add(new Bullet(c,c.cX,c.cY));
-      bulletCounter++;
-      c.fire();
-    }
+     addBullet();
   }
 
 }
@@ -733,15 +763,17 @@ void gameover()
   textFont(font);
   textAlign(CENTER);
   fill(255,255,0);
+  String s1 = "";
   if (win) {
-    text("You Won!!", width/2, height/2-50);
+    s1 = "You Won!!";
   }
   else{
-    text("You Lost!!", width/2, height/2-50);
+    s1 = "You got KNIFED!!";
   }
-
-  text("Your score was: " + score, width/2, height/2-25);
-  text("Press 'r' to Play Again!" , width/2, height/2+10);
+  text(s1, width/2-s1.length()/2*5, height/2-50);
+  //text("Your score was: " + score, width/2-100, height/2-25);
+  String s2 = "Press \'r\' to Play Again!";
+  text(s2, width/2-50, height/2-25);
 }
 void keyPressed()
 {
@@ -804,10 +836,20 @@ void getTrack(int index) {
   else {
     return document.getElementById("track1" + str(index));
   }
+}  
+
+void addBullet() {
+    if (bullets.size() >= 3)
+      return;
+    for (int k=0;k<cannons.size();k++)
+    {
+      Cannon c = cannons.get(k);
+      c.fire();
+    }
 }
 
-// A simple Particle class  
-  
+ // A simple Particle class  
+   
 class Particle {  
   Vector3D loc;  
   Vector3D vel;  
@@ -863,7 +905,7 @@ class Particle {
       return false;  
     }  
   }  
-}  
+ }  
   
   
 // A class to describe a group of Particles  
@@ -879,171 +921,171 @@ class ParticleSystem {
     origin = v.copy();                        // Store the origin point  
     for (int i = 0; i < num; i++) {  
       particles.add(new Particle(origin));    // Add "num" amount of particles to the arraylist  
-    }  
-  }  
-  
-  void run() {  
-    // Cycle through the ArrayList backwards b/c we are deleting  
-    for (int i = particles.size()-1; i >= 0; i--) {  
-      Particle p = (Particle) particles.get(i);  
-      p.run();  
-      if (p.dead()) {  
-        particles.remove(i);  
-      }  
-    }  
-  }  
-  
-  void addParticle() {  
-    particles.add(new Particle(origin));  
-  }  
-  
-  void addParticle(Particle p) {  
-    particles.add(p);  
-  }  
-  
-  // A method to test if the particle system still has particles  
-  boolean dead() {  
-    if (particles.isEmpty()) {  
-      return true;  
-    } else {  
-      return false;  
-    }  
-  }  
-  
-}  
-  
-  
-  
-// Simple Vector3D Class   
-  
-public class Vector3D {  
-  public float x;  
-  public float y;  
-  public float z;  
-  
-  Vector3D(float x_, float y_, float z_) {  
-    x = x_; y = y_; z = z_;  
-  }  
-  
-  Vector3D(float x_, float y_) {  
-    x = x_; y = y_; z = 0f;  
-  }  
+     }  
+   }  
+   
+   void run() {  
+     // Cycle through the ArrayList backwards b/c we are deleting  
+     for (int i = particles.size()-1; i >= 0; i--) {  
+       Particle p = (Particle) particles.get(i);  
+       p.run();  
+       if (p.dead()) {  
+         particles.remove(i);  
+       }  
+     }  
+   }  
+   
+   void addParticle() {  
+     particles.add(new Particle(origin));  
+   }  
+   
+   void addParticle(Particle p) {  
+     particles.add(p);  
+   }  
+   
+   // A method to test if the particle system still has particles  
+   boolean dead() {  
+     if (particles.isEmpty()) {  
+       return true;  
+     } else {  
+       return false;  
+     }  
+   }  
+   
+ }  
+   
+   
+   
+ // Simple Vector3D Class   
+   
+ public class Vector3D {  
+   public float x;  
+   public float y;  
+   public float z;  
+   
+   Vector3D(float x_, float y_, float z_) {  
+     x = x_; y = y_; z = z_;  
+   }  
+   
+   Vector3D(float x_, float y_) {  
+     x = x_; y = y_; z = 0f;  
+   }  
     
-  Vector3D() {  
-    x = 0f; y = 0f; z = 0f;  
-  }  
-  
-  void setX(float x_) {  
-    x = x_;  
-  }  
-  
-  void setY(float y_) {  
-    y = y_;  
-  }  
-  
-  void setZ(float z_) {  
-    z = z_;  
-  }  
-    
-  void setXY(float x_, float y_) {  
-    x = x_;  
-    y = y_;  
-  }  
-    
+   Vector3D() {  
+     x = 0f; y = 0f; z = 0f;  
+   }  
+   
+   void setX(float x_) {  
+     x = x_;  
+   }  
+   
+   void setY(float y_) {  
+     y = y_;  
+   }  
+   
+   void setZ(float z_) {  
+     z = z_;  
+   }  
+     
+   void setXY(float x_, float y_) {  
+     x = x_;  
+     y = y_;  
+   }  
+     
   void setXYZ(float x_, float y_, float z_) {  
-    x = x_;  
-    y = y_;  
-    z = z_;  
-  }  
-  
-  void setXYZ(Vector3D v) {  
-    x = v.x;  
-    y = v.y;  
-    z = v.z;  
-  }  
-  public float magnitude() {  
-    return (float) Math.sqrt(x*x + y*y + z*z);  
-  }  
+     x = x_;  
+     y = y_;  
+     z = z_;  
+   }  
+   
+   void setXYZ(Vector3D v) {  
+     x = v.x;  
+     y = v.y;  
+     z = v.z;  
+   }  
+   public float magnitude() {  
+     return (float) Math.sqrt(x*x + y*y + z*z);  
+   }  
   
   public Vector3D copy() {  
-    return new Vector3D(x,y,z);  
-  }  
+     return new Vector3D(x,y,z);  
+   }  
+   
+   public Vector3D copy(Vector3D v) {  
+     return new Vector3D(v.x, v.y,v.z);  
+   }  
+     
+   public void add(Vector3D v) {  
+     x += v.x;  
+     y += v.y;  
+     z += v.z;  
+   }  
+   
+   public void sub(Vector3D v) {  
+     x -= v.x;  
+     y -= v.y;  
+     z -= v.z;  
+   }  
+   
+   public void mult(float n) {  
+     x *= n;  
+     y *= n;  
+     z *= n;  
+   }  
+   
+   public void div(float n) {  
+     x /= n;  
+     y /= n;  
+     z /= n;  
+   }  
+   
+   public void normalize() {  
+     float m = magnitude();  
+     if (m > 0) {  
+        div(m);  
+     }  
+   }  
+   
+   public void limit(float max) {  
+     if (magnitude() > max) {  
+       normalize();  
+       mult(max);  
+     }  
+   }  
+   
+   public float heading2D() {  
+     float angle = (float) Math.atan2(-y, x);  
+     return -1*angle;  
+   }  
+   
+   public Vector3D add(Vector3D v1, Vector3D v2) {  
+     Vector3D v = new Vector3D(v1.x + v2.x,v1.y + v2.y, v1.z + v2.z);  
+     return v;  
+   }  
+   
+   public Vector3D sub(Vector3D v1, Vector3D v2) {  
+     Vector3D v = new Vector3D(v1.x - v2.x,v1.y - v2.y,v1.z - v2.z);  
+     return v;  
+   }  
+   
+   public Vector3D div(Vector3D v1, float n) {  
+     Vector3D v = new Vector3D(v1.x/n,v1.y/n,v1.z/n);  
+     return v;  
+   }  
   
-  public Vector3D copy(Vector3D v) {  
-    return new Vector3D(v.x, v.y,v.z);  
-  }  
-    
-  public void add(Vector3D v) {  
-    x += v.x;  
-    y += v.y;  
-    z += v.z;  
-  }  
+   public Vector3D mult(Vector3D v1, float n) {  
+     Vector3D v = new Vector3D(v1.x*n,v1.y*n,v1.z*n);  
+     return v;  
+   }  
+   
+   public float distance (Vector3D v1, Vector3D v2) {  
+     float dx = v1.x - v2.x;  
+     float dy = v1.y - v2.y;  
+     float dz = v1.z - v2.z;  
+     return (float) Math.sqrt(dx*dx + dy*dy + dz*dz);  
+   }  
   
-  public void sub(Vector3D v) {  
-    x -= v.x;  
-    y -= v.y;  
-    z -= v.z;  
-  }  
-  
-  public void mult(float n) {  
-    x *= n;  
-    y *= n;  
-    z *= n;  
-  }  
-  
-  public void div(float n) {  
-    x /= n;  
-    y /= n;  
-    z /= n;  
-  }  
-  
-  public void normalize() {  
-    float m = magnitude();  
-    if (m > 0) {  
-       div(m);  
-    }  
-  }  
-  
-  public void limit(float max) {  
-    if (magnitude() > max) {  
-      normalize();  
-      mult(max);  
-    }  
-  }  
-  
-  public float heading2D() {  
-    float angle = (float) Math.atan2(-y, x);  
-    return -1*angle;  
-  }  
-  
-  public Vector3D add(Vector3D v1, Vector3D v2) {  
-    Vector3D v = new Vector3D(v1.x + v2.x,v1.y + v2.y, v1.z + v2.z);  
-    return v;  
-  }  
-  
-  public Vector3D sub(Vector3D v1, Vector3D v2) {  
-    Vector3D v = new Vector3D(v1.x - v2.x,v1.y - v2.y,v1.z - v2.z);  
-    return v;  
-  }  
-  
-  public Vector3D div(Vector3D v1, float n) {  
-    Vector3D v = new Vector3D(v1.x/n,v1.y/n,v1.z/n);  
-    return v;  
-  }  
-  
-  public Vector3D mult(Vector3D v1, float n) {  
-    Vector3D v = new Vector3D(v1.x*n,v1.y*n,v1.z*n);  
-    return v;  
-  }  
-  
-  public float distance (Vector3D v1, Vector3D v2) {  
-    float dx = v1.x - v2.x;  
-    float dy = v1.y - v2.y;  
-    float dz = v1.z - v2.z;  
-    return (float) Math.sqrt(dx*dx + dy*dy + dz*dz);  
-  }  
-  
-}
+
 
 </script><canvas></canvas>
 <div style="height:0px;width:0px;overflow:hidden;"><img id="img1"><img id="img2"><img id="img3"></div>
