@@ -13,6 +13,9 @@
 <audio src="music/leveltwo03.ogg" preload="true" id="track13"></audio>
 <audio src="music/leveltwo04.ogg" preload="true" id="track14"></audio>
 <audio src="music/leveltwo05.ogg" preload="true" id="track15"></audio>
+<style type="text/css">
+body {background: #000 url("art_assets/knifetankbackground.png") no-repeat;}
+</style>
 <script type="application/processing">
 
 int numAudioFiles = 5;
@@ -21,7 +24,6 @@ int audioIndex = 1;
 boolean showBBs = true; // DEBUG: show bounding boxes.
 
 PFont font = loadFont("Arial-MT",15);
-PImage bg;
 PImage tank1;
 PImage tank2;
 PImage tank3;
@@ -39,7 +41,7 @@ int hitCounter = 0;
 float accuracy;
 int seconds = 0;
 int sc = 0;
-int speed = 10;
+int speed = 20;
 boolean playing = false;
 boolean win = false;
 
@@ -62,7 +64,8 @@ class Wall {
     return false;
   }
   void show() {
-    noStroke();
+    stroke(0,0,0,255);
+    strokeWeight(2);
     int hue = 200;
     if (on) {
       fill(255,255,0);
@@ -170,7 +173,7 @@ class Bullet
 class Target
 {
   PVector loc;
-  float d = 131;
+  float d = 70;
   int lives;
   boolean alive;
   float speed = 3;
@@ -277,8 +280,12 @@ class Target
     {
       fill(255);
       Cannon c = cannons.get(i);
-      PVector l = new PVector(c.loc.x,c.loc.y);
-      if (l.x>=loc.x&&l.x<=loc.x+75&&l.y >=loc.y&&l.y<=loc.y+75)
+      float minx = left()   - c.d/2;
+      float maxx = right()  + c.d/2;
+      float miny = top()    - c.d/2;
+      float maxy = bottom() + c.d/2;
+
+      if (c.loc.x>=minx && c.loc.x<=maxx && c.loc.y >= miny && c.loc.y <= maxy)
       {
          //FIXME: This collision detection is a little soft.
          playing = false;
@@ -366,8 +373,10 @@ class Cannon {
   float cY;
   PVector loc = new PVector();
   int sprite = 0;
+  float baseAngle = 0;
+  float firing = 0;
   Cannon(float x, float y) {
-    d = 120;
+    d = 70;
     r = d/2;
     loc.x = x;
     loc.y = y;
@@ -385,18 +394,23 @@ class Cannon {
     cX = (r * cos(angle)) + loc.x;
     cY = (r * sin(angle)) + loc.y;
 
-
     translate(loc.x,loc.y);
-    rotate(angle-PI/2);
+    rotate(baseAngle-PI/2);
     switch (sprite) {
       case 0: image(tank1,-d/2,-d/2); break;
       case 1: image(tank2,-d/2,-d/2); break;
       case 2: image(tank3,-d/2,-d/2); break;
     }
-
-    if (sc%10 == 0) {
-     sprite = sprite; //(sprite+1)%3;
-    }    
+    rotate(-baseAngle+PI/2);
+    switch (firing) {
+      //case 0: image(turret1,-d/2,-d/2); break;
+      //case 1: image(turret2,-d/2,-d/2); break;
+      //case 2: image(turret3,-d/2,-d/2); break;
+      //case 3: image(turret3,-d/2,-d/2); break;
+    }
+    if (firing > 0) --firing;
+    rotate(angle - PI/2);
+    // draw the turret sprite here.
     rotate(-angle+PI/2);
     translate(-loc.x,-loc.y);
     
@@ -427,6 +441,7 @@ class Cannon {
       loc.y = d/2;
     }
     sprite = (sprite+1)%3;
+    baseAngle = -PI/2;
   }
 
   void moveDown(float dy) {
@@ -446,6 +461,7 @@ class Cannon {
       loc.y = height-d/2;
     }
     sprite = (sprite+1)%3;
+    baseAngle = PI/2;
   }
 
   void moveLeft(float dx) {
@@ -465,7 +481,7 @@ class Cannon {
       loc.x = d/2;
     }
     sprite = (sprite+1)%3;
-
+    baseAngle = PI;
   }
   void moveRight(float dx) {
     for (int i=0;i<walls.size();++i) {
@@ -484,11 +500,11 @@ class Cannon {
       loc.x = width-d/2;
     }
     sprite = (sprite+1)%3;
-
+    baseAngle = 0;
   }
 
   void fire() {
-     // FIXME: Insert firing animation codes here.
+     firing = 3;
   } 
 }
 
@@ -518,15 +534,13 @@ void setup() {
   win = false;
   playing = true;
   frameRate(50);
-  background(125);
 
-  //bg = loadImage("art_assets/bg.jpg");
-  tank1 = loadImage("art_assets/tank01.png");
-  tank2 = loadImage("art_assets/tank02.png");
-  tank3 = loadImage("art_assets/tank03.png");
-  ghostank1 = loadImage("art_assets/ghostank01.png");
-  ghostank2 = loadImage("art_assets/ghostank02.png");
-  ghostank3 = loadImage("art_assets/ghostank03.png");
+  tank1 = loadImage("art_assets/tank01sm.png");
+  tank2 = loadImage("art_assets/tank02sm.png");
+  tank3 = loadImage("art_assets/tank03sm.png");
+  ghostank1 = loadImage("art_assets/ghostank01sm.png");
+  ghostank2 = loadImage("art_assets/ghostank02sm.png");
+  ghostank3 = loadImage("art_assets/ghostank03sm.png");
 
   var audioElement = getTrack(1);
   audioElement.load();
@@ -555,9 +569,7 @@ void play()
   font = loadFont("Arial-MT",15);
   textFont(font);
   
-  //background(bg); // <--Background image. slow as balls. fails in Chrome.
-  background(255);
-
+  clear();
   if (sc == 50)
   {
     seconds++;
