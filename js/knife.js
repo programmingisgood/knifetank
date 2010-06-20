@@ -17,8 +17,99 @@ knife.page.player.init = function() {
 	//knife.page.player.getPatterns();
 	//knife.page.player.getRate();
 	
+	
+	knife.page.player.FIRE_ANIM = new SpriteAnim({
+		elementId: 'fire',
+		frames: 5,
+		height: 640,
+		delay: 150
+	});
+	
+	
+
+	$.timer(2000, function(timer) {
+		timer.stop();
+		
+		
+		//$('#skull2').shake(2, 20, 500);
+		$('#skull2').animate({top: '91px'}, 2000 );
+
+		//$('#skull1').shake(4, 10, 500);
+		$('#skull1').animate({top: '58px'}, 2000, 'easeOutQuad', function() {
+			//$('#skull1').shake(4, 10, 1000);
+			knife.page.player.showTank();
+		} );
+
+		$('#controls .play').hover(function() {
+			$('#tank').shake(2, 10, 150);
+		}, function () {});
+		//$('#onair-chat').animate({scrollTop: targetOffset}, 500, '', removeComments);
+
+		$('#controls .tanks').click(function(e) {
+			e.preventDefault();
+			
+			$('#controls').fadeOut('', function() {
+				$('#controls2').fadeIn();
+			})
+			
+		})
+		
+		$('#controls2 .back').click(function(e) {
+			e.preventDefault();
+			
+			$('#controls2').fadeOut('', function() {
+				$('#controls').fadeIn();
+			})
+			
+		})
+		
+		var shake = true;
+		$.timer(10000, function() {
+			
+			if (shake) {
+				$('#skull1').shake(1, 5, 300);
+				shake = false;
+			} else {
+				$('#skull2').shake(2, 5, 500);
+				shake = true;
+			}
+			
+		})
+		
+		$.timer(15000, function(t) {
+			t.stop();
+			$('#skull2').shake(2, 5, 500);
+		});
+		
+		$.timer(20000, function(t) {
+			t.stop();
+			$('#skull1').shake(3, 10, 300);
+		})
+
+		$('#track1').attr('loop', true);
+			
+	})
+
+	
+	
 }
 
+
+knife.page.player.showTank = function () {
+	$.timer(1000, function(timer) {
+		timer.stop();
+		$('#tank').animate({top: '-5px', left: '250px'}, 500, 'easeOutBounce', knife.page.player.showTitle );
+	})
+
+}
+
+knife.page.player.showTitle = function () {
+	$('#title').animate({top: '25px', left: '0px'}, 500, 'easeOutBounce', knife.page.player.showControls );
+}
+
+knife.page.player.showControls = function () {
+	$('#controls').fadeIn('slow');
+}
 
 /*
 knife.page.player.getNumberOfChannels = function() {

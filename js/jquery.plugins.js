@@ -275,6 +275,25 @@ jQuery.extend( jQuery.easing,
 	}
 });
 
+jQuery.fn.shake = function(intShakes, intDistance, intDuration) {
+	this.each(function() {
+		var jqNode = $(this);
+		
+		var thisOffset = $(this).css('left');
+		thisOffset = parseInt(thisOffset.substring(0, thisOffset.length - 2));
+		
+		trace(thisOffset);
+		
+		//jqNode.css({position: 'relative'});
+		for (var x=1; x<=intShakes; x++) {
+			jqNode.animate({ left: (intDistance * -1) + thisOffset },(((intDuration / intShakes) / 4)))
+			.animate({ left: intDistance + thisOffset },((intDuration/intShakes)/2))
+			.animate({ left: thisOffset },(((intDuration/intShakes)/4)));
+		}
+		return this;
+	});
+};
+
 /*
  *
  * TERMS OF USE - EASING EQUATIONS
