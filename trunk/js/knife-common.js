@@ -638,3 +638,21 @@ Date.prototype.format = function (mask, utc) {
 String.prototype.rtrim = function() {
 	return this.replace(/\s+$/,"");
 }
+function SpriteAnim (options) {
+  var timerId, i = 0,
+      element = document.getElementById(options.elementId);
+
+	var delay = options.delay || 100;
+
+  timerId = setInterval(function () {
+    if (i >= options.frames) {
+      i = 0;
+    }
+    element.style.backgroundPosition = "0px -" + i * options.height + "px";
+     i++;
+  }, delay);
+
+  this.stopAnimation = function () {
+    clearInterval(timerId);
+  };
+}
