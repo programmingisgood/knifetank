@@ -21,7 +21,7 @@ body {background: #000 url("art_assets/knifetankbackground.png") no-repeat;}
 int numAudioFiles = 5;
 int audioIndex = 1;
 
-boolean showBBs = true; // DEBUG: show bounding boxes.
+boolean showBBs = false; // DEBUG: show bounding boxes.
 
 PFont font = loadFont("Arial-MT",15);
 PImage tank1;
@@ -34,6 +34,7 @@ PImage ghostank1;
 PImage ghostank2;
 PImage ghostank3;
 PImage ghosturret;
+PImage greyblock;
 ArrayList cannons;
 ArrayList bullets;
 ArrayList targets;
@@ -46,6 +47,7 @@ int hitCounter = 0;
 float accuracy;
 int seconds = 0;
 int sc = 0;
+int ticks = 0;
 int speed = 20;
 boolean playing = false;
 boolean win = false;
@@ -66,13 +68,13 @@ class Map
 
 Map map1 = new Map(
 "OOOOOO#XOO\
-OTOOOO#OOO\
+OTOOOOXOOO\
 OOOOOO#OOC\
-OTOOOO#OOO\
-OOOOOO##OO\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
 OOO#OOOOOO\
-OOO#OOOOOO\
-OOO#OOOOOO\
+OOOXOOOOOO\
 OOOOOOOOOO\
 OOOOOOOOOO");
 
@@ -83,88 +85,88 @@ class Wall {
   boolean on;
   boolean toggleable;
   Wall(float X, float Y, boolean toggle) {
-    x = X+d/2;
-    y = Y+d/2;
-    toggleable = toggle;
-    on = true;
+	x = X+d/2;
+	y = Y+d/2;
+	toggleable = toggle;
+	on = true;
   }
-  float top()    { return y - d/2; }
+  float top()	 { return y - d/2; }
   float bottom() { return y + d/2; }
-  float left()   { return x - d/2; }
-  float right()  { return x + d/2; }
+  float left()	 { return x - d/2; }
+  float right()	 { return x + d/2; }
 
-  boolean intersect(PVector p1, PVector p2) {
-    return false;
-  }
   void show() {
-    stroke(0,0,0,255);
-    strokeWeight(2);
-    int hue = 200;
-    if (!toggleable) {
-      fill(125);
-    }
-    else if (on) {
-      fill(255,255,0);
-    }
-    else {
-      fill(255,0,255);
-    }
-    rect(x-d/2,y-d/2,d,d);
-
-    for (int i=0;i<bullets.size();i++) {
-      Bullet b = bullets.get(i);
-      PVector l = new PVector(b.loc.x,b.loc.y);
-      if (l.x>=x-d/2&&l.x<=x+d/2&&l.y >=y-d/2&&l.y<=y+d/2) {
+	if (toggleable) {	
+		stroke(0,0,0,255);
+		strokeWeight(2);
+		int hue = 200;
+		if (!toggleable) {
+		  fill(125);
+		}
+		else if (on) {
+		  fill(255,255,0);
+		}
+		else {
+		  fill(255,0,255);
+		}
+		rect(x-d/2,y-d/2,d,d);
+	}
+	else
+		image(greyblock,x-d/2,y-d/2);
+	
+	for (int i=0;i<bullets.size();i++) {
+		Bullet b = bullets.get(i);
+		PVector l = new PVector(b.loc.x,b.loc.y);
+		if (l.x>=x-d/2&&l.x<=x+d/2&&l.y >=y-d/2&&l.y<=y+d/2) {
   
-        if (toggleable) {
-          on = !on;
+		if (toggleable) {
+			on = !on;
+			// switch to the next audio track
+			var prev = getTrack(audioIndex);
+			audioIndex += 1;
+			if (audioIndex > numAudioFiles)
+			audioIndex = 1;
+			var next = getTrack(audioIndex);
+			next.volume = 0;
+			next.play();
+			next.currentTime = prev.currentTime;	
+			next.volume = 1;
+			prev.volume = 0;
+			prev.pause();
+		}
 
-          // switch to the next audio track
-          var prev = getTrack(audioIndex);
-          audioIndex += 1;
-          if (audioIndex > numAudioFiles)
-            audioIndex = 1;
-          var next = getTrack(audioIndex);
-          next.volume = 0;
-          next.play();
-          next.currentTime = prev.currentTime;  
-          next.volume = 1;
-          prev.volume = 0;
-          prev.pause();
-        }
+		// reflect the bullet
+		PVector dir = new PVector(b.dir.x,b.dir.y);
+		if (dir.x == 0) {
+		  (bullets.get(i)).flipy(); 
+		}
+		else if (dir.y == 0) {
+		  (bullets.get(i)).flipx(); 
+		}
+		else {
+		  float dx = 0;
+		  if (dir.x > 0) {
+			dx = l.x - (x-d/2);
+		  }
+		  else {
+			dx = l.x - (x+d/2);
+		  }
+		  float dy = dx*dir.y/dir.x;		 
 
-        // reflect the bullet
-        PVector dir = new PVector(b.dir.x,b.dir.y);
-        if (dir.x == 0) {
-          (bullets.get(i)).flipy(); 
-        }
-        else if (dir.y == 0) {
-          (bullets.get(i)).flipx(); 
-        }
-        else {
-          float dx = 0;
-          if (dir.x > 0) {
-            dx = l.x - (x-d/2);
-          }
-          else {
-            dx = l.x - (x+d/2);
-          }
-          float dy = dx*dir.y/dir.x;         
-
-          float yy = l.y - dy;
-          if (yy==y-d/2 || yy == y+d/2) {
-            (bullets.get(i)).flipx();
-            (bullets.get(i)).flipy();
-          } 
-          else if (yy>y-d/2 && yy < y+d/2) {
-            (bullets.get(i)).flipx();
-          }
-          else {
-            (bullets.get(i)).flipy(); 
-          }
-        }
-      }  
-    }
+		  float yy = l.y - dy;
+		  if (yy==y-d/2 || yy == y+d/2) {
+			(bullets.get(i)).flipx();
+			(bullets.get(i)).flipy();
+		  } 
+		  else if (yy>y-d/2 && yy < y+d/2) {
+			(bullets.get(i)).flipx();
+		  }
+		  else {
+			(bullets.get(i)).flipy(); 
+		  }
+		}
+	  }	 
+	}
   }
 }
 
@@ -177,305 +179,451 @@ class Bullet
   boolean alive;
   Bullet(Cannon c, float x, float y)
   {
-    loc.x = x;
-    loc.y = y;
-    PVector center = new PVector(c.loc.x,c.loc.y);
-    PVector turret = new PVector(c.cX,c.cY);
-    dir = PVector.sub(turret, center);
-    alive = true;
+	loc.x = x;
+	loc.y = y;
+	PVector center = new PVector(c.loc.x,c.loc.y);
+	PVector turret = new PVector(c.cX,c.cY);
+	dir = PVector.sub(turret, center);
+	alive = true;
   }
   void run()
   {
-    noStroke();
-    fill(100);
-    ellipse(loc.x,loc.y,10,10);
-    loc.add(new PVector(dir.x/4,dir.y/4));
-    if (loc.x < 0 || loc.x > width)
-      flipx();
-    if (loc.y < 0 || loc.y > height)
-      flipy();
-    age++;
-    if (age>300)  alive = false;
+	noStroke();
+	fill(100);
+	ellipse(loc.x,loc.y,10,10);
+	loc.add(new PVector(dir.x/4,dir.y/4));
+	if (loc.x < 0 || loc.x > width)
+	  flipx();
+	if (loc.y < 0 || loc.y > height)
+	  flipy();
+	age++;
+	if (age>300)  alive = false;
   }
   void flipx()
   {
-    dir.x = -dir.x;
+	dir.x = -dir.x;
   }
   void flipy()
   {
-    dir.y = -dir.y;
+	dir.y = -dir.y;
   }
 }
 
 class Target
 {
-  PVector loc;
-  PVector dest;
-  float d = 80;
-  int lives;
-  boolean alive;
-  float speed = 3;
-  int sprite = 0;
-  float angle = 0; // angle to which we rotate to draw the sprite. radians.
-  int lastDirChange = 0;
-  float turretAngle = 0;
-  int timeOfDeath = 0;
+	int attackTimeout = 10; // give up attacking after 10 seconds
+	int destTimeout	  =	 5; // give up moving to random point after 5 seconds
+	float d = 80;
+	
+	PVector loc;
+	PVector dest;
+
+	boolean alive;
+	int lives;
+	int targetIndex;
+	float speed = 3;
+	int sprite = 0;
+	float angle = 0; // angle to which we rotate to draw the sprite. radians.
+	int lastDirChange = 0;
+	float turretAngle = 0;
+	int timeOfDeath = 0;
+	boolean attacking;
+	boolean canAttack = true;
+	int timeOfAttack	= 0;
+	boolean hitTank;
 
   Target(float X, float Y, int LIVES)
   {
-    loc = new PVector();
-    loc.x = X;
-    loc.y = Y;
-    dest = new PVector();
-    dest.x = random(width);
-    dest.y = random(height);
-    this.lives = LIVES;
-    alive = true;
+	loc = new PVector();
+	loc.x = X;
+	loc.y = Y;
+	dest = new PVector();
+	dest.x = random(width);
+	dest.y = random(height);
+	this.lives = LIVES;
+	alive = true;
+	target = -1;
+	hitTank = false;
   }
 
-  float top()    { return loc.y - d/2; }
+  float top()	 { return loc.y - d/2; }
   float bottom() { return loc.y + d/2; }
-  float left()   { return loc.x - d/2; }
-  float right()  { return loc.x + d/2; }
+  float left()	 { return loc.x - d/2; }
+  float right()	 { return loc.x + d/2; }
 
-  void show()
-  {
-	 if (!alive) {
-		if (seconds - timeOfDeath > 15)
-		  alive = true;
-		else 
-          return;
+	void show()
+	{
+		checkBulletHits();
+		
+		if (playing && !alive) {
+			if (seconds - timeOfDeath > 15)
+			  alive = true;
+			else {
+				translate(loc.x,loc.y);
+				rotate(angle);
+				image(ghostank1,-d/2,-d/2);
+				rotate(-angle);
+				translate(-loc.x,-loc.y);
+				return;
+			}
+		}
+	
+		if (playing) {
+			// Run Enemy AI...
+			if (canAttack) {
+				for (int i = 0; i < cannons.size(); ++i) {
+					Cannon c = cannons.get(i);
+					float distance = loc.dist(c.loc);
+					if (distance < 250) {
+						targetIndex= i;
+						attacking = true;
+						canAttack = false;
+						timeOfAttack = seconds;
+						break;
+					}
+				}
+			}
+	
+			if (attacking) {
+				Cannon c = cannons.get(targetIndex);
+				float distance = loc.dist(c.loc);
+				dest.x = c.loc.x;
+				dest.y = c.loc.y;
+		
+				if (seconds - timeOfAttack > attackTimeout) {
+					attacking = false;
+					canAttack = false;
+				}
+			}
+			else {
+		
+				if (!canAttack && seconds - timeOfAttack > attackTimeout+destTimeout)
+					canAttack = true;
+			}
+		}
+		else { // !playing
+			if (!hitTank)
+				attacking = false;
+		}
+	
+		boolean timeout = (seconds - lastDirChange > 5);
+		boolean arrived = loc.dist(dest) < d;
+		if (!attacking && ( timeout || arrived )) {
+			dest.x = random(width);
+			dest.y = random(height);
+			lastDirChange = seconds;
+		}
+
+		// move toward destination, pausing occasionally.
+		if (random(100) > 10)
+			moveToward(dest.x,dest.y); 
+		updateTurretAngle();
+
+		translate(loc.x,loc.y);
+		rotate(angle);
+		switch (sprite) {
+		  case 0: image(ghostank1,-d/2,-d/2); break;
+		  case 1: image(ghostank2,-d/2,-d/2); break;
+		  case 2: image(ghostank3,-d/2,-d/2); break;
+		}
+		if (ticks % 2 == 0) {
+			sprite = (sprite+1)%3;
+		}
+		rotate(-angle);
+		rotate(turretAngle);
+		image(ghosturret,-40,-30)
+		rotate(-turretAngle);
+		translate(-loc.x,-loc.y);
+	
+		if (showBBs) {
+			strokeWeight(1);
+			noFill();
+			stroke(0,0,255);
+			rect(loc.x-d/2,loc.y-d/2,d,d);
+		}
+
+		checkTankHits();
 	}
-	   
-     // This loop moves enemies "intelligently"
-     bool attack = false;
-     bool proximity = false;
-     for (int i = 0; i < cannons.size(); ++i) {
-       Cannon c = cannons.get(i);
-       float distance = loc.dist(c.loc);
-       if (distance < 300) {
-         dest.x = c.loc.x;
-         dest.y = c.loc.y;
-         attack = true;
+	
+	void checkTankHits(){
+		for (int i=0;i<cannons.size();i++)
+		{
+			fill(255);
+			Cannon c = cannons.get(i);
+			float minx = left()	  - c.d/2 - 1;
+			float maxx = right()  + c.d/2 + 1;
+			float miny = top()	  - c.d/2 - 1;
+			float maxy = bottom() + c.d/2 + 1;
 
-         if (distance < 200)
-           turretAngle = atan2(c.loc.y-loc.y,c.loc.x-loc.x) -PI/2 + 0.2*sin(sc);
-         else
-           turretAngle += PI/10;
-       }
-       else {
-	     turretAngle += PI/50;
-       }
-     }
-     boolean timeout = (seconds - lastDirChange > 3);
-     boolean arrived = loc.dist(dest) < d;
-     if (!attack && ( timeout || arrived )) {
-         dest.x = random(width);
-         dest.y = random(height);
-         lastDirChange = seconds;
-     }
+			if (c.loc.x>=minx && c.loc.x<=maxx && c.loc.y >= miny && c.loc.y <= maxy)
+			{
+				playing = false;
+				hitTank = true;
+			}  
+		}
+	}
 
-     moveToward(dest.x,dest.y); 
+	void updateTurretAngle() {
+		if (attacking){
+			float distance = loc.dist(dest);
+			turretAngle = atan2(dest.y-loc.y,dest.x-loc.x) - PI/2 + PI/4*sin(0.05*millis());
+		}
+		else {
+			if (playing) {
+				for (int i = 0; i < cannons.size(); ++i) {
+					Cannon c = cannons.get(i);
+					float distance = loc.dist(c.loc);
+					if (distance < 350) {
+						turretAngle += PI/10;
+						return;
+					}
+				}
+			}
+			turretAngle += PI/50;
+		}
+	}
+	void checkBulletHits() {
+		for (int i=0;i<bullets.size();i++)
+		{
+			Bullet b = bullets.get(i);
+			if (!b.alive) continue;
+			PVector l = new PVector(b.loc.x,b.loc.y);
+			if (l.x>=left()&&l.x<=right()&&l.y >=top()&&l.y<=bottom()) {
+				if (!alive) {
+					// reflect the bullet
+					PVector dir = new PVector(b.dir.x,b.dir.y);
+					if (dir.x == 0) {
+					  (bullets.get(i)).flipy(); 
+					}
+					else if (dir.y == 0) {
+					  (bullets.get(i)).flipx(); 
+					}
+					else {
+					  float dx = 0;
+					  if (dir.x > 0) {
+						dx = l.x - (loc.x-d/2);
+					  }
+					  else {
+						dx = l.x - (loc.x+d/2);
+					  }
+					  float dy = dx*dir.y/dir.x;		 
 
-    translate(loc.x,loc.y);
-    rotate(angle);
-    switch (sprite) {
-      case 0: image(ghostank1,-d/2,-d/2); break;
-      case 1: image(ghostank2,-d/2,-d/2); break;
-      case 2: image(ghostank3,-d/2,-d/2); break;
-    }
-    if (sc % 2 == 0) {
-      sprite = (sprite+1)%3;
-    }
-    rotate(-angle);
-    rotate(turretAngle);
-    image(ghosturret,-40,-30)
-    rotate(-turretAngle);
-    translate(-loc.x,-loc.y);
-    
-    if (showBBs) {
-      strokeWeight(1);
-      noFill();
-      stroke(0,0,255);
-      rect(loc.x-d/2,loc.y-d/2,d,d);
-    }
-    for (int i=0;i<bullets.size();i++)
-    {
-      Bullet b = bullets.get(i);
-      if (!b.alive) continue;
-
-      PVector l = new PVector(b.loc.x,b.loc.y);
-      if (l.x>=left()&&l.x<=right()&&l.y >=top()&&l.y<=bottom()) {
-        lives--;
-        hitCounter++;
-        bullets.remove(b);
-        if (lives <= 0) { 
-          points++;
-          alive = false;
-          timeOfDeath = seconds;
-          //Spawn blood effect when enemy dies
-          bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
-        }  
-      }  
-    }
-    for (int i=0;i<cannons.size();i++)
-    {
-      fill(255);
-      Cannon c = cannons.get(i);
-      float minx = left()   - c.d/2 - 1;
-      float maxx = right()  + c.d/2 + 1;
-      float miny = top()    - c.d/2 - 1;
-      float maxy = bottom() + c.d/2 + 1;
-
-      if (c.loc.x>=minx && c.loc.x<=maxx && c.loc.y >= miny && c.loc.y <= maxy)
-      {
-         playing = false;
-      }  
-    }
-
-  }
+					  float yy = l.y - dy;
+					  if (yy==loc.y-d/2 || yy == loc.y+d/2) {
+						(bullets.get(i)).flipx();
+						(bullets.get(i)).flipy();
+					  } 
+					  else if (yy>loc.y-d/2 && yy < loc.y+d/2) {
+						(bullets.get(i)).flipx();
+					  }
+					  else {
+						(bullets.get(i)).flipy(); 
+					  }
+					}
+					return; 
+				} // if (!alive)
+				
+				lives--;
+				hitCounter++;
+				bullets.remove(b);
+				if (lives <= 0) { 
+					points++;
+					alive = false;
+					timeOfDeath = seconds;
+					//Spawn blood effect when enemy dies
+					bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
+				}
+			}
+		}
+	}
 
   void moveToward(float x, float y) {
-       float oldx = loc.x;
-       float oldy = loc.y;
-       if (x < left()) {
-         moveLeft(speed);
-         angle = PI/2;        
-         if (loc.x != oldx || loc.y != oldy) {
-            return;
-         }
-       }
-       if (x > right()) {
-         moveRight(speed); 
-         angle = -PI/2;
-         if (loc.x != oldx || loc.y != oldy) {
-            return;   
-         }
-       }
-       if (y < top()) {
-         moveUp(speed);  
-         angle = PI;
-         if (loc.x != oldx || loc.y != oldy) {
-            return;
-         }
-       }
-       if (y > bottom()) {
-         moveDown(speed);
-         angle = 0;
-         if (loc.x != oldx || loc.y != oldy) {
-            return;
-         }
-       }
+	   float oldx = loc.x;
+	   float oldy = loc.y;
+	   if (x < left()) {
+		 moveLeft(speed);
+		 angle = PI/2;		  
+		 if (loc.x != oldx || loc.y != oldy) {
+			return;
+		 }
+	   }
+	   if (x > right()) {
+		 moveRight(speed); 
+		 angle = -PI/2;
+		 if (loc.x != oldx || loc.y != oldy) {
+			return;	  
+		 }
+	   }
+	   if (y < top()) {
+		 moveUp(speed);	 
+		 angle = PI;
+		 if (loc.x != oldx || loc.y != oldy) {
+			return;
+		 }
+	   }
+	   if (y > bottom()) {
+		 moveDown(speed);
+		 angle = 0;
+		 if (loc.x != oldx || loc.y != oldy) {
+			return;
+		 }
+	   }
   }
 
  void moveUp(float dy) {
-    for (int i=0;i<walls.size();++i) {
-      Wall wall = walls.get(i);
-      float minx = wall.left()   - d/2;
-      float maxx = wall.right()  + d/2;
-      float miny = wall.bottom() + d/2;
-      float maxy = wall.bottom() + d/2 + dy;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dy = top() - wall.bottom() - 1;
-      }
-    }
-    for (int i=0;i<cannons.size();++i) {
-      Cannon c = cannons.get(i);
-      float minx = c.left()   - d/2;
-      float maxx = c.right()  + d/2;
-      float miny = c.bottom() + d/2;
-      float maxy = c.bottom() + d/2 + dy;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dy = top() - c.bottom() - 1;
-      }
-    }
-    
-    loc.y -= dy
+	for (int i=0;i<walls.size();++i) {
+	  Wall wall = walls.get(i);
+	  float minx = wall.left()	 - d/2;
+	  float maxx = wall.right()	 + d/2;
+	  float miny = wall.bottom() + d/2;
+	  float maxy = wall.bottom() + d/2 + dy;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dy = top() - wall.bottom() - 1;
+	  }
+	}
+	for (int i=0;i<cannons.size();++i) {
+	  Cannon c = cannons.get(i);
+	  float minx = c.left()	  - d/2;
+	  float maxx = c.right()  + d/2;
+	  float miny = c.bottom() + d/2;
+	  float maxy = c.bottom() + d/2 + dy;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dy = top() - c.bottom() - 1;
+	  }
+	}
+	for (int i=0;i<targets.size();++i) {
+	  Target wall = targets.get(i);
+	  if (wall == this) continue;
+	  float minx = wall.left()	 - d/2;
+	  float maxx = wall.right()	 + d/2;
+	  float miny = wall.bottom() + d/2;
+	  float maxy = wall.bottom() + d/2 + dy;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dy = top() - wall.bottom() - 1;
+	  }
+	}
+	loc.y -= dy
 
-    if (top() < 0) {
-      loc.y = d/2;
-    }
+	if (top() < 0) {
+	  loc.y = d/2;
+	}
   }
 
   void moveDown(float dy) {
-    for (int i=0;i<walls.size();++i) {
-      Wall wall = walls.get(i);
-      float minx = wall.left() - d/2;
-      float maxx = wall.right() + d/2;
-      float miny = wall.top() - d/2 - dy;
-      float maxy = wall.top() - d/2;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dy = wall.top() - bottom() - 1;
-      }
-    }
-    for (int i=0;i<cannons.size();++i) {
-      Cannon wall = cannons.get(i);
-      float minx = wall.left() - d/2;
-      float maxx = wall.right() + d/2;
-      float miny = wall.top() - d/2 - dy;
-      float maxy = wall.top() - d/2;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dy = wall.top() - bottom() - 1;
-      }
-    }    loc.y += dy
+	for (int i=0;i<walls.size();++i) {
+	  Wall wall = walls.get(i);
+	  float minx = wall.left() - d/2;
+	  float maxx = wall.right() + d/2;
+	  float miny = wall.top() - d/2 - dy;
+	  float maxy = wall.top() - d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dy = wall.top() - bottom() - 1;
+	  }
+	}
+	for (int i=0;i<cannons.size();++i) {
+	  Cannon wall = cannons.get(i);
+	  float minx = wall.left()  - d/2;
+	  float maxx = wall.right() + d/2;
+	  float miny = wall.top()   - d/2 - dy;
+	  float maxy = wall.top()   - d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dy = wall.top() - bottom() - 1;
+	  }
+	}
+	
+	for (int i=0;i<targets.size();++i) {
+	  Target wall = targets.get(i);
+		if (c == this || !c.alive) continue;
+	  float minx = wall.left()  - d/2;
+	  float maxx = wall.right() + d/2;
+	  float miny = wall.top()   - d/2 - dy;
+	  float maxy = wall.top()   - d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dy = wall.top() - bottom() - 1;
+	  }
+	}	 
+	loc.y += dy
 
-    if (bottom() > height) {
-      loc.y = height-d/2;
-    }
+	if (bottom() > height) {
+	  loc.y = height-d/2;
+	}
   }
 
   void moveLeft(float dx) {
-    for (int i=0;i<walls.size();++i) {
-      Wall wall = walls.get(i);
-      float minx = wall.right()  + d/2;
-      float maxx = wall.right()  + d/2 + dx;
-      float miny = wall.top()    - d/2;
-      float maxy = wall.bottom() + d/2;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dx = left() - wall.right() - 1;
-      }
-    }
-    for (int i=0;i<cannons.size();++i) {
-      Cannon wall = cannons.get(i);
-      float minx = wall.right()  + d/2;
-      float maxx = wall.right()  + d/2 + dx;
-      float miny = wall.top()    - d/2;
-      float maxy = wall.bottom() + d/2;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dx = left() - wall.right() - 1;
-      }
-    }    loc.x -= dx
+	for (int i=0;i<walls.size();++i) {
+	  Wall wall = walls.get(i);
+	  float minx = wall.right()	 + d/2;
+	  float maxx = wall.right()	 + d/2 + dx;
+	  float miny = wall.top()	 - d/2;
+	  float maxy = wall.bottom() + d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dx = left() - wall.right() - 1;
+	  }
+	}
+	for (int i=0;i<cannons.size();++i) {
+	  Cannon wall = cannons.get(i);
+	  float minx = wall.right()	 + d/2;
+	  float maxx = wall.right()	 + d/2 + dx;
+	  float miny = wall.top()	 - d/2;
+	  float maxy = wall.bottom() + d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dx = left() - wall.right() - 1;
+	  }
+	}
+	for (int i=0;i<targets.size();++i) {
+	  Target wall = targets.get(i);
+		if (c == this || !c.alive) continue;
+		float minx = wall.right()	 + d/2;
+	  float maxx = wall.right()	 + d/2 + dx;
+	  float miny = wall.top()	 - d/2;
+	  float maxy = wall.bottom() + d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dx = left() - wall.right() - 1;
+	  }
+	}	 
+	loc.x -= dx
 
-    if (left() < 0) {
-      loc.x = d/2;
-    }
+	if (left() < 0) {
+	  loc.x = d/2;
+	}
   }
   void moveRight(float dx) {
-    for (int i=0;i<walls.size();++i) {
-      Wall wall = walls.get(i);
-      float minx = wall.left()   - d/2 - dx;
-      float maxx = wall.left()   - d/2;
-      float miny = wall.top()    - d/2;
-      float maxy = wall.bottom() + d/2;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dx = wall.left() - right() - 1;
-      }
-    }
-    for (int i=0;i<cannons.size();++i) {
-      Cannon wall = cannons.get(i);
-      float minx = wall.left()   - d/2 - dx;
-      float maxx = wall.left()   - d/2;
-      float miny = wall.top()    - d/2;
-      float maxy = wall.bottom() + d/2;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dx = wall.left() - right() - 1;
-      }
-    }
-    loc.x += dx
+	for (int i=0;i<walls.size();++i) {
+	  Wall wall = walls.get(i);
+	  float minx = wall.left()	 - d/2 - dx;
+	  float maxx = wall.left()	 - d/2;
+	  float miny = wall.top()	 - d/2;
+	  float maxy = wall.bottom() + d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dx = wall.left() - right() - 1;
+	  }
+	}
+	for (int i=0;i<cannons.size();++i) {
+	  Cannon wall = cannons.get(i);
+	  float minx = wall.left()	 - d/2 - dx;
+	  float maxx = wall.left()	 - d/2;
+	  float miny = wall.top()	 - d/2;
+	  float maxy = wall.bottom() + d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dx = wall.left() - right() - 1;
+	  }
+	}
+	for (int i=0;i<targets.size();++i) {
+	  Target wall = targets.get(i);
+		if (wall == this) continue;
+	  float minx = wall.left()	 - d/2 - dx;
+	  float maxx = wall.left()	 - d/2;
+	  float miny = wall.top()	 - d/2;
+	  float maxy = wall.bottom() + d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dx = wall.left() - right() - 1;
+	  }
+	}	
+	loc.x += dx
 
-    if (right() > width) {
-      loc.x = width-d/2;
-    }
+	if (right() > width) {
+	  loc.x = width-d/2;
+	}
   }
 }
 
@@ -502,196 +650,236 @@ class Cannon {
   float firingFrames;
  
   Cannon(float x, float y) {
-    d = 75;
-    r = d/2;
-    loc.x = x;
-    loc.y = y;
-    firingFrames = tf1 + tf2 + tf3;
+	d = 75;
+	r = d/2;
+	loc.x = x;
+	loc.y = y;
+	firingFrames = tf1 + tf2 + tf3;
   }
-  float top()    { return loc.y - d/2; }
+  float top()	 { return loc.y - d/2; }
   float bottom() { return loc.y + d/2; }
-  float left()   { return loc.x - d/2; }
-  float right()  { return loc.x + d/2; }
+  float left()	 { return loc.x - d/2; }
+  float right()	 { return loc.x + d/2; }
 
   void show() {
-    smooth();
+	smooth();
 
-    float angle = atan2(mouseY-loc.y,mouseX-loc.x);
+	float angle = atan2(mouseY-loc.y,mouseX-loc.x);
 
-    //Changed this from using r to d as the tank was shooting itself with the short barrel
-    cX = (d * cos(angle)) + loc.x;
-    cY = (d * sin(angle)) + loc.y;
+	//Changed this from using r to d as the tank was shooting itself with the short barrel
+	cX = (d * cos(angle)) + loc.x;
+	cY = (d * sin(angle)) + loc.y;
 
-    translate(loc.x,loc.y);
-    rotate(baseAngle-PI/2);
-    switch (sprite) {
-      case 0: image(tank1,-d/2,-d/2); break;
-      case 1: image(tank2,-d/2,-d/2); break;
-      case 2: image(tank3,-d/2,-d/2); break;
-    }
-    rotate(-baseAngle+PI/2);
-    rotate(angle - PI/2);
+	translate(loc.x,loc.y);
+	rotate(baseAngle-PI/2);
+	switch (sprite) {
+	  case 0: image(tank1,-d/2,-d/2); break;
+	  case 1: image(tank2,-d/2,-d/2); break;
+	  case 2: image(tank3,-d/2,-d/2); break;
+	}
+	rotate(-baseAngle+PI/2);
+	rotate(angle - PI/2);
 
-    if (firing > firingFrames - tf1)
-        image(turret2,-tOffsetx,-tOffsety);
-    else if ( firing > firingFrames - tf1 - tf2)
-        image(turret3,-tOffsetx,-tOffsety);
-    else if ( firing > 0)
-        image(turret2,-tOffsetx,-tOffsety);
-    else
-        image(turret1,-tOffsetx,-tOffsety);
-    rotate(-angle+PI/2);
-    translate(-loc.x,-loc.y);
+	if (firing > firingFrames - tf1)
+		image(turret2,-tOffsetx,-tOffsety);
+	else if ( firing > firingFrames - tf1 - tf2)
+		image(turret3,-tOffsetx,-tOffsety);
+	else if ( firing > 0)
+		image(turret2,-tOffsetx,-tOffsety);
+	else
+		image(turret1,-tOffsetx,-tOffsety);
+	rotate(-angle+PI/2);
+	translate(-loc.x,-loc.y);
 
-    if (firing == firingFrames - tf1) {
-      bullets.add(new Bullet(this,cX,cY));
-      bulletCounter++;
-    }
+	if (firing == firingFrames - tf1) {
+	  bullets.add(new Bullet(this,cX,cY));
+	  bulletCounter++;
+	}
 
-    if (firing > 0) 
-      --firing;    
-    
-    if (showBBs) {
-      // show bounding box
-      noFill();
-      strokeWeight(1);
-      stroke(0,255,0);
-      rect(loc.x-d/2,loc.y-d/2,d,d);
-      line(loc.x,loc.y,cX,cY);
-    }
-    
-    updateStun();
-    
-    //Bullet to cannon test
-    for (int i=0;i<bullets.size();i++)
-    {
-      Bullet b = bullets.get(i);
-      if (!b.alive) continue;
+	if (firing > 0) 
+	  --firing;	   
+	
+	if (showBBs) {
+	  // show bounding box
+	  noFill();
+	  strokeWeight(1);
+	  stroke(0,255,0);
+	  rect(loc.x-d/2,loc.y-d/2,d,d);
+	  line(loc.x,loc.y,cX,cY);
+	}
+	
+	updateStun();
+	
+	//Bullet to cannon test
+	for (int i=0;i<bullets.size();i++)
+	{
+		Bullet b = bullets.get(i);
+		if (!b.alive) continue;
 
-      PVector l = new PVector(b.loc.x,b.loc.y);
-      if (l.x>=left()&&l.x<=right()&&l.y >=top()&&l.y<=bottom()) {
-        stun = true;
-        lastStunTime = millis() / 1000.0;
-	stunTime = 0;
-        bullets.remove(b);
-        //Spawn blood effect when cannon hit with bullet
-	bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
-        }
-     }
+		PVector l = new PVector(b.loc.x,b.loc.y);
+		if (l.x>=left()&&l.x<=right()&&l.y >=top()&&l.y<=bottom()) {
+			stun = true;
+			lastStunTime = millis() / 1000.0;
+			stunTime = 0;
+			bullets.remove(b);
+			//Spawn blood effect when cannon hit with bullet
+			bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
+		}
+	 }
   }
   
-  void updateStun()
-  {
-      if (stun)
-      {
-          stunTime += millis() / 1000.0 - lastStunTime;
-	  lastStunTime = millis() / 1000.0;
-	  if (stunTime >= stunTimer)
-	  {
-	      console.log("Stop stun!");
-	      stunTime = 0;
-	      stun = false;
-	  }
-      }
-  }
-  
-  void fire() {
-     firing = firingFrames;
-  } 
-  
- void moveUp(float dy) {
-    if (stun)
-    {
-        return;
-    }
-    for (int i=0;i<walls.size();++i) {
-      Wall wall = walls.get(i);
-      float minx = wall.left()   - d/2;
-      float maxx = wall.right()  + d/2;
-      float miny = wall.bottom() + d/2;
-      float maxy = wall.bottom() + d/2 + dy;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dy = top() - wall.bottom();
-      }
-    }
-    loc.y -= dy
+	void updateStun()
+	{
+		if (stun)
+		{
+			stunTime += millis() / 1000.0 - lastStunTime;
+			lastStunTime = millis() / 1000.0;
+			if (stunTime >= stunTimer)
+			{
+				//console.log("Stop stun!");
+				stunTime = 0;
+				stun = false;
+			}
+		}
+	}
 
-    if (top() < 0) {
-      loc.y = d/2;
-    }
-    sprite = (sprite+1)%3;
-    baseAngle = -PI/2;
-  }
+	void fire() {
+		firing = firingFrames;
+	}
 
-  void moveDown(float dy) {
-     if (stun)
-    {
-        return;
-    }
-    for (int i=0;i<walls.size();++i) {
-      Wall wall = walls.get(i);
-      float minx = wall.left() - d/2;
-      float maxx = wall.right() + d/2;
-      float miny = wall.top() - d/2 - dy;
-      float maxy = wall.top() - d/2;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dy = wall.top() - bottom() - 1;
-      }
-    }
-    loc.y += dy
+	void moveUp(float dy) {
+		if (stun)
+		{
+			return;
+		}
+		for (int i=0;i<walls.size();++i) {
+			Wall wall = walls.get(i);
+			float minx = wall.left()	 - d/2;
+			float maxx = wall.right()	 + d/2;
+			float miny = wall.bottom() + d/2;
+			float maxy = wall.bottom() + d/2 + dy;
+			if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+			dy = top() - wall.bottom();
+		  }
+		}
+		for (int i=0;i<targets.size();++i) {
+			Target wall = targets.get(i);
+			float minx = wall.left()	 - d/2;
+			float maxx = wall.right()	 + d/2;
+			float miny = wall.bottom() + d/2;
+			float maxy = wall.bottom() + d/2 + dy;
+			if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+			dy = top() - wall.bottom();
+		  }
+		}
+		loc.y -= dy
 
-    if (bottom() > height) {
-      loc.y = height-d/2;
-    }
-    sprite = (sprite+1)%3;
-    baseAngle = PI/2;
-  }
+		if (top() < 0) {
+			loc.y = d/2;
+		}
+		sprite = (sprite+1)%3;
+		baseAngle = -PI/2;
+ 	}
+
+	void moveDown(float dy) {
+		if (stun)
+		{
+			return;
+		}
+		for (int i=0;i<walls.size();++i) {
+			Wall wall = walls.get(i);
+			float minx = wall.left() - d/2;
+			float maxx = wall.right() + d/2;
+			float miny = wall.top() - d/2 - dy;
+			float maxy = wall.top() - d/2;
+			if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+				dy = wall.top() - bottom() - 1;
+			}
+		}
+		for (int i=0;i<targets.size();++i) {
+			Target wall = targets.get(i);
+			float minx = wall.left() - d/2;
+			float maxx = wall.right() + d/2;
+			float miny = wall.top() - d/2 - dy;
+			float maxy = wall.top() - d/2;
+			if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+				dy = wall.top() - bottom() - 1;
+			}
+		}
+		loc.y += dy
+
+		if (bottom() > height) {
+			loc.y = height-d/2;
+		}
+		sprite = (sprite+1)%3;
+		baseAngle = PI/2;
+	}
 
   void moveLeft(float dx) {
-     if (stun)
-    {
-        return;
-    }
-    for (int i=0;i<walls.size();++i) {
-      Wall wall = walls.get(i);
-      float minx = wall.right()  + d/2;
-      float maxx = wall.right()  + d/2 + dx;
-      float miny = wall.top()    - d/2;
-      float maxy = wall.bottom() + d/2;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dx = left() - wall.right() - 1;
-      }
-    }
-    loc.x -= dx
+	 if (stun)
+	{
+		return;
+	}
+	for (int i=0;i<walls.size();++i) {
+	  Wall wall = walls.get(i);
+	  float minx = wall.right()	 + d/2;
+	  float maxx = wall.right()	 + d/2 + dx;
+	  float miny = wall.top()	 - d/2;
+	  float maxy = wall.bottom() + d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dx = left() - wall.right() - 1;
+	  }
+	}
+	for (int i=0;i<targets.size();++i) {
+	  Target wall = targets.get(i);
+	  float minx = wall.right()	 + d/2;
+	  float maxx = wall.right()	 + d/2 + dx;
+	  float miny = wall.top()	 - d/2;
+	  float maxy = wall.bottom() + d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dx = left() - wall.right() - 1;
+	  }
+	}
+	loc.x -= dx
 
-    if (left() < 0) {
-      loc.x = d/2;
-    }
-    sprite = (sprite+1)%3;
-    baseAngle = PI;
+	if (left() < 0) {
+	  loc.x = d/2;
+	}
+	sprite = (sprite+1)%3;
+	baseAngle = PI;
   }
   void moveRight(float dx) {
-     if (stun)
-    {
-        return;
-    }
-    for (int i=0;i<walls.size();++i) {
-      Wall wall = walls.get(i);
-      float minx = wall.left()   - d/2 - dx;
-      float maxx = wall.left()   - d/2;
-      float miny = wall.top()    - d/2;
-      float maxy = wall.bottom() + d/2;
-      if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
-        dx = wall.left() - right() - 1;
-      }
-    }
-    loc.x += dx
+	 if (stun)
+	{
+		return;
+	}
+	for (int i=0;i<walls.size();++i) {
+	  Wall wall = walls.get(i);
+	  float minx = wall.left()	 - d/2 - dx;
+	  float maxx = wall.left()	 - d/2;
+	  float miny = wall.top()	 - d/2;
+	  float maxy = wall.bottom() + d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dx = wall.left() - right() - 1;
+	  }
+	}
+	for (int i=0;i<targets.size();++i) {
+	  Target wall = targets.get(i);
+	  float minx = wall.left()	 - d/2 - dx;
+	  float maxx = wall.left()	 - d/2;
+	  float miny = wall.top()	 - d/2;
+	  float maxy = wall.bottom() + d/2;
+	  if (loc.x >= minx && loc.x <= maxx && loc.y >= miny && loc.y <= maxy) {
+		dx = wall.left() - right() - 1;
+	  }
+	}
+	loc.x += dx
 
-    if (right() > width) {
-      loc.x = width-d/2;
-    }
-    sprite = (sprite+1)%3;
-    baseAngle = 0;
+	if (right() > width) {
+	  loc.x = width-d/2;
+	}
+	sprite = (sprite+1)%3;
+	baseAngle = 0;
   }
 
 }
@@ -700,7 +888,7 @@ void setup() {
   cannons = new ArrayList();
   bullets = new ArrayList();
   targets = new ArrayList();
-  walls   = new ArrayList();
+  walls	  = new ArrayList();
   bloods = new ArrayList();
   points = 0;
   targetInterval = 150;
@@ -710,9 +898,10 @@ void setup() {
   accuracy = 0;
   seconds = 0;
   sc = 0;
-  c = 0;
-  speed = 10;
-  size(960,640);
+	ticks = 0;
+	c = 0;
+	speed = 10;
+	size(960,640);
   cursor(CROSS);
   textFont(font);
   
@@ -732,6 +921,7 @@ void setup() {
   ghostank2 = loadImage("art_assets/kt_enemy03.png");
   ghostank3 = loadImage("art_assets/kt_enemy04.png");
   ghosturret = loadImage("art_assets/kt_enemy01.png");
+  greyblock = loadImage("art_assets/kt_greywall02.png");
 
   var audioElement = getTrack(1);
   audioElement.load();
@@ -740,140 +930,130 @@ void setup() {
   audioElement.play();
 
   for (int i=2; i <= numAudioFiles; ++i) {
-    var audioElement = document.getElementById("track"+str(i));
-    audioElement.load();
-    audioElement.loop = true;
-    audioElement.volume = 0;
+	var audioElement = document.getElementById("track"+str(i));
+	audioElement.load();
+	audioElement.loop = true;
+	audioElement.volume = 0;
   }
 }
 
 void generateMap(Map fromMap)
 {
-    for (x=0; x<fromMap.mapData.length; x++)
-    {
-        c = fromMap.mapData.charAt(x);
-	if (c == "#")       // toggleable wall
+	for (x=0; x<fromMap.mapData.length; x++)
 	{
-	    walls.add(new Wall((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,true));
-	}
-        if (c == "X")       // non-toggleable wall
+		c = fromMap.mapData.charAt(x);
+	if (c == "#")		// toggleable wall
 	{
-	    walls.add(new Wall((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,false));
+		walls.add(new Wall((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,true));
 	}
-	else if (c == "T")  // bad guy
+	if (c == "X")		// non-toggleable wall
 	{
-            targets.add(new Target((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,1));
+		walls.add(new Wall((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,false));
 	}
-	else if (c == "C")  // good guy
+	else if (c == "T")
 	{
-	    cannons.add(new Cannon((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist));
+			targets.add(new Target((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist,1));
 	}
-    }
+	else if (c == "C")
+	{
+		cannons.add(new Cannon((x % fromMap.width) * fromMap.objDist, floor((x / fromMap.height)) * fromMap.objDist));
+	}
+	}
 }
 
 void draw()
 {
 	play();
-  if (!playing)
-    gameover();
+	if (!playing)
+		gameover();
 }
 
 void play()
 {
-  font = loadFont("Arial-MT",15);
-  textFont(font);
-  
-  clear();
-  if (sc == 50)
-  {
-    seconds++;
-    sc=0;  
-  }
-  for(int k=0;k<bullets.size();k++)
-  {
-    Bullet b = bullets.get(k);
-    if (b.alive)
-      b.run();  
-    else
-      bullets.remove(b);
-  }
-  for(int j=0;j<targets.size();j++)
-  {
-    (targets.get(j)).show();  
-  }
-  for(int j=0;j<walls.size();j++)
-  {
-    (walls.get(j)).show();  
-  }
-  for(int i=0;i<cannons.size();i++)
-  {
-    (cannons.get(i)).show();
-  }
+	clear();
+	drawBackground();
 
-  textAlign(LEFT);
-  fill(255);
-  text("Time: " + seconds,5,15);
-  text("Points: " + points,5,30);
-  if (bulletCounter > 0)
-  {
-    accuracy = int((hitCounter/bulletCounter)*100);
-    int h = bulletCounter - hitCounter;
-    int p = int(h/bulletCounter);
-  }
-  else if (bulletCounter == 0)
-  {
-    accuracy = 0;
-  }
-  //text("Accuracy: " + accuracy + "%", 5, 50);
-  //text("Seconds: " + seconds, 5, 35);
-    
-  int bulletsAlive = 0;
-  for(int j=0;j<bullets.size();j++) {
-    if (bullets.get(j).alive)
-      bulletsAlive ++;
-  }
+	if (sc == 50)
+	{
+		seconds++;
+		sc=0;  
+	}
+	for(int k=0;k<bullets.size();k++)
+	{
+		Bullet b = bullets.get(k);
+		if (b.alive)
+			b.run();	
+		else
+			bullets.remove(b);
+	}
+	for(int j=0;j<walls.size();j++)
+	{
+		(walls.get(j)).show();	
+	}
+	for(int j=0;j<targets.size();j++)
+	{
+		(targets.get(j)).show();  
+	}
+	for(int i=0;i<cannons.size();i++)
+	{
+		(cannons.get(i)).show();
+	}
+
+	// Check for win. 
+	testFTW();
 	
-  int wallsOn = 0;
-  for(int j=0;j<walls.size();j++) {
-    Wall w = walls.get(j);
-    if (w.toggleable && w.on)
-      wallsOn ++;
-  }
-  if (bulletsAlive ==0 && wallsOn ==0) {
-    win = true;
-    playing = false;
-  }
+	// run blood particle stuff
+	for (int i=0;i<bloods.size();) {
+		ParticleSystem b = bloods.get(i);
+		b.run();
+		if (b.dead()) {
+			bloods.remove(i);
+		}
+		else {
+			i++;
+		}
+	}
 
-  stroke(100,100,255,125);
-  for (int i=25;i<height; i+= 25) {
-    strokeWeight(1);
-    line(0,i,width,i);
-  }
-  stroke(255,100,100);
-  line(width*0.85,0,width*0.85,height);
-  sc++;
-
-   for (int i=0;i<bloods.size();)
-   {
-     ParticleSystem b = bloods.get(i);
-     b.run();
-     if (b.dead())
-     {
-        bloods.remove(i);
-     }
-     else
-     {
-         i++;
-     }
-   }
-
-
+	// update time counters
+	++sc;
+	++ticks;
 }
+
+void testFTW()
+{
+	int bulletsAlive = 0;
+	for(int j=0;j<bullets.size();j++) {
+		if (bullets.get(j).alive)
+		bulletsAlive ++;
+	}
+	int wallsOn = 0;
+	for(int j=0;j<walls.size();j++) {
+		Wall w = walls.get(j);
+		if (w.toggleable && w.on)
+			wallsOn ++;
+	}
+	if (bulletsAlive ==0 && wallsOn ==0) {
+		win = true;
+		playing = false;
+	}	
+}
+
+void drawBackground() {
+	// draw some horizontal lines that look like notebook paper.
+	stroke(100,100,255,125);
+	for (int i=25;i<height; i+= 25) {
+		strokeWeight(1);
+		line(0,i,width,i);
+	}
+	stroke(255,100,100);
+	line(width*0.85,0,width*0.85,height);
+}
+
 void mousePressed()
 {
   if (playing)
   {
-     addBullet();
+	addBullet();
   }
 
 }
@@ -884,16 +1064,16 @@ void gameover()
 	rect(width/2-100,height/2-50,200,100);
 	int score = int(((points*seconds)*54.73)-((bulletCounter-hitCounter)*10));
 	font = loadFont("Arial-MT",50);
-    textFont(font);
-    textAlign(CENTER);
-    fill(255,255,0);
-    String s1 = "";
+	textFont(font);
+	textAlign(CENTER);
+	fill(255,255,0);
+	String s1 = "";
 
-  	if (win) {
-    	s1 = "You Won!!";
-  	}
+	if (win) {
+		s1 = "You Won!!";
+	}
   else{
-    s1 = "You got KNIFED!!";
+	s1 = "You got KNIFED!!";
   }
   text(s1, width/2-s1.length()/2*5, height/2-25);
   //text("Your score was: " + score, width/2-100, height/2-25);
@@ -904,50 +1084,50 @@ void keyPressed()
 {
   if (!playing)
   {
-    if (key == 'r')
-      setup();
+	if (key == 'r')
+	  setup();
   }
   else if (key == 'w') {
-    for (int k=0;k<cannons.size();k++) {
-      (cannons.get(k)).moveUp(speed);  
-    }  
+	for (int k=0;k<cannons.size();k++) {
+	  (cannons.get(k)).moveUp(speed);  
+	}  
   }
   else if (key == 's') { 
-    for (int k=0;k<cannons.size();k++) {
-      (cannons.get(k)).moveDown(speed);  
-    }
+	for (int k=0;k<cannons.size();k++) {
+	  (cannons.get(k)).moveDown(speed);	 
+	}
   }
   else if (key == 'a') {
-    for (int k=0;k<cannons.size();k++) {
-      (cannons.get(k)).moveLeft(speed);  
-    }
+	for (int k=0;k<cannons.size();k++) {
+	  (cannons.get(k)).moveLeft(speed);	 
+	}
   }
   else if (key == 'd') {
-    for (int k=0;k<cannons.size();k++) {
-      (cannons.get(k)).moveRight(speed);  
-    }
+	for (int k=0;k<cannons.size();k++) {
+	  (cannons.get(k)).moveRight(speed);  
+	}
   }
   else if (keyPressed&&key==CODED) {
-    if (keyCode == UP) { 
-      for (int k=0;k<cannons.size();k++) {
-        (cannons.get(k)).moveUp(speed);  
-      }
-    } 
-    if (keyCode == DOWN) {
-      for (int k=0;k<cannons.size();k++) {
-        (cannons.get(k)).moveDown(speed);  
-      }
-    }
-    if (keyCode == LEFT) {
-      for (int k=0;k<cannons.size();k++) {
-        (cannons.get(k)).moveLeft(speed);  
-      }
-    }
-    if (keyCode == RIGHT){
-      for (int k=0;k<cannons.size();k++) {
-        (cannons.get(k)).moveRight(speed);  
-      }
-    }
+	if (keyCode == UP) { 
+	  for (int k=0;k<cannons.size();k++) {
+		(cannons.get(k)).moveUp(speed);	 
+	  }
+	} 
+	if (keyCode == DOWN) {
+	  for (int k=0;k<cannons.size();k++) {
+		(cannons.get(k)).moveDown(speed);  
+	  }
+	}
+	if (keyCode == LEFT) {
+	  for (int k=0;k<cannons.size();k++) {
+		(cannons.get(k)).moveLeft(speed);  
+	  }
+	}
+	if (keyCode == RIGHT){
+	  for (int k=0;k<cannons.size();k++) {
+		(cannons.get(k)).moveRight(speed);	
+	  }
+	}
   }
 
 }
@@ -956,91 +1136,91 @@ void getTrack(int index) {
   var track = document.getElementById("track" + str(index));
   boolean canPlayWav = ("no" != track.canPlayType("audio/wav")) && ("" != track.canPlayType("audio/wav"));
   if (canPlayWav) {
-    return track;
+	return track;
   }
   else {
-    return document.getElementById("track1" + str(index));
+	return document.getElementById("track1" + str(index));
   }
 }  
 
 void addBullet() {
-    if (bullets.size() >= 3)
-      return;
-    for (int k=0;k<cannons.size();k++)
-    {
-      Cannon c = cannons.get(k);
-      c.fire();
-    }
+	if (bullets.size() >= 3)
+	  return;
+	for (int k=0;k<cannons.size();k++)
+	{
+	  Cannon c = cannons.get(k);
+	  c.fire();
+	}
 }
 
- // A simple Particle class  
+ // A simple Particle class	 
    
 class Particle {  
-  Vector3D loc;  
-  Vector3D vel;  
-  Vector3D acc;  
+  Vector3D loc;	 
+  Vector3D vel;	 
+  Vector3D acc;	 
   float r;
   float startTimer = 60.0;
-  float timer;  
+  float timer;	
   
   // One constructor  
-  Particle(Vector3D a, Vector3D v, Vector3D l, float r_) {  
-    acc = a.copy();  
-    vel = v.copy();  
-    loc = l.copy();  
-    r = r_;  
-    timer = startTimer  
-  }  
-    
+  Particle(Vector3D a, Vector3D v, Vector3D l, float r_) {	
+	acc = a.copy();	 
+	vel = v.copy();	 
+	loc = l.copy();	 
+	r = r_;	 
+	timer = startTimer	
+  }	 
+	
   // Another constructor (the one we are using here)  
   Particle(Vector3D l) {  
-    acc = new Vector3D(0,0,0);
-    vel = new Vector3D(random(-2,2),random(-2,2),0);  
-    loc = l.copy();  
-    r = 5.0;
-    timer = startTimer;
-  }  
+	acc = new Vector3D(0,0,0);
+	vel = new Vector3D(random(-2,2),random(-2,2),0);  
+	loc = l.copy();	 
+	r = 5.0;
+	timer = startTimer;
+  }	 
   
   
-  void run() {  
-    update();  
-    render();  
-  }  
+  void run() {	
+	update();  
+	render();  
+  }	 
   
   // Method to update location
   void update() {  
-    vel.add(acc);  
-    loc.add(vel);  
-    timer -= 1.0;  
-  }  
+	vel.add(acc);  
+	loc.add(vel);  
+	timer -= 1.0;  
+  }	 
   
   // Method to display
   void render() {  
-    //ellipseMode(CENTER);  
-    noStroke();
-    fill(#FF0000, (timer / startTimer) * 127) + 127;
-    rect(loc.x, loc.y, r, r);
-    ellipse(loc.x,loc.y,r,r);  
-  }  
-    
-  // Is the particle still useful?  
-  boolean dead() {  
-    if (timer <= 0.0) {  
-      return true;  
-    } else {  
-      return false;  
-    }  
-  }  
- }  
+	//ellipseMode(CENTER);	
+	noStroke();
+	fill(#FF0000, (timer / startTimer) * 127) + 127;
+	rect(loc.x, loc.y, r, r);
+	ellipse(loc.x,loc.y,r,r);  
+  }	 
+	
+  // Is the particle still useful?	
+  boolean dead() {	
+	if (timer <= 0.0) {	 
+	  return true;	
+	} else {  
+	  return false;	 
+	}  
+  }	 
+ }	
   
   
-// A class to describe a group of Particles  
-// An ArrayList is used to manage the list of Particles   
+// A class to describe a group of Particles	 
+// An ArrayList is used to manage the list of Particles	  
   
-class ParticleSystem {  
+class ParticleSystem {	
   
-  ArrayList particles;    // An arraylist for all the particles  
-  Vector3D origin;        // An origin point for where particles are birthed
+  ArrayList particles;	  // An arraylist for all the particles	 
+  Vector3D origin;		  // An origin point for where particles are birthed
   float lastTime;
   float currTime;
   float overTime;
@@ -1048,188 +1228,188 @@ class ParticleSystem {
   int numSpawned;
   
   ParticleSystem(int setNum, float setOverTime, Vector3D v) {
-    num = setNum;
-    numSpawned = 0;
-    overTime = setOverTime;
-    particles = new ArrayList();              // Initialize the arraylist
-    origin = v.copy();                        // Store the origin point
-    currTime = 0;
-    lastTime = millis() / 1000.0;
+	num = setNum;
+	numSpawned = 0;
+	overTime = setOverTime;
+	particles = new ArrayList();			  // Initialize the arraylist
+	origin = v.copy();						  // Store the origin point
+	currTime = 0;
+	lastTime = millis() / 1000.0;
    }
    
    void run() {
 	if (numSpawned < num)
 	{
-	     currTime += (millis() / 1000.0) - lastTime;
-	     lastTime = millis() / 1000.0;
-	     if (overTime == 0)
-	     {
+		 currTime += (millis() / 1000.0) - lastTime;
+		 lastTime = millis() / 1000.0;
+		 if (overTime == 0)
+		 {
 		 overTime = currTime;
-	     }
-	     int numToSpawn = ((currTime / overTime) * num) - numSpawned;
-	     numSpawned += numToSpawn;
-	     for (int i = 0; i < numToSpawn; i++) {
-	      addParticle();    // Add "num" amount of particles to the arraylist
-	     }
+		 }
+		 int numToSpawn = ((currTime / overTime) * num) - numSpawned;
+		 numSpawned += numToSpawn;
+		 for (int i = 0; i < numToSpawn; i++) {
+		  addParticle();	// Add "num" amount of particles to the arraylist
+		 }
 	}
-     // Cycle through the ArrayList backwards b/c we are deleting  
-     for (int i = particles.size()-1; i >= 0; i--) {  
-       Particle p = (Particle) particles.get(i);  
-       p.run();  
-       if (p.dead()) {  
-         particles.remove(i);  
-       }  
-     }  
+	 // Cycle through the ArrayList backwards b/c we are deleting  
+	 for (int i = particles.size()-1; i >= 0; i--) {  
+	   Particle p = (Particle) particles.get(i);  
+	   p.run();	 
+	   if (p.dead()) {	
+		 particles.remove(i);  
+	   }  
+	 }	
    }  
    
-   void addParticle() {  
-     particles.add(new Particle(origin));  
+   void addParticle() {	 
+	 particles.add(new Particle(origin));  
    }  
    
    void addParticle(Particle p) {  
-     particles.add(p);  
+	 particles.add(p);	
    }  
    
    // A method to test if the particle system still has particles  
-   boolean dead() {  
-     if (particles.isEmpty()) {  
-       return true;  
-     } else {  
-       return false;  
-     }  
+   boolean dead() {	 
+	 if (particles.isEmpty()) {	 
+	   return true;	 
+	 } else {  
+	   return false;  
+	 }	
    }  
    
- }  
+ }	
    
    
    
- // Simple Vector3D Class   
+ // Simple Vector3D Class	
    
  public class Vector3D {  
-   public float x;  
-   public float y;  
-   public float z;  
+   public float x;	
+   public float y;	
+   public float z;	
    
-   Vector3D(float x_, float y_, float z_) {  
-     x = x_; y = y_; z = z_;  
+   Vector3D(float x_, float y_, float z_) {	 
+	 x = x_; y = y_; z = z_;  
    }  
    
    Vector3D(float x_, float y_) {  
-     x = x_; y = y_; z = 0f;  
+	 x = x_; y = y_; z = 0f;  
    }  
-    
-   Vector3D() {  
-     x = 0f; y = 0f; z = 0f;  
+	
+   Vector3D() {	 
+	 x = 0f; y = 0f; z = 0f;  
    }  
    
    void setX(float x_) {  
-     x = x_;  
+	 x = x_;  
    }  
    
    void setY(float y_) {  
-     y = y_;  
+	 y = y_;  
    }  
    
    void setZ(float z_) {  
-     z = z_;  
+	 z = z_;  
    }  
-     
-   void setXY(float x_, float y_) {  
-     x = x_;  
-     y = y_;  
+	 
+   void setXY(float x_, float y_) {	 
+	 x = x_;  
+	 y = y_;  
    }  
-     
+	 
   void setXYZ(float x_, float y_, float z_) {  
-     x = x_;  
-     y = y_;  
-     z = z_;  
+	 x = x_;  
+	 y = y_;  
+	 z = z_;  
    }  
    
    void setXYZ(Vector3D v) {  
-     x = v.x;  
-     y = v.y;  
-     z = v.z;  
+	 x = v.x;  
+	 y = v.y;  
+	 z = v.z;  
    }  
    public float magnitude() {  
-     return (float) Math.sqrt(x*x + y*y + z*z);  
+	 return (float) Math.sqrt(x*x + y*y + z*z);	 
    }  
   
-  public Vector3D copy() {  
-     return new Vector3D(x,y,z);  
+  public Vector3D copy() {	
+	 return new Vector3D(x,y,z);  
    }  
    
    public Vector3D copy(Vector3D v) {  
-     return new Vector3D(v.x, v.y,v.z);  
+	 return new Vector3D(v.x, v.y,v.z);	 
    }  
-     
+	 
    public void add(Vector3D v) {  
-     x += v.x;  
-     y += v.y;  
-     z += v.z;  
+	 x += v.x;	
+	 y += v.y;	
+	 z += v.z;	
    }  
    
    public void sub(Vector3D v) {  
-     x -= v.x;  
-     y -= v.y;  
-     z -= v.z;  
+	 x -= v.x;	
+	 y -= v.y;	
+	 z -= v.z;	
    }  
    
-   public void mult(float n) {  
-     x *= n;  
-     y *= n;  
-     z *= n;  
+   public void mult(float n) {	
+	 x *= n;  
+	 y *= n;  
+	 z *= n;  
    }  
    
    public void div(float n) {  
-     x /= n;  
-     y /= n;  
-     z /= n;  
+	 x /= n;  
+	 y /= n;  
+	 z /= n;  
    }  
    
    public void normalize() {  
-     float m = magnitude();  
-     if (m > 0) {  
-        div(m);  
-     }  
+	 float m = magnitude();	 
+	 if (m > 0) {  
+		div(m);	 
+	 }	
    }  
    
    public void limit(float max) {  
-     if (magnitude() > max) {  
-       normalize();  
-       mult(max);  
-     }  
+	 if (magnitude() > max) {  
+	   normalize();	 
+	   mult(max);  
+	 }	
    }  
    
    public float heading2D() {  
-     float angle = (float) Math.atan2(-y, x);  
-     return -1*angle;  
+	 float angle = (float) Math.atan2(-y, x);  
+	 return -1*angle;  
    }  
    
-   public Vector3D add(Vector3D v1, Vector3D v2) {  
-     Vector3D v = new Vector3D(v1.x + v2.x,v1.y + v2.y, v1.z + v2.z);  
-     return v;  
+   public Vector3D add(Vector3D v1, Vector3D v2) {	
+	 Vector3D v = new Vector3D(v1.x + v2.x,v1.y + v2.y, v1.z + v2.z);  
+	 return v;	
    }  
    
-   public Vector3D sub(Vector3D v1, Vector3D v2) {  
-     Vector3D v = new Vector3D(v1.x - v2.x,v1.y - v2.y,v1.z - v2.z);  
-     return v;  
+   public Vector3D sub(Vector3D v1, Vector3D v2) {	
+	 Vector3D v = new Vector3D(v1.x - v2.x,v1.y - v2.y,v1.z - v2.z);  
+	 return v;	
    }  
    
-   public Vector3D div(Vector3D v1, float n) {  
-     Vector3D v = new Vector3D(v1.x/n,v1.y/n,v1.z/n);  
-     return v;  
+   public Vector3D div(Vector3D v1, float n) {	
+	 Vector3D v = new Vector3D(v1.x/n,v1.y/n,v1.z/n);  
+	 return v;	
    }  
   
-   public Vector3D mult(Vector3D v1, float n) {  
-     Vector3D v = new Vector3D(v1.x*n,v1.y*n,v1.z*n);  
-     return v;  
+   public Vector3D mult(Vector3D v1, float n) {	 
+	 Vector3D v = new Vector3D(v1.x*n,v1.y*n,v1.z*n);  
+	 return v;	
    }  
    
    public float distance (Vector3D v1, Vector3D v2) {  
-     float dx = v1.x - v2.x;  
-     float dy = v1.y - v2.y;  
-     float dz = v1.z - v2.z;  
-     return (float) Math.sqrt(dx*dx + dy*dy + dz*dz);  
+	 float dx = v1.x - v2.x;  
+	 float dy = v1.y - v2.y;  
+	 float dz = v1.z - v2.z;  
+	 return (float) Math.sqrt(dx*dx + dy*dy + dz*dz);  
    }  
   
 
