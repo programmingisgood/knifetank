@@ -18,8 +18,11 @@ body {background: #000 url("art_assets/knifetankbackground.png") no-repeat;}
 </style>
 <script type="application/processing">
 
+// Global constants
+int speed         = 20;
+float bleedTime   = 1.0;
 int numAudioFiles = 5;
-int audioIndex = 1;
+int audioIndex;
 
 boolean showBBs = false; // DEBUG: show bounding boxes.
 
@@ -41,17 +44,14 @@ ArrayList targets;
 ArrayList walls;
 ArrayList bloods;
 
-int points = 0;
-int bulletCounter = 0;
-int hitCounter = 0;
-float accuracy;
-int seconds = 0;
-int sc = 0;
-int ticks = 0;
-int speed = 20;
-boolean playing = false;
-boolean win = false;
-float bleedTime = 1.0;
+int points;
+int bulletCounter;
+int hitCounter;
+int seconds;
+int sc;
+int ticks;
+boolean playing;
+boolean win;
 
 ArrayList winphrases;
 ArrayList losephrases;
@@ -176,48 +176,48 @@ class Wall {
 
 class Bullet
 {
-  PVector loc = new PVector();
-  PVector dir = new PVector();
-  float angle;
-  int age = 0;
-  boolean alive;
-  Bullet(Cannon c, float x, float y)
-  {
-	loc.x = x;
-	loc.y = y;
-	PVector center = new PVector(c.loc.x,c.loc.y);
-	PVector turret = new PVector(c.cX,c.cY);
-	dir = PVector.sub(turret, center);
-	alive = true;
-  }
-  void run()
-  {
-	noStroke();
-	fill(100);
-	ellipse(loc.x,loc.y,10,10);
-	loc.add(new PVector(dir.x/4,dir.y/4));
-	if (loc.x < 0 || loc.x > width)
-	  flipx();
-	if (loc.y < 0 || loc.y > height)
-	  flipy();
-	age++;
-	if (age>300)  alive = false;
-  }
-  void flipx()
-  {
-	dir.x = -dir.x;
-  }
-  void flipy()
-  {
-	dir.y = -dir.y;
-  }
+	PVector loc = new PVector();
+	PVector dir = new PVector();
+	float angle;
+	int age = 0;
+	boolean alive;
+	Bullet(Cannon c, float x, float y)
+	{
+		loc.x = x;
+		loc.y = y;
+		PVector center = new PVector(c.loc.x,c.loc.y);
+		PVector turret = new PVector(c.cX,c.cY);
+		dir = PVector.sub(turret, center);
+		alive = true;
+	}
+	void run()
+	{
+		noStroke();
+		fill(100);
+		ellipse(loc.x,loc.y,10,10);
+		loc.add(new PVector(dir.x/4,dir.y/4));
+		if (loc.x < 0 || loc.x > width)
+		  flipx();
+		if (loc.y < 0 || loc.y > height)
+		  flipy();
+		age++;
+		if (age>300)  alive = false;
+	}
+	void flipx()
+	{
+		dir.x = -dir.x;
+	}
+	void flipy()
+	{
+		dir.y = -dir.y;
+	}
 }
 
 class Target
 {
 	int attackTimeout = 10; // give up attacking after 10 seconds
-	int destTimeout	  =	 5; // give up moving to random point after 5 seconds
-	float d = 80;
+	int destTimeout   =  5; // give up moving to random point after 5 seconds
+	float d           = 80; // bounding box size
 	
 	PVector loc;
 	PVector dest;
@@ -262,7 +262,19 @@ class Target
 		if (playing && !alive) {
 			if (seconds - timeOfDeath > 15)
 			  alive = true;
-			else {
+			
+			else if (seconds - timeOfDeath > 13 && ticks % 2 == 0) {
+				float dx = random(5) - 2.5;
+				float dy = random(5) - 2.5;
+				translate(loc.x+dx,loc.y+dy);
+				rotate(angle);
+				image(ghostank1,-d/2,-d/2);
+				rotate(-angle);
+				translate(-loc.x-dx,-loc.y-dy);
+				return;
+
+			}
+			else {	
 				translate(loc.x,loc.y);
 				rotate(angle);
 				image(ghostank1,-d/2,-d/2);
@@ -273,7 +285,8 @@ class Target
 		}
 	
 		if (playing) {
-			// Run Enemy AI...
+			// Attempt to attack, timeout attacks,
+			// and timeout mandatory non-violent periods between attacks
 			if (canAttack) {
 				for (int i = 0; i < cannons.size(); ++i) {
 					Cannon c = cannons.get(i);
@@ -281,7 +294,7 @@ class Target
 					if (distance < 250) {
 						targetIndex= i;
 						attacking = true;
-						canAttack = false;
+						canAttack = false; // can't attack again immediately
 						timeOfAttack = seconds;
 						break;
 					}
@@ -289,6 +302,7 @@ class Target
 			}
 	
 			if (attacking) {
+				// update our target's location
 				Cannon c = cannons.get(targetIndex);
 				float distance = loc.dist(c.loc);
 				dest.x = c.loc.x;
@@ -299,10 +313,8 @@ class Target
 					canAttack = false;
 				}
 			}
-			else {
-		
-				if (!canAttack && seconds - timeOfAttack > attackTimeout+destTimeout)
-					canAttack = true;
+			else if (!canAttack && seconds - timeOfAttack > attackTimeout+destTimeout) {
+				canAttack = true;
 			}
 		}
 		else { // !playing
@@ -310,6 +322,7 @@ class Target
 				attacking = false;
 		}
 	
+		// wander around
 		boolean timeout = (seconds - lastDirChange > 5);
 		boolean arrived = loc.dist(dest) < d;
 		if (!attacking && ( timeout || arrived )) {
@@ -399,6 +412,7 @@ class Target
 				alive = false;
 				bullets.remove(b);
 				points++;
+				hitCounter++;
 				timeOfDeath = seconds;
 				//Spawn blood effect when enemy dies
 				bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
@@ -858,27 +872,24 @@ void setup() {
 	cannons = new ArrayList();
 	bullets = new ArrayList();
 	targets = new ArrayList();
-	walls	  = new ArrayList();
-	bloods = new ArrayList();
-	points = 0;
-	counter = 0;
+	walls   = new ArrayList();
+	bloods  = new ArrayList();
+	points        = 0;
 	bulletCounter = 0;
-	hitCounter = 0;
-	accuracy = 0;
-	seconds = 0;
-	sc = 0;
-	ticks = 0;
-	c = 0;
-	speed = 10;
-	win = false;
+	hitCounter    = 0;
+	seconds       = 0;
+	sc            = 0;
+	ticks         = 0;
+	win           = false;
 	playing = true;
+	audioIndex = 1;
 	
 	size(960,640);
 	frameRate(50);
 	cursor(CROSS);
 	textFont(font);
   
-  generateMap(map1);
+	generateMap(map1);
   
 	losephrases = new ArrayList();
 	losephrases.add("Nice Knfehole!");
@@ -1046,8 +1057,8 @@ void mousePressed()
 void gameover()
 {
 	fill(0);
-	rect(width/2-100,height/2-50,200,100);
-	int score = int(((points*seconds)*54.73)-((bulletCounter-hitCounter)*10));
+	rect(width/2-150,height/2-50,300,100);
+	int score = int(((points)*54.73)-((bulletCounter-hitCounter)*10));
 	font = loadFont("Arial-MT",50);
 	textFont(font);
 	textAlign(CENTER);
@@ -1061,9 +1072,9 @@ void gameover()
 		s1 = losephrases.get(phraseIndex);
 	}
 	text(s1, width/2-s1.length()/2*5, height/2-25);
-	text("Your score was: " + score, width/2-60, height/2);
+	text("Your score was: " + score, width/2-50, height/2);
 	String s2 = "Stab the spacebar to continue!";
-	text(s2, width/2-80, height/2+25);
+	text(s2, width/2-70, height/2+25);
 }
 void keyPressed()
 {
