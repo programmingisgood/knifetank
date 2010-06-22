@@ -53,6 +53,10 @@ boolean playing = false;
 boolean win = false;
 float bleedTime = 1.0;
 
+ArrayList winphrases;
+ArrayList losephrases;
+int phraseIndex;
+
 class Map
 {
 	var mapData;
@@ -357,9 +361,12 @@ class Target
 
 			if (c.loc.x>=minx && c.loc.x<=maxx && c.loc.y >= miny && c.loc.y <= maxy)
 			{
+				if (playing)
+					phraseIndex = int(random(losephrases.size()));
+				
 				playing = false;
 				hitTank = true;
-			}  
+			}
 		}
 	}
 
@@ -389,50 +396,13 @@ class Target
 			if (!b.alive) continue;
 			PVector l = new PVector(b.loc.x,b.loc.y);
 			if (l.x>=left()&&l.x<=right()&&l.y >=top()&&l.y<=bottom()) {
-				if (!alive) {
-					// reflect the bullet
-					PVector dir = new PVector(b.dir.x,b.dir.y);
-					if (dir.x == 0) {
-					  (bullets.get(i)).flipy(); 
-					}
-					else if (dir.y == 0) {
-					  (bullets.get(i)).flipx(); 
-					}
-					else {
-					  float dx = 0;
-					  if (dir.x > 0) {
-						dx = l.x - (loc.x-d/2);
-					  }
-					  else {
-						dx = l.x - (loc.x+d/2);
-					  }
-					  float dy = dx*dir.y/dir.x;		 
-
-					  float yy = l.y - dy;
-					  if (yy==loc.y-d/2 || yy == loc.y+d/2) {
-						(bullets.get(i)).flipx();
-						(bullets.get(i)).flipy();
-					  } 
-					  else if (yy>loc.y-d/2 && yy < loc.y+d/2) {
-						(bullets.get(i)).flipx();
-					  }
-					  else {
-						(bullets.get(i)).flipy(); 
-					  }
-					}
-					return; 
-				} // if (!alive)
-				
-				lives--;
-				hitCounter++;
+				alive = false;
 				bullets.remove(b);
-				if (lives <= 0) { 
-					points++;
-					alive = false;
-					timeOfDeath = seconds;
-					//Spawn blood effect when enemy dies
-					bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
-				}
+				points++;
+				timeOfDeath = seconds;
+				//Spawn blood effect when enemy dies
+				bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
+				
 			}
 		}
 	}
@@ -885,31 +855,42 @@ class Cannon {
 }
 
 void setup() {
-  cannons = new ArrayList();
-  bullets = new ArrayList();
-  targets = new ArrayList();
-  walls	  = new ArrayList();
-  bloods = new ArrayList();
-  points = 0;
-  targetInterval = 150;
-  counter = 0;
-  bulletCounter = 0;
-  hitCounter = 0;
-  accuracy = 0;
-  seconds = 0;
-  sc = 0;
+	cannons = new ArrayList();
+	bullets = new ArrayList();
+	targets = new ArrayList();
+	walls	  = new ArrayList();
+	bloods = new ArrayList();
+	points = 0;
+	counter = 0;
+	bulletCounter = 0;
+	hitCounter = 0;
+	accuracy = 0;
+	seconds = 0;
+	sc = 0;
 	ticks = 0;
 	c = 0;
 	speed = 10;
+	win = false;
+	playing = true;
+	
 	size(960,640);
-  cursor(CROSS);
-  textFont(font);
+	frameRate(50);
+	cursor(CROSS);
+	textFont(font);
   
   generateMap(map1);
   
-  win = false;
-  playing = true;
-  frameRate(50);
+	losephrases = new ArrayList();
+	losephrases.add("Nice Knfehole!");
+	losephrases.add("You've been KnifeTanked!");
+	losephrases.add("Stab Stab Stab Stab!");
+	losephrases.add("I'm sorry, I couldn't understand what you just said.. It sounded like 'Aaaaarrrrrrrgh!'")
+
+	winphrases = new ArrayList();
+	winphrases.add("Whatever... You won't win again.");
+	winphrases.add("You only won because KnifeTank let you.");
+	winphrases.add("Okay, so you bet the level. Big deal!");
+	winphrases.add("You probably cheated, but you won't beat the next level.");
 
   tank1 = loadImage("art_assets/body1.png");
   tank2 = loadImage("art_assets/body2.png");
@@ -929,12 +910,12 @@ void setup() {
   audioElement.volume = 1;
   audioElement.play();
 
-  for (int i=2; i <= numAudioFiles; ++i) {
-	var audioElement = document.getElementById("track"+str(i));
-	audioElement.load();
-	audioElement.loop = true;
-	audioElement.volume = 0;
-  }
+	for (int i=2; i <= numAudioFiles; ++i) {
+		var audioElement = document.getElementById("track"+str(i));
+		audioElement.load();
+		audioElement.loop = true;
+		audioElement.volume = 0;
+	}
 }
 
 void generateMap(Map fromMap)
@@ -1021,6 +1002,9 @@ void play()
 
 void testFTW()
 {
+	if (!playing)
+		return;
+		
 	int bulletsAlive = 0;
 	for(int j=0;j<bullets.size();j++) {
 		if (bullets.get(j).alive)
@@ -1035,6 +1019,7 @@ void testFTW()
 	if (bulletsAlive ==0 && wallsOn ==0) {
 		win = true;
 		playing = false;
+		phraseIndex = int(random(winphrases.size()));
 	}	
 }
 
@@ -1070,21 +1055,21 @@ void gameover()
 	String s1 = "";
 
 	if (win) {
-		s1 = "You Won!!";
+		s1 = winphrases.get(phraseIndex);
 	}
-  else{
-	s1 = "You got KNIFED!!";
-  }
-  text(s1, width/2-s1.length()/2*5, height/2-25);
-  //text("Your score was: " + score, width/2-100, height/2-25);
-  String s2 = "Press \'r\' to Play Again!";
-  text(s2, width/2-50, height/2+25);
+	else{
+		s1 = losephrases.get(phraseIndex);
+	}
+	text(s1, width/2-s1.length()/2*5, height/2-25);
+	text("Your score was: " + score, width/2-60, height/2);
+	String s2 = "Stab the spacebar to continue!";
+	text(s2, width/2-80, height/2+25);
 }
 void keyPressed()
 {
   if (!playing)
   {
-	if (key == 'r')
+	if (key == ' ')
 	  setup();
   }
   else if (key == 'w') {
