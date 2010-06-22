@@ -533,7 +533,7 @@ class Target
 	
 	for (int i=0;i<targets.size();++i) {
 	  Target wall = targets.get(i);
-		if (c == this || !c.alive) continue;
+		if (wall == this) continue;
 	  float minx = wall.left()  - d/2;
 	  float maxx = wall.right() + d/2;
 	  float miny = wall.top()   - d/2 - dy;
@@ -572,7 +572,7 @@ class Target
 	}
 	for (int i=0;i<targets.size();++i) {
 	  Target wall = targets.get(i);
-		if (c == this || !c.alive) continue;
+		if (wall == this) continue;
 		float minx = wall.right()	 + d/2;
 	  float maxx = wall.right()	 + d/2 + dx;
 	  float miny = wall.top()	 - d/2;
