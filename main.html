@@ -26,7 +26,7 @@ int audioIndex;
 
 boolean showBBs = false; // DEBUG: show bounding boxes.
 
-PFont font = loadFont("Arial-MT",15);
+PFont font = loadFont("Krungthep-25.vlw");
 PImage tank1;
 PImage tank2;
 PImage tank3;
@@ -889,21 +889,28 @@ void setup() {
 	size(960,640);
 	frameRate(50);
 	cursor(CROSS);
-	textFont(font);
-  
 	generateMap(map1);
   
 	losephrases = new ArrayList();
-	losephrases.add("Nice Knfehole!");
+	losephrases.add("Nice Knifehole!");
 	losephrases.add("You've been KnifeTanked!");
 	losephrases.add("Stab Stab Stab Stab!");
-	losephrases.add("I'm sorry, I couldn't understand what you just said.. It sounded like 'Aaaaarrrrrrrgh!'")
-
+	losephrases.add("I'm sorry, I couldn't understand what you just said.. It sounded like 'Aaaaarrrrrrrgh!'");
+	losephrases.add("Your tank doesn't have enough knife!");
+	losephrases.add("KnifeTank looks forward to stabbing you again soon.");
+	losephrases.add("It slices, it dices, it makes julienne fries! It's KnifeTank!")
+	losephrases.add("Gimme a Knife! Gimme a Tank! What does it spell? KnifeTank!");
+	losephrases.add("Maybe you should go play some SpoonTank.");
+	losephrases.add("How many tanks could a KnifeTank knife if a KnifeTank could knife tanks?!")
+	
 	winphrases = new ArrayList();
 	winphrases.add("Whatever... You won't win again.");
 	winphrases.add("You only won because KnifeTank let you.");
-	winphrases.add("Okay, so you bet the level. Big deal!");
+	winphrases.add("Okay, so you beat the level. Big deal!");
 	winphrases.add("You probably cheated, but you won't beat the next level.");
+	winphrases.add("KnifeTank's blades must need sharpening.");
+	winphrases.add("KnifeTank is just lulling you into a false sense of security.");
+	
 
   tank1 = loadImage("art_assets/body1.png");
   tank2 = loadImage("art_assets/body2.png");
@@ -1057,27 +1064,39 @@ void mousePressed()
 
 }
 
+
 void gameover()
 {
-	fill(0);
-	rect(width/2-150,height/2-50,300,100);
 	int score = int(((points)*54.73)-((bulletCounter-hitCounter)*10));
-	font = loadFont("Arial-MT",50);
-	textFont(font);
+	
+	fill(125,225);
+	float w = 500;
+	float h = 200;
+	noStroke();
+	rect(width/2-w/2,height/2-h/2,w,h);
+	strokeWeight(5);
+	float fontsize = 12;
+	font = loadFont("Courier New");
+	textFont(font, 20);
 	textAlign(CENTER);
 	fill(255,255,0);
-	String s1 = "";
+	String s = "";
 
 	if (win) {
-		s1 = winphrases.get(phraseIndex);
+		s = winphrases.get(phraseIndex);
+		text("WINNER!", width/2 - 7*fontsize/2, height/2-35);
 	}
 	else{
-		s1 = losephrases.get(phraseIndex);
+		s = losephrases.get(phraseIndex);
+		text("LOSER!", width/2 - 6*fontsize/2, height/2-35);
 	}
-	text(s1, width/2-s1.length()/2*5, height/2-25);
-	text("Your score was: " + score, width/2-50, height/2);
-	String s2 = "Stab the spacebar to continue!";
-	text(s2, width/2-70, height/2+25);
+	text(s, width/2-s.length()*fontsize/2, height/2+15);
+	
+	s = "Your score was: " + score;
+	text(s, width/2-s.length()*fontsize/2, height/2+40);
+
+	s = "Stab the spacebar to continue.";
+	text(s, width/2-s.length()*fontsize/2, height/2+65);
 }
 void keyPressed()
 {
@@ -1411,7 +1430,7 @@ class ParticleSystem {
 	 return (float) Math.sqrt(dx*dx + dy*dy + dz*dz);  
    }  
   
-
+}
 
 </script><canvas></canvas>
 <div style="height:0px;width:0px;overflow:hidden;"><img id="img1"><img id="img2"><img id="img3"></div>
