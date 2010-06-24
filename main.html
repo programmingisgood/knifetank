@@ -39,6 +39,8 @@ PImage ghostank3;
 PImage ghostank4;
 PImage ghosturret;
 PImage greyblock;
+PImage musicblockon;
+PImage musicblockoff;
 ArrayList cannons;
 ArrayList bullets;
 ArrayList targets;
@@ -109,12 +111,11 @@ class Wall {
 		  fill(125);
 		}
 		else if (on) {
-		  fill(255,255,0);
+		  image(musicblockon, x-d/2,y-d/2);
 		}
 		else {
-		  fill(255,0,255);
+		  image(musicblockoff, x-d/2,y-d/2);
 		}
-		rect(x-d/2,y-d/2,d,d);
 	}
 	else
 		image(greyblock,x-d/2,y-d/2);
@@ -924,7 +925,8 @@ void setup() {
   ghostank4 = loadImage("art_assets/kt_enemy05.png");
   ghosturret = loadImage("art_assets/kt_enemy01.png");
   greyblock = loadImage("art_assets/kt_greywall02.png");
-
+	musicblockon = loadImage("art_assets/musicblockon.png");
+	musicblockoff = loadImage("art_assets/musicblockoff.png");
   var audioElement = getTrack(1);
   audioElement.load();
   audioElement.loop = true;
