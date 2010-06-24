@@ -30,6 +30,8 @@ PFont font = loadFont("Krungthep-25.vlw");
 PImage tank1;
 PImage tank2;
 PImage tank3;
+PImage ripped;
+PImage fixed;
 PImage turret1;
 PImage turret2;
 PImage turret3;
@@ -628,7 +630,7 @@ class Cannon {
   boolean stun = false;
   float lastStunTime = 0;
   float stunTime = 0;
-  float stunTimer = 2;
+  float stunTimer = 5;
 
   // frame counts for turrent animation
   int tf1 = 8;
@@ -649,6 +651,9 @@ class Cannon {
   float right()	 { return loc.x + d/2; }
 
   void show() {
+	
+	updateStun();
+
 	smooth();
 
 	float angle = atan2(mouseY-loc.y,mouseX-loc.x);
@@ -659,10 +664,18 @@ class Cannon {
 
 	translate(loc.x,loc.y);
 	rotate(baseAngle-PI/2);
-	switch (sprite) {
-	  case 0: image(tank1,-d/2,-d/2); break;
-	  case 1: image(tank2,-d/2,-d/2); break;
-	  case 2: image(tank3,-d/2,-d/2); break;
+	if (stun){
+		if (stunTimer - stunTime <= 2)
+			image(fixed,-d/2,-d/2);
+		else
+			image(ripped, -d/2,-d/2);
+	}
+	else {
+		switch (sprite) {
+		  case 0: image(tank1,-d/2,-d/2); break;
+		  case 1: image(tank2,-d/2,-d/2); break;
+		  case 2: image(tank3,-d/2,-d/2); break;
+		}
 	}
 	rotate(-baseAngle+PI/2);
 	rotate(angle - PI/2);
@@ -694,8 +707,6 @@ class Cannon {
 	  rect(loc.x-d/2,loc.y-d/2,d,d);
 	  line(loc.x,loc.y,cX,cY);
 	}
-	
-	updateStun();
 	
 	//Bullet to cannon test
 	for (int i=0;i<bullets.size();i++)
@@ -916,6 +927,8 @@ void setup() {
   tank1 = loadImage("art_assets/body1.png");
   tank2 = loadImage("art_assets/body2.png");
   tank3 = loadImage("art_assets/body3.png");
+	ripped = loadImage("art_assets/ripped1.png");
+	fixed = loadImage("art_assets/fixed1.png");
   turret1 = loadImage("art_assets/turret1.png");
   turret2 = loadImage("art_assets/turret2.png");
   turret3 = loadImage("art_assets/turret3.png");
@@ -1059,11 +1072,10 @@ void drawBackground() {
 
 void mousePressed()
 {
-  if (playing)
-  {
-	addBullet();
-  }
-
+	if (playing)
+	{
+		addBullet();
+	}
 }
 
 
