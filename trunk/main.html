@@ -2,6 +2,7 @@
 <head>
 <title>Knifetank!</title>
 <script type="text/javascript" src="processing/processing-0.9.1.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.3.min.js"></script>
 <script type="text/javascript" src="processing/init.js"></script>
 <audio src="music/leveltwo01.wav" preload="true" id="track1"></audio>
 <audio src="music/leveltwo02.wav" preload="true" id="track2"></audio>
@@ -15,7 +16,30 @@
 <audio src="music/leveltwo05.ogg" preload="true" id="track15"></audio>
 <style type="text/css">
 body {background: #000 url("art_assets/knifetankbackground.png") no-repeat;}
+form {display: none;}
 </style>
+<script language="javascript" type="text/javascript">
+function urlquery( name )
+	{
+	  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+	  var regexS = "[\\?&]"+name+"=([^&#]*)";
+	  var regex = new RegExp( regexS );
+	  var results = regex.exec( window.location.href );
+	  if( results == null )
+	    return "";
+	  else
+	    return results[1];
+	}
+	
+
+	$(document).ready(function() {		
+		var thisLevel = urlquery('level');
+		if (thisLevel == "") {
+			thisLevel = 1;
+		}
+		$('#level-select').val(thisLevel);
+	});
+</script>
 <script type="application/processing">
 
 // Global constants
@@ -23,6 +47,7 @@ int speed         = 20;
 float bleedTime   = 1.0;
 int numAudioFiles = 5;
 int audioIndex;
+int initLevel = $('#level-select').val();
 
 boolean showBBs = false; // DEBUG: show bounding boxes.
 
@@ -77,6 +102,18 @@ class Map
 
 Map map1 = new Map(
 "OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map2 = new Map(
+"##########\
 OTOOOOXOOO\
 OOOOOO#OOC\
 OTOOOOXOOO\
@@ -901,7 +938,12 @@ void setup() {
 	size(960,640);
 	frameRate(50);
 	cursor(CROSS);
-	generateMap(map1);
+	
+	if (initLevel == 1) {
+		generateMap(map1);
+	} else {
+		generateMap(map2);
+	}
   
 	losephrases = new ArrayList();
 	losephrases.add("Nice Knifehole!");
@@ -1448,4 +1490,5 @@ class ParticleSystem {
 
 </script><canvas></canvas>
 <div style="height:0px;width:0px;overflow:hidden;"><img id="img1"><img id="img2"><img id="img3"></div>
+<form><input type="hidden" name="level-select" id="level-select" /></form>
 </body> </html>
