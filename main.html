@@ -102,15 +102,13 @@ class Map
 
 Map map1 = new Map(
 "OOOOOOOOOO\
-OOTOOOOTOO\
-OOOOOOOOOO\
+OOOOOXOOOO\
+OOOOOOOOCO\
 OOO#OOOOOO\
-OOX#OOOOOO\
-OOOOOOOO#O\
+OOXOOOOOOO\
+OOOOOTOO#O\
 OOOOOOOXOO\
-OOOOCOOOOO\
-OOOOOOOOOO\
-OOOOOOOOOO");
+#OOOOOOOOO");
 
 Map map2 = new Map(
 "OOOOOOOOOO\
@@ -120,9 +118,7 @@ OXO#OOOOOO\
 OOOOOXOOOO\
 OOOOOOOOOO\
 OOTOOOXOOO\
-OOOOOOOOCO\
-OOOOOOOOOO\
-OOOOOOOOOO");
+OOOOOOOOCO");
 
 Map map3 = new Map(
 "OOOOOOOOOO\
@@ -132,79 +128,69 @@ OOTOOXOOOO\
 OOOOOTXOOO\
 OXOOOOOOOO\
 OXO#OOX#OO\
-O#OTOOXOOO\
-OOOOOOOOOO\
-OOOOOOOOOO");
+O#OTOOXOOO");
 
 Map map4 = new Map(
-"OOOOOO#XOO\
-OTOOOOXOOO\
-OOOOOO#OOC\
-OTOOOOXOOO\
-OOOOOO#XOO\
-OOOXOOOOOO\
-OOO#OOOOOO\
-OOOXOOOOOO\
-OOOOOOOOOO\
-OOOOOOOOOO");
+"OOXOOOOXOO\
+OOXOOOOXOC\
+OOXO#OTXOO\
+OTXOXOOXOO\
+OOXO#OOXOO\
+OOXOXOOXOO\
+OO#OXOO#OO\
+OOOOXOOOOTO");
 
 Map map5 = new Map(
 "OOOOOO#XOO\
 OTOOOOXOOO\
 OOOOOO#OOC\
 OTOOOOXOOO\
-OOOOOO#XOO\
+OOOOOO#XXO\
 OOOXOOOOOO\
 OOO#OOOOOO\
-OOOXOOOOOO\
+OOOXOOTOOO\
 OOOOOOOOOO\
 OOOOOOOOOO");
 
 Map map6 = new Map(
-"OOOOOO#XOO\
-OTOOOOXOOO\
-OOOOOO#OOC\
-OTOOOOXOOO\
-OOOOOO#XOO\
-OOOXOOOOOO\
-OOO#OOOOOO\
-OOOXOOOOOO\
-OOOOOOOOOO\
+"X##XXXOXXX\
+#TOTOOXOOO\
+#OOXOOOOOO\
+XTOOOOXOOO\
+XOOXOOOXOO\
+XOOOOOOOOO\
+XOOXOOOOOO\
+XOOOOOOCOO\
+XOOOOOOOOX\
 OOOOOOOOOO");
 
 Map map7 = new Map(
-"OOOOOO#XOO\
-OTOOOOXOOO\
-OOOOOO#OOC\
-OTOOOOXOOO\
-OOOOOO#XOO\
-OOOXOOOOOO\
-OOO#OOOOOO\
-OOOXOOOOOO\
-OOOOOOOOOO\
-OOOOOOOOOO");
+"OOOOOOOOO\
+OCOOOXXXXO\
+OOOOXOOOOXO\
+OOOXO##OXO\
+OOOXO##TXO\
+OOOXOOOOXO\
+OTOOXXXXOO\
+OOOOOOOOO");
 
 Map map8 = new Map(
-"OOOOOO#XOO\
-OTOOOOXOOO\
-OOOOOO#OOC\
-OTOOOOXOOO\
-OOOOOO#XOO\
-OOOXOOOOOO\
-OOO#OOOOOO\
-OOOXOOOOOO\
+"OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
 OOOOOOOOOO\
 OOOOOOOOOO");
 
 Map map9 = new Map(
-"OOOOOO#XOO\
-OTOOOOXOOO\
-OOOOOO#OOC\
-OTOOOOXOOO\
-OOOOOO#XOO\
-OOOXOOOOOO\
-OOO#OOOOOO\
-OOOXOOOOOO\
+"OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
 OOOOOOOOOO\
 OOOOOOOOOO");
 
@@ -221,14 +207,12 @@ OOOOOOOOOO\
 OOOOOOOOOO");
 
 Map map11 = new Map(
-"OOOOOO#XOO\
-OTOOOOXOOO\
-OOOOOO#OOC\
-OTOOOOXOOO\
-OOOOOO#XOO\
-OOOXOOOOOO\
-OOO#OOOOOO\
-OOOXOOOOOO\
+"OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO\
 OOOOOOOOOO\
 OOOOOOOOOO");
 
@@ -1134,13 +1118,13 @@ void setup() {
 	losephrases.add("Nice Knifehole!");
 	losephrases.add("You've been KnifeTanked!");
 	losephrases.add("Stab Stab Stab Stab!");
-	losephrases.add("Always Be Cutting.");
+	losephrases.add("ABC: Always Be Cutting.");
 	losephrases.add("Command Z this.");
 	losephrases.add("I'm sorry, I couldn't understand what you just said.. It sounded like 'Aaaaarrrrrrrgh!'");
 	losephrases.add("Your tank doesn't have enough knife!");
 	losephrases.add("KnifeTank looks forward to stabbing you again soon.");
 	losephrases.add("It slices, it dices, it makes julienne fries! It's KnifeTank!")
-	losephrases.add("Nice sarcasm… not!");
+	losephrases.add("Nice sarcasm... not!");
 	losephrases.add("Looks like somebody brought a gun to a KnifeTank fight.");
 	losephrases.add("Gimme a Knife! Gimme a Tank! What does it spell? KnifeTank!");
 	losephrases.add("Maybe you should go play some SpoonTank.");
@@ -1149,7 +1133,7 @@ void setup() {
 	winphrases = new ArrayList();
 	winphrases.add("Whatever... You won't win again.");
 	winphrases.add("Needs more KnifeTank.");
-	winphrases.add("The princess is in another castle.");
+	winphrases.add("… but the princess is in another castle.");
 	winphrases.add("You only won because KnifeTank let you.");
 	winphrases.add("Big deal, you beat one level.");
 	winphrases.add("You probably cheated, but you won't beat the next level.");
