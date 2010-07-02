@@ -124,6 +124,163 @@ OOOXOOOOOO\
 OOOOOOOOOO\
 OOOOOOOOOO");
 
+Map map3 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map4 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map5 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map6 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map7 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map8 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map9 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map10 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map11 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map12 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map13 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map14 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+Map map15 = new Map(
+"OOOOOO#XOO\
+OTOOOOXOOO\
+OOOOOO#OOC\
+OTOOOOXOOO\
+OOOOOO#XOO\
+OOOXOOOOOO\
+OOO#OOOOOO\
+OOOXOOOOOO\
+OOOOOOOOOO\
+OOOOOOOOOO");
+
+
 class Wall {
   float x;
   float y;
@@ -941,8 +1098,36 @@ void setup() {
 	
 	if (initLevel == 1) {
 		generateMap(map1);
-	} else {
+	} else if (initLevel == 2) {
 		generateMap(map2);
+	} else if (initLevel == 3) {
+		generateMap(map3);
+	} else if (initLevel == 4) {
+		generateMap(map4);
+	} else if (initLevel == 5) {
+		generateMap(map5);
+	} else if (initLevel == 6) {
+		generateMap(map6);
+	} else if (initLevel == 7) {
+		generateMap(map7);
+	} else if (initLevel == 8) {
+		generateMap(map8);
+	} else if (initLevel == 9) {
+		generateMap(map9);
+	} else if (initLevel == 10) {
+		generateMap(map10);
+	} else if (initLevel == 11) {
+		generateMap(map11);
+	} else if (initLevel == 12) {
+		generateMap(map12);
+	} else if (initLevel == 13) {
+		generateMap(map13);
+	} else if (initLevel == 14) {
+		generateMap(map14);
+	} else if (initLevel == 15) {
+		generateMap(map15);
+	} else {
+		generateMap(map1);
 	}
   
 	losephrases = new ArrayList();
