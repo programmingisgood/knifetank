@@ -101,38 +101,38 @@ class Map
 }
 
 Map map1 = new Map(
-"OOOOOO#XOO\
-OTOOOOXOOO\
-OOOOOO#OOC\
-OTOOOOXOOO\
-OOOOOO#XOO\
-OOOXOOOOOO\
+"OOOOOOOOOO\
+OOTOOOOTOO\
+OOOOOOOOOO\
 OOO#OOOOOO\
-OOOXOOOOOO\
+OOX#OOOOOO\
+OOOOOOOO#O\
+OOOOOOOXOO\
+OOOOCOOOOO\
 OOOOOOOOOO\
 OOOOOOOOOO");
 
 Map map2 = new Map(
-"##########\
-OTOOOOXOOO\
-OOOOOO#OOC\
-OTOOOOXOOO\
-OOOOOO#XOO\
-OOOXOOOOOO\
-OOO#OOOOOO\
-OOOXOOOOOO\
+"OOOOOOOOOO\
+OOOXOOOTOO\
+OO#OOOOOOO\
+OXO#OOOOOO\
+OOOOOXOOOO\
+OOOOOOOOOO\
+OOTOOOXOOO\
+OOOOOOOOCO\
 OOOOOOOOOO\
 OOOOOOOOOO");
 
 Map map3 = new Map(
-"OOOOOO#XOO\
-OTOOOOXOOO\
-OOOOOO#OOC\
-OTOOOOXOOO\
-OOOOOO#XOO\
-OOOXOOOOOO\
-OOO#OOOOOO\
-OOOXOOOOOO\
+"OOOOOOOOOO\
+OOOXXOOOCO\
+OOOOXOOOOO\
+OOTOOXOOOO\
+OOOOOTXOOO\
+OXOOOOOOOO\
+OXO#OOX#OO\
+O#OTOOXOOO\
 OOOOOOOOOO\
 OOOOOOOOOO");
 
@@ -209,14 +209,14 @@ OOOOOOOOOO\
 OOOOOOOOOO");
 
 Map map10 = new Map(
-"OOOOOO#XOO\
-OTOOOOXOOO\
-OOOOOO#OOC\
-OTOOOOXOOO\
-OOOOOO#XOO\
-OOOXOOOOOO\
+"OTOTOOOOOO\
+OOTOTOOOOO\
+OOOOOOOCOO\
 OOO#OOOOOO\
-OOOXOOOOOO\
+OOX#OOOOOO\
+OOOOOOOO#O\
+OOOOOOOXOO\
+OOOOCOOOOO\
 OOOOOOOOOO\
 OOOOOOOOOO");
 
@@ -1134,18 +1134,24 @@ void setup() {
 	losephrases.add("Nice Knifehole!");
 	losephrases.add("You've been KnifeTanked!");
 	losephrases.add("Stab Stab Stab Stab!");
+	losephrases.add("Always Be Cutting.");
+	losephrases.add("Command Z this.");
 	losephrases.add("I'm sorry, I couldn't understand what you just said.. It sounded like 'Aaaaarrrrrrrgh!'");
 	losephrases.add("Your tank doesn't have enough knife!");
 	losephrases.add("KnifeTank looks forward to stabbing you again soon.");
 	losephrases.add("It slices, it dices, it makes julienne fries! It's KnifeTank!")
+	losephrases.add("Nice sarcasm… not!");
+	losephrases.add("Looks like somebody brought a gun to a KnifeTank fight.");
 	losephrases.add("Gimme a Knife! Gimme a Tank! What does it spell? KnifeTank!");
 	losephrases.add("Maybe you should go play some SpoonTank.");
 	losephrases.add("How many tanks could a KnifeTank knife if a KnifeTank could knife tanks?!")
 	
 	winphrases = new ArrayList();
 	winphrases.add("Whatever... You won't win again.");
+	winphrases.add("Needs more KnifeTank.");
+	winphrases.add("The princess is in another castle.");
 	winphrases.add("You only won because KnifeTank let you.");
-	winphrases.add("Okay, so you beat the level. Big deal!");
+	winphrases.add("Big deal, you beat one level.");
 	winphrases.add("You probably cheated, but you won't beat the next level.");
 	winphrases.add("KnifeTank's blades must need sharpening.");
 	winphrases.add("KnifeTank is just lulling you into a false sense of security.");
