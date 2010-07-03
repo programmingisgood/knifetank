@@ -1,21 +1,21 @@
 <html>
 <head>
-<title>Knifetank!</title>
+<title>Knifetanks</title>
 <script type="text/javascript" src="processing/processing-0.9.1.js"></script>
 <script type="text/javascript" src="js/jquery-1.4.3.min.js"></script>
 <script type="text/javascript" src="processing/init.js"></script>
-<audio src="music/leveltwo01.wav" preload="true" id="track1"></audio>
-<audio src="music/leveltwo02.wav" preload="true" id="track2"></audio>
-<audio src="music/leveltwo03.wav" preload="true" id="track3"></audio>
-<audio src="music/leveltwo04.wav" preload="true" id="track4"></audio>
-<audio src="music/leveltwo05.wav" preload="true" id="track5"></audio>
-<audio src="music/leveltwo01.ogg" preload="true" id="track11"></audio>
-<audio src="music/leveltwo02.ogg" preload="true" id="track12"></audio>
-<audio src="music/leveltwo03.ogg" preload="true" id="track13"></audio>
-<audio src="music/leveltwo04.ogg" preload="true" id="track14"></audio>
-<audio src="music/leveltwo05.ogg" preload="true" id="track15"></audio>
+<audio src="music/kt2/track2_1.wav" preload="true" id="track1"></audio>
+<audio src="music/kt2/track2_2.wav" preload="true" id="track2"></audio>
+<audio src="music/kt2/track2_3.wav" preload="true" id="track3"></audio>
+<audio src="music/kt2/track2_4.wav" preload="true" id="track4"></audio>
+<audio src="music/kt2/track2_5.wav" preload="true" id="track5"></audio>
+<audio src="music/kt2/track2_1.ogg" preload="true" id="track11"></audio>
+<audio src="music/kt2/track2_2.ogg" preload="true" id="track12"></audio>
+<audio src="music/kt2/track2_3.ogg" preload="true" id="track13"></audio>
+<audio src="music/kt2/track2_4.ogg" preload="true" id="track14"></audio>
+<audio src="music/kt2/track2_5.ogg" preload="true" id="track15"></audio>
 <style type="text/css">
-body {background: #000 url("art_assets/knifetankbackground.png") no-repeat;}
+body {background: #000 url("art_assets/bg.png");}
 form {display: none;}
 </style>
 <script language="javascript" type="text/javascript">
@@ -291,10 +291,10 @@ class Wall {
 		  fill(125);
 		}
 		else if (on) {
-		  image(musicblockon, x-d/2,y-d/2);
+		  image(musicblockoff, x-d/2,y-d/2);
 		}
 		else {
-		  image(musicblockoff, x-d/2,y-d/2);
+		  image(musicblockon, x-d/2,y-d/2);
 		}
 	}
 	else
@@ -1276,8 +1276,10 @@ void testFTW()
 	}	
 }
 
+
 void drawBackground() {
 	// draw some horizontal lines that look like notebook paper.
+	/*
 	stroke(100,100,255,125);
 	for (int i=25;i<height; i+= 25) {
 		strokeWeight(1);
@@ -1285,7 +1287,9 @@ void drawBackground() {
 	}
 	stroke(255,100,100);
 	line(width*0.85,0,width*0.85,height);
+	*/
 }
+
 
 void mousePressed()
 {
