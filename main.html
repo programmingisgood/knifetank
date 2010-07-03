@@ -1046,6 +1046,8 @@ class Cannon {
 
 }
 
+currLevel = 1;
+
 void setup() {
 	cannons = new ArrayList();
 	bullets = new ArrayList();
@@ -1061,6 +1063,11 @@ void setup() {
 	win           = false;
 	playing = true;
 	audioIndex = 1;
+	
+	
+	//CF next level hack	
+	initLevel = int(currLevel);
+	
 	
 	size(960,640);
 	frameRate(50);
@@ -1323,8 +1330,23 @@ void keyPressed()
 {
   if (!playing)
   {
-	if (key == ' ')
-	  setup();
+	if (win)
+	{
+		if (key == ' ')
+		{
+			currLevel = currLevel+1;
+			//alert(currLevel);
+			setup();
+		 }
+	}
+	else
+	{
+		if (key == ' ')
+	 	{
+	 		//alert("lose");
+			setup();
+	 	}
+	 }
   }
   else if (key == 'w') {
 	for (int k=0;k<cannons.size();k++) {
