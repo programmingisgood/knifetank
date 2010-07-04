@@ -195,7 +195,7 @@ h1 {
 	padding: 15px 10px 10px 10px;
 	color: #000;
 	font-weight: bold;
-	font-size: 90%;
+	font-size: 142%;
 	text-decoration: none;
 	display: block;
 	letter-spacing: 0.15em;
@@ -210,21 +210,19 @@ h1 {
 #peeps
 {
 	background: white;
-	padding: 5px;
 	color: #000;
 	font-weight: bold;
-	font-size: 10px;
 	text-decoration: none;
 }
 
 #peeps a
 {
 	background: white;
-	padding: 5px;
 	color: #000;
 	font-weight: bold;
-	font-size: 10x;
 	text-decoration: none;
+	padding: 0px;
+	margin: 0px;
 }
 
 #peeps a:hover
