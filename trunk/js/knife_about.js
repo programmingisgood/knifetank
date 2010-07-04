@@ -27,28 +27,28 @@ knife.page.player.init = function() {
 	
 	
 
-	$.timer(2000, function(timer) {
+	$.timer(1000, function(timer) {
 		timer.stop();
 		
 		
 		//$('#skull2').shake(2, 20, 500);
-		$('#skull2').animate({top: '91px'}, 2000 );
+		$('#skull2').animate({top: '91px'}, 1000 );
 
 		//$('#skull1').shake(4, 10, 500);
-		$('#skull1').animate({top: '58px'}, 2000, 'easeOutQuad', function() {
+		$('#skull1').animate({top: '58px'}, 1000, 'easeOutQuad', function() {
 			//$('#skull1').shake(4, 10, 1000);
 			knife.page.player.showTank();
 		} );
 
-		$('#controls .play').hover(function() {
+		$('#controls3 .play').hover(function() {
 			$('#tank').shake(2, 10, 150);
 		}, function () {});
 		//$('#onair-chat').animate({scrollTop: targetOffset}, 500, '', removeComments);
 
-		$('#controls .tanks').click(function(e) {
+		$('#controls3 .tanks').click(function(e) {
 			e.preventDefault();
 			
-			$('#controls').fadeOut('', function() {
+			$('#controls3').fadeOut('', function() {
 				$('#controls2').fadeIn();
 			})
 			
@@ -58,30 +58,10 @@ knife.page.player.init = function() {
 			e.preventDefault();
 			
 			$('#controls2').fadeOut('', function() {
-				$('#controls').fadeIn();
-			})
-			
-		})
-		
-		//morgan
-		$('#controls2 .about').click(function(e) {
-			e.preventDefault();
-			
-			$('#controls2').fadeOut('', function() {
 				$('#controls3').fadeIn();
 			})
 			
 		})
-		
-		$('#controls3 .back').click(function(e) {
-			e.preventDefault();
-			
-			$('#controls3').fadeOut('', function() {
-				$('#controls2').fadeIn();
-			})
-			
-		})		
-		//morgan
 		
 		var shake = true;
 		$.timer(10000, function() {
@@ -128,7 +108,7 @@ knife.page.player.showTitle = function () {
 }
 
 knife.page.player.showControls = function () {
-	$('#controls').fadeIn('slow');
+	$('#controls3').fadeIn('slow');
 }
 
 /*
