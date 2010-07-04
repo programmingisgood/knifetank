@@ -170,3 +170,65 @@ h1 {
 	text-decoration: none;
 	background-color: #F27D19;
 }
+
+
+#controls3
+{
+	width: 800px;
+	position: absolute;
+	top: 180px;
+	left: 100px;
+	display: none;
+}
+
+#controls3 li
+{
+	border: 2px solid white;
+	background: transparent;
+	margin-bottom: 2em;
+}
+
+#controls3 a
+{
+	background: white;
+	margin: 5px;
+	padding: 15px 10px 10px 10px;
+	color: #000;
+	font-weight: bold;
+	font-size: 90%;
+	text-decoration: none;
+	display: block;
+	letter-spacing: 0.15em;
+}
+
+#controls3 a:hover
+{
+	text-decoration: none;
+	background-color: #F27D19;
+}
+
+#peeps
+{
+	background: white;
+	padding: 5px;
+	color: #000;
+	font-weight: bold;
+	font-size: 10px;
+	text-decoration: none;
+}
+
+#peeps a
+{
+	background: white;
+	padding: 5px;
+	color: #000;
+	font-weight: bold;
+	font-size: 10x;
+	text-decoration: none;
+}
+
+#peeps a:hover
+{
+	text-decoration: none;
+	background-color: #F27D19;
+}
