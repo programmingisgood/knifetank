@@ -74,6 +74,8 @@ ArrayList targets;
 ArrayList walls;
 ArrayList bloods;
 
+
+
 int points;
 int bulletCounter;
 int hitCounter;
@@ -291,9 +293,39 @@ class Wall {
 		PVector l = new PVector(b.loc.x,b.loc.y);
 		if (l.x>=x-d/2&&l.x<=x+d/2&&l.y >=y-d/2&&l.y<=y+d/2) {
   
+
+	
 		if (toggleable) {
 			on = !on;
 			// switch to the next audio track
+			
+			/*morgan tracks switching hack: swwitches back and forth through audio index based on numBlocksOn */
+			if (on == false)
+			{
+				numBlocksOn = numBlocksOn+1; 
+			}
+			else if (on == true)
+			{
+				numBlocksOn = numBlocksOn-1; 
+			}
+
+			var prev = getTrack(audioIndex);
+			//audioIndex += 1;
+			
+			audioIndex = numBlocksOn;
+			audioIndex += 1;
+			if (audioIndex > numAudioFiles)
+			audioIndex = 1;
+			var next = getTrack(audioIndex);
+			next.volume = 0;
+			next.play();
+			next.currentTime = prev.currentTime;	
+			next.volume = 1;
+			prev.volume = 0;
+			prev.pause();
+
+			
+			/*
 			var prev = getTrack(audioIndex);
 			audioIndex += 1;
 			if (audioIndex > numAudioFiles)
@@ -305,6 +337,7 @@ class Wall {
 			next.volume = 1;
 			prev.volume = 0;
 			prev.pause();
+			*/
 		}
 
 		// reflect the bullet
@@ -1063,6 +1096,7 @@ void setup() {
 	win           = false;
 	playing = true;
 	audioIndex = 1;
+	numBlocksOn = 0;
 	
 	
 	//CF next level hack	
@@ -1275,6 +1309,7 @@ void testFTW()
 
 void drawBackground() {
 	// draw some horizontal lines that look like notebook paper.
+	//taking this our for now.
 	/*
 	stroke(100,100,255,125);
 	for (int i=25;i<height; i+= 25) {
