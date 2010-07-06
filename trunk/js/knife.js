@@ -110,8 +110,60 @@ knife.page.player.init = function() {
 			
 	})
 
+	$('#controls .play').click(function(e) {
+		
+		e.preventDefault();
+		
+		$.timer(1000, function(t) {
+			t.stop();
+			document.location = 'main.html';
+		})
+	})
+
+
+	$('body').click(function() {
+		
+		var slash = document.getElementById('slash');
+		var canPlayWav1 = ("no" != slash.canPlayType("audio/wav")) && ("" != slash.canPlayType("audio/wav"));
+		
+		if (canPlayWav1) {
+			slash.play();
+		}
+		
+		knife.page.player.KNIFE_ANIM = new SpriteAnim({
+			elementId: 'tank',
+			frames: 3,
+			height: 470,
+			delay: 200,
+			numberOfLoops: 1 
+		});
+		
+		$.timer(800, function(t) {
+			t.stop();
+			knife.page.player.KNIFE_ANIM.stopAnimation();
+			$('#tank').css({backgroundPosition: '0 0'});
+
+		})
+		
+	})
 	
+	var track1 = document.getElementById('track1');
 	
+	var canPlayOgg = ("no" != track1.canPlayType("audio/ogg")) && ("" != track1.canPlayType("audio/ogg"));
+	var canPlayMp3 = ("no" != track1.canPlayType("audio/mpeg")) && ("" != track1.canPlayType("audio/mpeg"));
+	var canPlayWav = ("no" != track1.canPlayType("audio/wav")) && ("" != track1.canPlayType("audio/wav"));
+
+	//trace(canPlayOgg+' '+canPlayMp3+' '+canPlayWav);
+	
+	if (canPlayMp3) {
+		$('#track1').attr('src', 'music/opening.mp3');
+	} else if (canPlayOgg) {
+		$('#track1').attr('src', 'music/opening.ogg');
+	} else if (canPlayWav) {
+		$('#track1').attr('src', 'music/opening.wav');
+	}
+	
+	track1.play();
 }
 
 
