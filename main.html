@@ -1117,7 +1117,7 @@ class Cannon {
 }
 
 //currLevel = 1;
-currLevel = $('#level-select').val();
+currLevel = int($('#level-select').val());
 
 void setup() {
 	cannons = new ArrayList();
@@ -1412,7 +1412,8 @@ void keyPressed()
 		{
 			currLevel = currLevel+1;
 			//alert(currLevel);
-			setup();
+			//setup();
+			document.location = "main.html?level="+currLevel;
 		 }
 	}
 	else
