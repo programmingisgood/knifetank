@@ -14,6 +14,15 @@
 <audio id="track13"></audio>
 <audio id="track14"></audio>
 <audio id="track15"></audio>
+
+<audio id="sfx1" src="music/sfx/hit_block_music.wav"></audio>
+<audio id="sfx2" src="music/sfx/hit_block_normal.wav"></audio>
+<audio id="sfx3" src="music/sfx/hit_block_wall.wav"></audio>
+<audio id="sfx4" src="music/sfx/hit_knifetank.wav"></audio>
+<audio id="sfx5" src="music/sfx/hit_papertank_self.wav"></audio>
+<audio id="sfx6" src="music/sfx/hit_papertank_slash.wav"></audio>
+<audio id="sfx7" src="music/sfx/pt_launch.wav"></audio>
+
 <style type="text/css">
 body {background: #000 url("art_assets/bg.png") no-repeat;}
 form {display: none;}
@@ -361,6 +370,7 @@ class Wall {
 			prev.volume = 0;
 			prev.pause();
 
+			playSfx(1);
 			
 			/*
 			var prev = getTrack(audioIndex);
@@ -375,6 +385,8 @@ class Wall {
 			prev.volume = 0;
 			prev.pause();
 			*/
+		} else {
+			playSfx(2);
 		}
 
 		// reflect the bullet
@@ -434,10 +446,14 @@ class Bullet
 		fill(100);
 		ellipse(loc.x,loc.y,10,10);
 		loc.add(new PVector(dir.x/4,dir.y/4));
-		if (loc.x < 0 || loc.x > width)
-		  flipx();
-		if (loc.y < 0 || loc.y > height)
-		  flipy();
+		if (loc.x < 0 || loc.x > width) {
+		  flipx(); 
+			playSfx(3);
+		}
+		if (loc.y < 0 || loc.y > height) {
+			flipy();
+			playSfx(3);
+		}
 		age++;
 		if (age>300)  alive = false;
 	}
@@ -613,8 +629,10 @@ class Target
 
 			if (c.loc.x>=minx && c.loc.x<=maxx && c.loc.y >= miny && c.loc.y <= maxy)
 			{
-				if (playing)
+				if (playing) {
 					phraseIndex = int(random(losephrases.size()));
+					playSfx(6);	
+				}
 				
 				playing = false;
 				hitTank = true;
@@ -655,7 +673,7 @@ class Target
 				timeOfDeath = seconds;
 				//Spawn blood effect when enemy dies
 				bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
-				
+				playSfx(4);
 			}
 		}
 	}
@@ -899,10 +917,11 @@ class Cannon {
 	translate(loc.x,loc.y);
 	rotate(baseAngle-PI/2);
 	if (stun){
-		if (stunTimer - stunTime <= 2)
+		if (stunTimer - stunTime <= 2) {
 			image(fixed,-d/2,-d/2);
-		else
+		} else {
 			image(ripped, -d/2,-d/2);
+		}
 	}
 	else {
 		switch (sprite) {
@@ -956,6 +975,7 @@ class Cannon {
 			bullets.remove(b);
 			//Spawn blood effect when cannon hit with bullet
 			bloods.add(new ParticleSystem(200, bleedTime, new Vector3D(loc.x,loc.y,0)));
+			playSfx(5);
 		}
 	 }
   }
@@ -977,6 +997,7 @@ class Cannon {
 
 	void fire() {
 		firing = firingFrames;
+		playSfx(7);
 	}
 
 	void moveUp(float dy) {
@@ -1480,6 +1501,20 @@ void getTrack(int index) {
 	return document.getElementById("track1" + str(index));
   }
 }
+
+
+void playSfx(int index) {
+  var sfx = document.getElementById("sfx" + str(index));
+  boolean canPlayWav2 = ("no" != sfx.canPlayType("audio/wav")) && ("" != sfx.canPlayType("audio/wav"));
+  if (canPlayWav2) {
+	 var audioElement2 = sfx;
+	  audioElement2.load();
+	  audioElement2.loop = false;
+	  audioElement2.volume = 1;
+	  audioElement2.play();
+  }
+}
+
 
 void addBullet() {
 	if (bullets.size() >= 3)
