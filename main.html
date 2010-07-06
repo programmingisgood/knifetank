@@ -120,7 +120,12 @@ ArrayList targets;
 ArrayList walls;
 ArrayList bloods;
 
-
+var sfx1;
+var sfx2;
+var sfx3;
+var sfx4;
+var sfx5;
+var sfx6;
 
 int points;
 int bulletCounter;
@@ -1161,6 +1166,7 @@ void setup() {
 	//CF next level hack	
 	initLevel = int(currLevel);
 	
+	initSfx();
 	
 	size(960,640);
 	frameRate(50);
@@ -1514,16 +1520,67 @@ void getTrack(int index) {
 }
 
 
+void initSfx() {
+	
+	sfx1 = document.getElementById("sfx1");
+	sfx1.load();
+	sfx1.loop = false;
+	sfx1.volume = 1;
+
+	sfx2 = document.getElementById("sfx2");
+	sfx2.load();
+	sfx2.loop = false;
+	sfx2.volume = 1;
+
+	sfx3 = document.getElementById("sfx3");
+	sfx3.load();
+	sfx3.loop = false;
+	sfx3.volume = 1;
+
+	sfx4 = document.getElementById("sfx4");
+	sfx4.load();
+	sfx4.loop = false;
+	sfx4.volume = 1;
+
+	sfx5 = document.getElementById("sfx5");
+	sfx5.load();
+	sfx5.loop = false;
+	sfx5.volume = 1;
+
+	sfx6 = document.getElementById("sfx6");
+	sfx6.load();
+	sfx6.loop = false;
+	sfx6.volume = 1;
+
+	
+}
+
 void playSfx(int index) {
-  var sfx = document.getElementById("sfx" + str(index));
-  boolean canPlayWav2 = ("no" != sfx.canPlayType("audio/wav")) && ("" != sfx.canPlayType("audio/wav"));
-  if (canPlayWav2) {
-	 var audioElement2 = sfx;
-	  audioElement2.load();
-	  audioElement2.loop = false;
-	  audioElement2.volume = 1;
-	  audioElement2.play();
-  }
+  
+	//var sfx = document.getElementById("sfx" + str(index));
+  //boolean canPlayWav2 = ("no" != sfx.canPlayType("audio/wav")) && ("" != sfx.canPlayType("audio/wav"));
+  //if (canPlayWav2) {
+	// var audioElement2 = sfx;
+	//  audioElement2.load();
+	//  audioElement2.loop = false;
+	//  audioElement2.volume = 1;
+	//  audioElement2.play();
+  //}
+
+	if (index == 1) {
+		sfx1.play();
+	} else if (index == 2) {
+		sfx2.play();
+	} else if (index == 3) {
+		sfx3.play();
+	} else if (index == 4) {
+		sfx4.play();
+	} else if (index == 5) {
+		sfx5.play();
+	} else if (index == 6) {
+		sfx6.play();
+	}
+
 }
 
 
