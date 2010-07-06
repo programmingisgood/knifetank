@@ -1336,6 +1336,13 @@ void play()
 			i++;
 		}
 	}
+	
+	// display score and level.
+	font = loadFont("Courier New");
+	textFont(font, 20);
+	fill(255,255,0);
+	text("Level: " + str(currLevel), 5, 25);
+	text("Score: " + str(getScore()), 5, 45);
 
 	// update time counters
 	++sc;
@@ -1389,10 +1396,14 @@ void mousePressed()
 	}
 }
 
+float getScore()
+{
+	return int(((points)*54.73)-((bulletCounter-hitCounter)*10));
+}
 
 void gameover()
 {
-	int score = int(((points)*54.73)-((bulletCounter-hitCounter)*10));
+	int score = getScore();
 	
 	fill(125,225);
 	float w = 500;
