@@ -13,7 +13,7 @@
 		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 	})();
 </script>  
-<script type="text/javascript" src="processing/processing-0.9.1.js"></script>
+<script type="text/javascript" src="processing/processing-0.8.js"></script>
 <script type="text/javascript" src="js/jquery-1.4.3.min.js"></script>
 <script type="text/javascript" src="processing/init.js"></script>
 <audio id="track1"></audio>
@@ -98,7 +98,7 @@ function urlquery( name )
 		$('#level-select').val(thisLevel);
 	});
 </script>
-<script type="application/processing">
+<script type="application/processing" targetCanvas="pcanvas">
 
 // Global constants
 int speed         = 20;
@@ -1867,7 +1867,7 @@ class ParticleSystem {
   
 }
 
-</script><canvas></canvas>
+</script><canvas id="pcanvas"></canvas>
 <div style="height:0px;width:0px;overflow:hidden;"><img id="img1"><img id="img2"><img id="img3"></div>
 <form><input type="hidden" name="level-select" id="level-select" /></form>
 </body> </html>
