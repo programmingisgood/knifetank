@@ -1522,8 +1522,8 @@ void keyPressed()
 
 void getTrack(int index) {
   var track = document.getElementById("track" + str(index));
-  boolean canPlayWav = ("no" != track.canPlayType("audio/wav")) && ("" != track.canPlayType("audio/wav"));
-  if (canPlayWav) {
+  boolean canPlayMp3 = ("no" != track.canPlayType("audio/mp3")) && ("" != track.canPlayType("audio/mp3"));
+  if (canPlayMp3) {
 	return track;
   }
   else {
