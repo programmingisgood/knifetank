@@ -4,16 +4,16 @@
 <script type="text/javascript" src="processing/processing-0.8.js"></script>
 <script type="text/javascript" src="js/jquery-1.4.3.min.js"></script>
 <script type="text/javascript" src="processing/init.js"></script>
-<audio id="track1"></audio>
-<audio id="track2"></audio>
-<audio id="track3"></audio>
-<audio id="track4"></audio>
-<audio id="track5"></audio>
-<audio id="track11"></audio>
-<audio id="track12"></audio>
-<audio id="track13"></audio>
-<audio id="track14"></audio>
-<audio id="track15"></audio>
+<audio id="track1" src="music/track1_1.mp3" preload="true" autobuffer></audio>
+<audio id="track2" src="music/track1_2.mp3" preload="true" autobuffer></audio>
+<audio id="track3" src="music/track1_3.mp3" preload="true" autobuffer></audio>
+<audio id="track4" src="music/track1_4.mp3" preload="true" autobuffer></audio>
+<audio id="track5" src="music/track1_5.mp3" preload="true" autobuffer></audio>
+<audio id="track11" src="music/track1_1.ogg" preload="true" autobuffer></audio>
+<audio id="track12" src="music/track1_2.ogg" preload="true" autobuffer></audio>
+<audio id="track13" src="music/track1_3.ogg" preload="true" autobuffer></audio>
+<audio id="track14" src="music/track1_4.ogg" preload="true" autobuffer></audio>
+<audio id="track15" src="music/track1_5.ogg" preload="true" autobuffer></audio>
 
 <audio id="sfx1" src="music/sfx/hit_block_music.wav" preload="true" autobuffer></audio>
 <audio id="sfx2" src="music/sfx/hit_block_normal.wav" preload="true" autobuffer></audio>
@@ -83,6 +83,7 @@ function urlquery( name )
 			$('#track14').attr('src', 'music/track3_4.ogg');
 			$('#track15').attr('src', 'music/track3_5.ogg');
 		}
+		
 		$('#level-select').val(thisLevel);
 	});
 </script>
@@ -1510,7 +1511,7 @@ void keyPressed()
 
 void getTrack(int index) {
   var track = document.getElementById("track" + str(index));
-  boolean canPlayMp3 = ("no" != track.canPlayType("audio/mp3")) && ("" != track.canPlayType("audio/mp3"));
+  boolean canPlayMp3 = ("no" != track.canPlayType("audio/mpeg")) && ("" != track.canPlayType("audio/mpeg"));
   if (canPlayMp3) {
 	return track;
   }
