@@ -85,6 +85,17 @@ function urlquery( name )
 		}
 		
 		$('#level-select').val(thisLevel);
+		$('#track1').load();
+		$('#track2').load();
+		$('#track3').load();
+		$('#track4').load();
+		$('#track5').load();
+		$('#track11').load();
+		$('#track12').load();
+		$('#track13').load();
+		$('#track14').load();
+		$('#track15').load();
+		
 	});
 </script>
 <script type="application/processing" targetCanvas="pcanvas">
@@ -96,7 +107,7 @@ int numAudioFiles = 5;
 int audioIndex;
 int initLevel = $('#level-select').val();
 
-boolean showBBs = false; // DEBUG: show bounding boxes.
+boolean showBBs = true; // DEBUG: show bounding boxes.
 
 PFont font = loadFont("Krungthep-25.vlw");
 PImage tank1;
@@ -1254,14 +1265,12 @@ void setup() {
 	musicblockon = loadImage("art_assets/musicblockon.png");
 	musicblockoff = loadImage("art_assets/musicblockoff.png");
   var audioElement = getTrack(1);
-  audioElement.load();
   audioElement.loop = true;
   audioElement.volume = 1;
   audioElement.play();
 
 	for (int i=2; i <= numAudioFiles; ++i) {
 		var audioElement = document.getElementById("track"+str(i));
-		audioElement.load();
 		audioElement.loop = true;
 		audioElement.volume = 0;
 	}
