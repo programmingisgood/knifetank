@@ -230,3 +230,11 @@ h1 {
 	text-decoration: none;
 	background-color: #F27D19;
 }
+
+
+/* game stuff */
+.main-content canvas {background: #000 url("../art_assets/bg.png") no-repeat; width: 960px; height: 640px;}
+#instructions {background: transparent url("../img/knifetankinstructions.png") no-repeat; width: 954px; height: 230px; text-indent: -9999px;}
+#instructions dl, #instructions h1, #instructions p {display: none;}
+#loading  { position: absolute; width: 530px; height: 530px; margin-left: 206px; margin-top: 57px; }
+#pcanvas { display: block; }

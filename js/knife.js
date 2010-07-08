@@ -123,13 +123,8 @@ knife.page.player.init = function() {
 
 	$('body').click(function() {
 		
-		var slash = document.getElementById('slash');
-		var canPlayWav1 = ("no" != slash.canPlayType("audio/wav")) && ("" != slash.canPlayType("audio/wav"));
 		
-		if (canPlayWav1) {
-			slash.play();
-		}
-		
+	
 		knife.page.player.KNIFE_ANIM = new SpriteAnim({
 			elementId: 'tank',
 			frames: 3,
@@ -138,11 +133,23 @@ knife.page.player.init = function() {
 			numberOfLoops: 1 
 		});
 		
+		$.timer(500, function(t) {
+	
+			t.stop();
+	
+			var slash = document.getElementById('slash');
+			var canPlayWav1 = ("no" != slash.canPlayType("audio/wav")) && ("" != slash.canPlayType("audio/wav"));
+
+	
+			if (canPlayWav1) {
+				slash.play();
+			}
+		})
+		
 		$.timer(800, function(t) {
 			t.stop();
 			knife.page.player.KNIFE_ANIM.stopAnimation();
 			$('#tank').css({backgroundPosition: '0 0'});
-
 		})
 		
 	})
