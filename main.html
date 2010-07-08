@@ -1696,8 +1696,8 @@ void getTrack(int index) {
 void initSfx() {
   	var track = document.getElementById("track1");
 
-	boolean canPlayOgg = ("no" != track.canPlayType("audio/ogg")) && ("" != track.canPlayType("audio/ogg"));
-	if (canPlayOgg) {
+	boolean canPlayWav = ("no" != track.canPlayType("audio/wav")) && ("" != track.canPlayType("audio/wav"));
+	if (canPlayWav) {
 		//return track;
 		
 		sfx1 = document.getElementById("sfx1");
