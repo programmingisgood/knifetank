@@ -1,33 +1,58 @@
-<html>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Knifetank(s)</title>  
-<script type="text/javascript" src="processing/processing-0.8.js"></script>
-<script type="text/javascript" src="js/jquery-1.4.3.min.js"></script>
-<script type="text/javascript" src="processing/init.js"></script>
-<audio id="track1" src="music/track1_1.mp3" preload="true" autobuffer></audio>
-<audio id="track2" src="music/track1_2.mp3" preload="true" autobuffer></audio>
-<audio id="track3" src="music/track1_3.mp3" preload="true" autobuffer></audio>
-<audio id="track4" src="music/track1_4.mp3" preload="true" autobuffer></audio>
-<audio id="track5" src="music/track1_5.mp3" preload="true" autobuffer></audio>
-<audio id="track11" src="music/track1_1.ogg" preload="true" autobuffer></audio>
-<audio id="track12" src="music/track1_2.ogg" preload="true" autobuffer></audio>
-<audio id="track13" src="music/track1_3.ogg" preload="true" autobuffer></audio>
-<audio id="track14" src="music/track1_4.ogg" preload="true" autobuffer></audio>
-<audio id="track15" src="music/track1_5.ogg" preload="true" autobuffer></audio>
+	<title>Knifetank(s)</title>
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	<meta name="MSSmartTagsPreventParsing" content="true" />
+	<meta http-equiv="imagetoolbar" content="no" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<link rel="stylesheet" type="text/css" media="screen, print, projection" href="css/screen.css" />
 
-<audio id="sfx1" src="music/sfx/hit_block_music.wav" preload="true" autobuffer></audio>
-<audio id="sfx2" src="music/sfx/hit_block_normal.wav" preload="true" autobuffer></audio>
-<audio id="sfx3" src="music/sfx/hit_block_wall.wav" preload="true" autobuffer></audio>
-<audio id="sfx4" src="music/sfx/hit_knifetank.wav" preload="true" autobuffer></audio>
-<audio id="sfx5" src="music/sfx/hit_papertank_self.wav" preload="true" autobuffer></audio>
-<audio id="sfx6" src="music/sfx/hit_papertank_slash.wav" preload="true" autobuffer></audio>
-<audio id="sfx7" src="music/sfx/pt_launch.wav" preload="true" autobuffer></audio>
+	<script type="text/javascript" src="processing/processing-0.8.js"></script>
+	<script type="text/javascript" src="js/jquery-1.4.3.min.js"></script>
+	<script type="text/javascript" src="processing/init.js"></script>
+	
+	<audio id="track1" preload="auto" autobuffer loop="true"></audio>
+	<audio id="track2" preload="auto" autobuffer loop="true"></audio>
+	<audio id="track3" preload="auto" autobuffer loop="true"></audio>
+	<audio id="track4" preload="auto" autobuffer loop="true"></audio>
+	<audio id="track5" preload="auto" autobuffer loop="true"></audio>
 
+	<!--<audio id="sfx1" preload="auto" autobuffer></audio>
+	<audio id="sfx2" preload="auto" autobuffer></audio>
+	<audio id="sfx3" preload="auto" autobuffer></audio>
+	<audio id="sfx4" preload="auto" autobuffer></audio>
+	<audio id="sfx5" preload="auto" autobuffer></audio>
+	<audio id="sfx6" preload="auto" autobuffer></audio>
+	<audio id="sfx7" preload="auto" autobuffer></audio>-->
+	
+	<audio id="sfx1" src="music/sfx/hit_block_music.wav" preload="auto" autobuffer></audio>
+	<audio id="sfx2" src="music/sfx/hit_block_normal.wav" preload="auto" autobuffer></audio>
+	<audio id="sfx3" src="music/sfx/hit_block_wall.wav" preload="auto" autobuffer></audio>
+	<audio id="sfx4" src="music/sfx/hit_knifetank.wav" preload="auto" autobuffer></audio>
+	<audio id="sfx5" src="music/sfx/hit_papertank_self.wav" preload="auto" autobuffer></audio>
+	<audio id="sfx6" src="music/sfx/hit_papertank_slash.wav" preload="auto" autobuffer></audio>
+	<audio id="sfx7" src="music/sfx/pt_launch.wav" preload="auto" autobuffer></audio>
+	
+	<audio id="sfx1b" src="music/sfx/hit_block_music.ogg" preload="auto" autobuffer></audio>
+	<audio id="sfx2b" src="music/sfx/hit_block_normal.ogg" preload="auto" autobuffer></audio>
+	<audio id="sfx3b" src="music/sfx/hit_block_wall.ogg" preload="auto" autobuffer></audio>
+	<audio id="sfx4b" src="music/sfx/hit_knifetank.ogg" preload="auto" autobuffer></audio>
+	<audio id="sfx5b" src="music/sfx/hit_papertank_self.ogg" preload="auto" autobuffer></audio>
+	<audio id="sfx6b" src="music/sfx/hit_papertank_slash.ogg" preload="auto" autobuffer></audio>
+	<audio id="sfx7b" src="music/sfx/pt_launch.ogg" preload="auto" autobuffer></audio>
+	
+	
 <style type="text/css">
-body {background: #000 url("art_assets/bg.png") no-repeat;}
+/* body {background: #000 url("art_assets/bg.png") no-repeat;} */
 form {display: none;}
 </style>
 <script language="javascript" type="text/javascript">
+
+var LOADED_TRACKS = 0;
+
 function urlquery( name )
 	{
 	  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
@@ -40,6 +65,49 @@ function urlquery( name )
 	    return results[1];
 	}
 	
+//dustin diaz
+function addEvent( obj, type, fn ) {
+	if (obj.addEventListener) {
+		obj.addEventListener( type, fn, false );
+		EventCache.add(obj, type, fn);
+	}
+	else if (obj.attachEvent) {
+		obj["e"+type+fn] = fn;
+		obj[type+fn] = function() { obj["e"+type+fn]( window.event ); }
+		obj.attachEvent( "on"+type, obj[type+fn] );
+		EventCache.add(obj, type, fn);
+	}
+	else {
+		obj["on"+type] = obj["e"+type+fn];
+	}
+}
+
+var EventCache = function(){
+	var listEvents = [];
+	return {
+		listEvents : listEvents,
+		add : function(node, sEventName, fHandler){
+			listEvents.push(arguments);
+		},
+		flush : function(){
+			var i, item;
+			for(i = listEvents.length - 1; i >= 0; i = i - 1){
+				item = listEvents[i];
+				if(item[0].removeEventListener){
+					item[0].removeEventListener(item[1], item[2], item[3]);
+				};
+				if(item[1].substring(0, 2) != "on"){
+					item[1] = "on" + item[1];
+				};
+				if(item[0].detachEvent){
+					item[0].detachEvent(item[1], item[2]);
+				};
+				item[0][item[1]] = null;
+			};
+		}
+	};
+}();
+addEvent(window,'unload',EventCache.flush);	
 
 	$(document).ready(function() {		
 		var thisLevel = urlquery('level');
@@ -47,56 +115,150 @@ function urlquery( name )
 			thisLevel = 1;
 		}
 		
+		var thisTrack = 1;
 		if (thisLevel == 1 || thisLevel == 4 || thisLevel == 7 || thisLevel == 10 || thisLevel == 13) {
-			$('#track1').attr('src', 'music/track1_1.mp3');
-			$('#track2').attr('src', 'music/track1_2.mp3');
-			$('#track3').attr('src', 'music/track1_3.mp3');
-			$('#track4').attr('src', 'music/track1_4.mp3');
-			$('#track5').attr('src', 'music/track1_5.mp3');
-			$('#track11').attr('src', 'music/track1_1.ogg');
-			$('#track12').attr('src', 'music/track1_2.ogg');
-			$('#track13').attr('src', 'music/track1_3.ogg');
-			$('#track14').attr('src', 'music/track1_4.ogg');
-			$('#track15').attr('src', 'music/track1_5.ogg');
+			thisTrack = 1;
 		}
 		if (thisLevel == 2 || thisLevel == 5 || thisLevel == 8 || thisLevel == 11 || thisLevel == 14) {
-			$('#track1').attr('src', 'music/track2_1.mp3');
-			$('#track2').attr('src', 'music/track2_2.mp3');
-			$('#track3').attr('src', 'music/track2_3.mp3');
-			$('#track4').attr('src', 'music/track2_4.mp3');
-			$('#track5').attr('src', 'music/track2_5.mp3');
-			$('#track11').attr('src', 'music/track2_1.ogg');
-			$('#track12').attr('src', 'music/track2_2.ogg');
-			$('#track13').attr('src', 'music/track2_3.ogg');
-			$('#track14').attr('src', 'music/track2_4.ogg');
-			$('#track15').attr('src', 'music/track2_5.ogg');
+			thisTrack = 2;
 		}
 		if (thisLevel == 3 || thisLevel == 6 || thisLevel == 9 || thisLevel == 12 || thisLevel == 15) {
-			$('#track1').attr('src', 'music/track3_1.mp3');
-			$('#track2').attr('src', 'music/track3_2.mp3');
-			$('#track3').attr('src', 'music/track3_3.mp3');
-			$('#track4').attr('src', 'music/track3_4.mp3');
-			$('#track5').attr('src', 'music/track3_5.mp3');
-			$('#track11').attr('src', 'music/track3_1.ogg');
-			$('#track12').attr('src', 'music/track3_2.ogg');
-			$('#track13').attr('src', 'music/track3_3.ogg');
-			$('#track14').attr('src', 'music/track3_4.ogg');
-			$('#track15').attr('src', 'music/track3_5.ogg');
+			thisTrack = 3;
 		}
 		
-		$('#level-select').val(thisLevel);
-		$('#track1').load();
-		$('#track2').load();
-		$('#track3').load();
-		$('#track4').load();
-		$('#track5').load();
-		$('#track11').load();
-		$('#track12').load();
-		$('#track13').load();
-		$('#track14').load();
-		$('#track15').load();
+		var thisSoundExtension = "mp3";
+		var thisSfxExtension = "wav";
+
+		var myAudioObj = {};
 		
+		try {
+		  // The 'src' parameter is mandatory in Opera 10, so have used an empty string "".
+		  // Otherwise, an exception is thrown.
+		  myAudioObj = new Audio(""); 
+
+		  audioObjSupport = !!(myAudioObj.canPlayType);
+		  basicAudioSupport = !!(!audioObjSupport ? myAudioObj.play : false);
+		} catch (e) {
+		  audioObjSupport = false;
+		  basicAudioSupport = false;
+		}
+		
+		// Need to check the canPlayType first or an exception
+		// will be thrown for those browsers that don't support it
+		if (myAudioObj.canPlayType) {
+
+		  // Currently canPlayType(type) returns: "no", "maybe" or "probably"
+		  var thisCanPlayOgg = ("no" != myAudioObj.canPlayType("audio/ogg")) && ("" != myAudioObj.canPlayType("audio/ogg"));
+		  var thisCanPlayMp3 = ("no" != myAudioObj.canPlayType("audio/mpeg")) && ("" != myAudioObj.canPlayType("audio/mpeg"));
+		  var thisCanPlayWav = ("no" != myAudioObj.canPlayType("audio/wav")) && ("" != myAudioObj.canPlayType("audio/wav"));
+		
+
+			if (!thisCanPlayMp3 && thisCanPlayOgg) {
+				thisSoundExtension = "ogg";
+			}
+			
+			if (!thisCanPlayWav && thisCanPlayMp3) {
+				thisSfxExtension = "mp3";
+			}
+			
+		}
+		
+		
+		/* TRACKS */
+		
+		var track1 = document.getElementById('track1');
+		track1.setAttribute('src', 'music/track'+thisTrack+'_1.'+thisSoundExtension);
+		track1.load();
+		track1.loop = true;
+		addEvent(track1, 'canplaythrough', function() {
+			loadingCB();
+		});
+		
+		var track2 = document.getElementById('track2');
+		track2.setAttribute('src', 'music/track'+thisTrack+'_2.'+thisSoundExtension);
+		track2.load();
+		track2.loop = true;
+		addEvent(track2, 'canplaythrough', function() {
+			loadingCB();
+		});
+		
+		var track3 = document.getElementById('track3');
+		track3.setAttribute('src', 'music/track'+thisTrack+'_3.'+thisSoundExtension);
+		track3.load();
+		track3.loop = true;
+		addEvent(track3, 'canplaythrough', function() {
+			loadingCB();
+		});
+		
+		var track4 = document.getElementById('track4');
+		track4.setAttribute('src', 'music/track'+thisTrack+'_4.'+thisSoundExtension);
+		track4.load();
+		track4.loop = true;
+		addEvent(track4, 'canplaythrough', function() {
+			loadingCB();
+		});
+		
+		var track5 = document.getElementById('track5');
+		track5.setAttribute('src', 'music/track'+thisTrack+'_5.'+thisSoundExtension);
+		track5.load();
+		track5.loop = true;
+		addEvent(track5, 'canplaythrough', function() {
+			loadingCB();
+		});
+		
+		
+				
+				
+		/* SFX */
+		/*
+		var thisSfx1 = document.getElementById('sfx1');
+		thisSfx1.setAttribute('src', 'music/sfx/hit_block_music.'+thisSfxExtension);
+		//thisSfx1.load();
+		///	addEvent(thisSfx1, 'canplaythrough', function() {
+		//		alert('here');
+		//	});
+		
+		var thisSfx2 = document.getElementById('sfx2');
+		thisSfx2.setAttribute('src', 'music/sfx/hit_block_normal.'+thisSfxExtension);
+		thisSfx2.load();
+	
+		var thisSfx3 = document.getElementById('sfx3');
+		thisSfx3.setAttribute('src', 'music/sfx/hit_block_wall.'+thisSfxExtension);
+		thisSfx3.load();
+
+		var thisSfx4 = document.getElementById('sfx4');
+		thisSfx4.setAttribute('src', 'music/sfx/hit_knifetank.'+thisSfxExtension);
+		thisSfx4.load();
+
+		var thisSfx5 = document.getElementById('sfx5');
+		thisSfx5.setAttribute('src', 'music/sfx/hit_papertank_self.'+thisSfxExtension);
+		thisSfx5.load();
+
+		var thisSfx6 = document.getElementById('sfx6');
+		thisSfx6.setAttribute('src', 'music/sfx/hit_papertank_slash.'+thisSfxExtension);
+		thisSfx6.load();
+
+		var thisSfx7 = document.getElementById('sfx7');
+		thisSfx7.setAttribute('src', 'music/sfx/pt_launch.'+thisSfxExtension);
+		thisSfx7.load();
+		*/
+		
+		$('#level-select').val(thisLevel);
 	});
+	
+	function loadingCB() {
+	//	console.log(thisLoadedTrack);
+	
+		LOADED_TRACKS++;
+		
+		if (LOADED_TRACKS == 5) {
+			//track1.play();
+			initProcessingScripts();
+			$('#loading').css({display: 'none'});
+
+		}
+	
+	}
 </script>
 <script type="application/processing" targetCanvas="pcanvas">
 
@@ -1520,49 +1682,76 @@ void keyPressed()
 
 void getTrack(int index) {
   var track = document.getElementById("track" + str(index));
-  boolean canPlayMp3 = ("no" != track.canPlayType("audio/mpeg")) && ("" != track.canPlayType("audio/mpeg"));
-  if (canPlayMp3) {
 	return track;
-  }
-  else {
-	return document.getElementById("track1" + str(index));
-  }
+  //boolean canPlayMp3 = ("no" != track.canPlayType("audio/mpeg")) && ("" != track.canPlayType("audio/mpeg"));
+  //if (canPlayMp3) {
+	//return track;
+  //}
+  //else {
+//	return document.getElementById("track1" + str(index));
+  //}
 }
 
 
 void initSfx() {
+  	var track = document.getElementById("track1");
+
+	boolean canPlayOgg = ("no" != track.canPlayType("audio/ogg")) && ("" != track.canPlayType("audio/ogg"));
+	if (canPlayOgg) {
+		//return track;
+		
+		sfx1 = document.getElementById("sfx1");
+		sfx2 = document.getElementById("sfx2");
+		sfx3 = document.getElementById("sfx3");
+		sfx4 = document.getElementById("sfx4");
+		sfx5 = document.getElementById("sfx5");
+		sfx6 = document.getElementById("sfx6");
+		
+	} else {
+	//	return document.getElementById("track1" + str(index));
 	
+		sfx1 = document.getElementById("sfx1b");
+		sfx2 = document.getElementById("sfx2b");
+		sfx3 = document.getElementById("sfx3b");
+		sfx4 = document.getElementById("sfx4b");
+		sfx5 = document.getElementById("sfx5b");
+		sfx6 = document.getElementById("sfx6b");
+	
+	 
+	}
+	
+	/*
 	sfx1 = document.getElementById("sfx1");
-	sfx1.load();
-	sfx1.loop = false;
-	sfx1.volume = 1;
+	//sfx1.load();
+	//sfx1.loop = false;
+	//sfx1.volume = 1;
 
 	sfx2 = document.getElementById("sfx2");
-	sfx2.load();
-	sfx2.loop = false;
-	sfx2.volume = 1;
+	//sfx2.load();
+	//sfx2.loop = false;
+	//sfx2.volume = 1;
 
 	sfx3 = document.getElementById("sfx3");
-	sfx3.load();
-	sfx3.loop = false;
-	sfx3.volume = 1;
+	//sfx3.load();
+	//sfx3.loop = false;
+	//sfx3.volume = 1;
 
 	sfx4 = document.getElementById("sfx4");
-	sfx4.load();
-	sfx4.loop = false;
-	sfx4.volume = 1;
+	//sfx4.load();
+	//sfx4.loop = false;
+	//sfx4.volume = 1;
 
 	sfx5 = document.getElementById("sfx5");
-	sfx5.load();
-	sfx5.loop = false;
-	sfx5.volume = 1;
+	//sfx5.load();
+	//sfx5.loop = false;
+	//sfx5.volume = 1;
 
 	sfx6 = document.getElementById("sfx6");
-	sfx6.load();
-	sfx6.loop = false;
-	sfx6.volume = 1;
+	//sfx6.load();
+	//sfx6.loop = false;
+	//sfx6.volume = 1;
 
-	
+	*/
 }
 
 void playSfx(int index) {
@@ -1865,7 +2054,33 @@ class ParticleSystem {
   
 }
 
-</script><canvas id="pcanvas"></canvas>
+</script>
+
+<div class="main">
+		<div class="main-content">
+			<div id="loading"><img src="img/loading.gif" width="530" height="530" /></div>
+			<canvas id="pcanvas"></canvas>
+			<div id="instructions">
+				<h1>KnifeTank the game</h1>
+				<dl>
+					<dt>how to play</dt>
+					<dd>
+						<ul>
+							<li>Don't get stabbed.</li>
+							<li>Turn all music blocks on</li>
+							<li>w a s d to move</li>
+							<li>use mouse to shoot</li>
+							<li>for Safari, and Chrome</li>
+							<li>remember to turn sound on</li>
+							<li>other browsers coming soon</li>
+						</ul>
+					</dd>
+				</dl>
+				<p>KnifeTank copyright Doctor Popular 2010</p>
+				<p>html5 game</p>
+			</div>
+		</div>
+</div>
 <div style="height:0px;width:0px;overflow:hidden;"><img id="img1"><img id="img2"><img id="img3"></div>
 <form><input type="hidden" name="level-select" id="level-select" /></form>
 </body>
