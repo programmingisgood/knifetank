@@ -352,6 +352,7 @@ function statehack() {
 		
 		if (this.stairClicks == 0) {
 			gworld.text = "Those stairs don't look very safe...";
+			this.stairClicks = 1;
 		}
 		else {
 			gworld.goto_scene("stairdeath");
@@ -549,7 +550,7 @@ function statehack() {
 		gworld.text = "That's one way to get ahead in life.";
 	}
 
-	this.updateRightDoll = function() {
+	this.updateLeftDoll = function() {
 		if (this.has("inv_knife_argyle")){
 			gworld.text = "That's one way to get ahead in life.";
 		}
@@ -558,7 +559,7 @@ function statehack() {
 			gworld.text = "You lift up one a headless doll, revealing an argyle knife.<br><i>You equip ARGYLE KNIFE.</i>"
 		}
 	}
-	this.updateLeftDoll = function() {
+	this.updateRightDoll = function() {
 		if (this.has("inv_key_blue")){
 			gworld.text = "That's one way to get ahead in life.";
 		}

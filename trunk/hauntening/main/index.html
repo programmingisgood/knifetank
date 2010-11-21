@@ -117,10 +117,10 @@ body {
 </map>
 <map id="bus" name="bus" text="Your bus has broken down on the way back from the big game.<br>No one has a cell phone with them, but you need to call for a tow truck. Time to start walking.">
    <area shape="rect" 
-            coords="0,200,100,300"
+            coords="0,400,100,500"
             targetscene="roadleft"/>
    <area shape="rect" 
-            coords="860,200,960,300"
+            coords="860,400,960,500"
             targetscene="roadright"/>
    <area shape="rect" 
             coords="150,100,750,440"
@@ -133,29 +133,29 @@ body {
 </map>
 <map id="roadleft" name="roadleft" text="You head left down a long, dark road.">
    <area shape="rect" 
-            coords="0,200,100,300"
+            coords="0,400,100,500"
             targetscene="house"/>
    <area shape="rect" 
-            coords="860,200,960,300"
+            coords="860,400,960,500"
             targetscene="bus"/>
 </map>
 <map id="roadright" name="roadright" text="You bank right down a long, dark road.">
    <area shape="rect" 
-            coords="0,200,100,300"
+            coords="0,400,100,500"
             targetscene="bus"/>
    <area shape="rect" 
-            coords="860,200,960,300"
+            coords="860,400,960,500"
             targetscene="house"/></map>	
 
 <map id="house" name="house" text="You see a house in the distance. It looks like it's been vacant for years.">
    <area shape="rect" 
-            coords="0,200,100,300"
+            coords="0,400,100,500"
             targetscene="roadright"/>
    <area shape="rect" 
-            coords="860,200,960,300"
+            coords="860,400,960,500"
             targetscene="roadleft"/>
    <area shape="rect" 
-            coords="550,0,800,200"
+            coords="550,50,750,175"
             targetscene="door"/>
 </map>
 <map id="house2" name="house2" text="Realizing your innocent mistake, you decide that our best option is to burn the entire house down.">
@@ -168,7 +168,7 @@ body {
 </map>
 <map id="door" name="door" text="The house is eerily silent. The door is ajar.">
    <area shape="rect" 
-            coords="0,0,200,100"
+            coords="450,425,550,500"
             targetscene="house"/>
    <area shape="rect" 
             coords="400,50,600,300"
@@ -186,7 +186,7 @@ body {
             coords="270,50,600,400,300,500"
             targetscene="hallway"/>        
    <area shape="rect" 
-            coords="0,00,200,100"
+            coords="450,425,550,500"
             targetscene="door"/>
    <!-- stairs -->
    <area shape="polygon" 
@@ -220,7 +220,7 @@ body {
             coords="750,0,850,500"
             targetscene="kitchen"/>
    <area shape="rect" 
-            coords="350,400,610,500"
+            coords="450,425,550,500"
             targetscene="entrance"/>
 
    <area shape="rect" 
@@ -230,7 +230,7 @@ body {
 
 <map id="bathroom" name="bathroom" text="A restroom." >
    <area shape="rect" 
-            coords="860,200,960,300"
+            coords="450,425,550,500"
             targetscene="hallway"/>
    <area shape="rect" 
             coords="300,250,600,450"
@@ -238,7 +238,7 @@ body {
 </map>
 <map id="bathroom2" name="bathroom2" text="A restroom." >
    <area shape="rect" 
-            coords="0,0,300,100"
+            coords="450,425,550,500"
             targetscene="hallway"/>
    <area shape="rect" 
             coords="300,250,600,450"
@@ -247,7 +247,7 @@ body {
 
 <map id="kitchen" name="kitchen" text="" >
    <area shape="rect" 
-            coords="0,0,200,100"
+            coords="450,425,550,500"
             targetscene="hallway"/>
    <area shape="rect" 
             coords="280,100,500,500"
@@ -303,38 +303,38 @@ body {
 </map>
 <map id="kidsroom" name="kidsroom" text="D'awwww, how sweet." >
    <area shape="rect" 
-            coords="0,400,300,500"
+            coords="450,425,550,500"
 			targetscene="upstairs"/>
    <area shape="rect" 
-            coords="0,0,300,100"
+            coords="200,200,400,450"
 			onClick="state.updateKidBed();gworld.update();"/>
    <area shape="rect" 
-            coords="600,0,900,100"
+            coords="500,50,700,300"
 			onClick="state.updateClothing();gworld.update();"/>
 </map>
 <map id="bedroom" name="bedroom" text="Wow, something crazy happened in here." >
    <area shape="rect" 
-            coords="0,400,300,500"
-			targetscene="upstairs"/>
+            coords="450,425,550,500"
+   			targetscene="upstairs"/>
    <area shape="rect" 
-            coords="0,0,300,100"
+            coords="100,250,200,350"
 			onClick="state.updateLeftDrawer();gworld.update();"/>
    <area shape="rect" 
-            coords="300,0,600,100"
+            coords="300,250,750,400"
 			onClick="state.updateBed();gworld.update();"/>
    <area shape="rect" 
-            coords="600,0,900,100"
+            coords="450,200,650,250"
 			onClick="state.updateRightDrawer();gworld.update();"/>
 </map>
 <map id="secretroom" name="secretroom" text="What's this? A hidden room? It reeks of motor oil in here." >
    <area shape="rect" 
-            coords="0,400,300,500"
+            coords="450,425,550,500"
 			targetscene="kidsroom"/>
-   <area shape="rect" 
-            coords="0,0,300,100"
+   <area shape="rect" 	
+            coords="300,300,400,400"
 			onClick="state.updateLeftDoll();gworld.update();"/>
    <area shape="rect" 
-            coords="600,0,900,100"
+            coords="450,350,550,400"
 			onClick="state.updateRightDoll();gworld.update();"/>
 
 </map>
@@ -390,7 +390,7 @@ body {
             coords="0,400,300,500"
 			targetscene="house2"/>
 </map>
-<map id="reveal" name="reveal" text="The police scream repeatedly 'PUT DOWN YOUR WEAPONS!' You look behind you for an escape. Funny, bloody tank tread marks lead from the house right to you. You look at your arms, which, now that you think about it, look a lot like giant knives.<br>You suddenly realize...<br>YOU ARE KNIFETANK. Arms streatched to the heavens, you sink to your kneetreads and scream, 'NOOOOOOOOOOOOOOOOOOOOO!'">
+<map id="reveal" name="reveal" text="The police scream repeatedly 'PUT DOWN YOUR WEAPONS!' You look behind you for an escape. Funny, bloody tank tread marks lead from the house right to you. You look at your arms, which, now that you think about it, look a lot like giant knives.<br>You suddenly realize...YOU ARE KNIFETANK. Arms streatched to the heavens, you sink to your kneetreads and scream, 'NOOOOOOOOOOOOOOOOOOOOO!'">
 <area shape="rect" 
             coords="0,0,960,500"
 			targetscene="credits"/>
