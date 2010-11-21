@@ -1,0 +1,9 @@
+Scene: The front of a dilapidated old house. The front door to the house is partially open. There is a "Welcomen" mat at the front entrance.
+
+Text: The house is eerily silent. The door is ajar.
+
+If player selects door then Entrance.
+
+If player selects door mat then text reads "You lift up the map and slide your hand underneath. You grab what feels like a door key, but realize to late that it is just a centipede."
+
+If player selects back arrow then House.

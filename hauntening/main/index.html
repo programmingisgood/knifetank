@@ -1,0 +1,471 @@
+<html>
+<head>
+<title>Knifetank: The Hauntening</title>  
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name = "viewport" content ="width=480,height=268,initial-scale=.5,maximum-scale=.5,user-scalable=no">
+
+<SCRIPT TYPE="text/javascript" SRC="gadventure.js">
+<!--
+// JavaScript 'Adventure' style world w/ images
+// Based on Slideshow by Patrick Fitzgerald
+// http://slideshow.barelyfitz.com/
+// -->
+</SCRIPT>
+
+<SCRIPT TYPE="text/javascript">
+<!--
+var gworld;
+gworld = new world();
+gworld.prefetch = 1;
+
+var state;
+state = new statehack();
+-->
+</SCRIPT>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	padding: 0px;
+	background: #000;
+	color: #ffffff;
+	font-family: Helvetica, Arial;
+	text-align: center;
+}
+
+#img_div {
+	text-align: center;
+}
+
+#hud_div {
+	margin: 0px auto;
+	height: 36px;
+	width: 960px;
+	background-color:#666666;	
+}
+
+#inventory_div {
+	text-align: center;
+	height: 36px;	
+}
+
+#img_and_text {
+	text-align: center;
+	height: 500px;
+	width: 960px;
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#text_div {
+	bottom: 0px;
+	width: 960px;
+	text-align: center;
+	position: absolute;
+	background: rgb(21,21,21);
+	background: rgba(21,21,21,0.9);	
+}
+</style>
+</head>
+<!--
+<body onload="gworld.restore_position('GW_POSITION');gworld.update();" onunload="gworld.save_position('GW_POSITION');">
+-->
+<body>
+<script>window.scrollTo(0, 1);</script>
+
+<FORM ID="gw_form" NAME="gw_form" ACTION="" METHOD="GET" style="margin:0px; padding:0px;">
+
+<div id="img_and_text">
+	<div id="img_div"><img id="currentImage" name="currentImage" src="cubius.png" border=0 width=960 height=500></div>
+	<div id="text_div">(no text)</div>
+</div>
+
+<div id="hud_div">
+    <div id="inventory_div">
+        <img id="inv1" name="inv1" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv2" name="inv2" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv3" name="inv3" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv4" name="inv4" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv5" name="inv5" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv6" name="inv6" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv7" name="inv7" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv8" name="inv8" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv9" name="inv9" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv10" name="inv10" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv11" name="inv11" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv12" name="inv12" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv13" name="inv13" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv14" name="inv14" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv15" name="inv15" src="images/empty.png" width=36 height=36 border=0>
+    </div>
+</div>
+
+</FORM>
+
+<!-- Define the scenes as image maps with some bonus fields for inventory and other behaviors -->
+
+<map id="start" name="start" text="">
+   <area shape="rect" 
+            coords="0,0,960,500"
+            targetscene="bus"/>
+
+</map>
+<map id="bus" name="bus" text="Your bus has broken down on the way back from the big game.<br>No one has a cell phone with them, but you need to call for a tow truck. Time to start walking.">
+   <area shape="rect" 
+            coords="0,200,100,300"
+            targetscene="roadleft"/>
+   <area shape="rect" 
+            coords="860,200,960,300"
+            targetscene="roadright"/>
+   <area shape="rect" 
+            coords="100,60,830,440"
+            onClick="state.updateBus();gworld.update();"/>
+</map>
+<map id="bus2" name="bus2" text="Thank goodness the cops are finally hear to protect you and the kids from that horrible KnifeTank creature..<br>Hopefully they haven't found the burning house yet." >
+   <area shape="rect" 
+            coords="100,60,830,440"
+            targetscene="reveal"/>
+</map>
+<map id="roadleft" name="roadleft" text="You head left down a long, dark road.">
+   <area shape="rect" 
+            coords="0,200,100,300"
+            targetscene="house"/>
+   <area shape="rect" 
+            coords="860,200,960,300"
+            targetscene="bus"/>
+</map>
+<map id="roadright" name="roadright" text="You bank right down a long, dark road.">
+   <area shape="rect" 
+            coords="0,200,100,300"
+            targetscene="bus"/>
+   <area shape="rect" 
+            coords="860,200,960,300"
+            targetscene="house"/></map>	
+
+<map id="house" name="house" text="You see a house in the distance. It looks like it's been vacant for years.">
+   <area shape="rect" 
+            coords="0,200,100,300"
+            targetscene="roadright"/>
+   <area shape="rect" 
+            coords="860,200,960,300"
+            targetscene="roadleft"/>
+   <area shape="rect" 
+            coords="550,0,800,200"
+            targetscene="door"/>
+</map>
+<map id="house2" name="house2" text="Realizing your innocent mistake, you decide that our best option is to burn the entire house down.">
+   <area shape="rect" 
+            coords="0,200,100,300"
+            targetscene="bus2"/>
+   <area shape="rect" 
+            coords="860,200,960,300"
+            targetscene="bus2"/>
+</map>
+<map id="door" name="door" text="The house is eerily silent. The door is ajar.">
+   <area shape="rect" 
+            coords="0,200,100,300"
+            targetscene="house"/>
+   <area shape="rect" 
+            coords="300,200,400,300"
+            targetscene="entrance"/>
+   <area shape="rect" 
+            coords="600,200,900,300"
+            onClick="state.updateDoor();gworld.update();"/>
+</map>
+
+<map id="entrance" name="entrance" text="The door was unlocked so you amble right on in. Seems kind of rude, but whatever.">
+   <area shape="rect" 
+            coords="800,50,960,400"
+            targetscene="living"/>
+   <area shape="polygon" 
+            coords="220,50,600,460,600,500,250,500"
+            targetscene="hallway"/>        
+   <area shape="rect" 
+            coords="0,400,300,500"
+            targetscene="door"/>
+   <!-- stairs -->
+   <area shape="polygon" 
+            coords="210,0,500,0,750,250,750,400,600,460,220,50"
+            onClick="state.checkStairDeath();gworld.update();"/>
+</map>
+
+<map id="living" name="living" text="Smells kind of like...old people.">
+   <area shape="rect" 
+            coords="0,200,100,300"
+            targetscene="entrance"/>
+	<!-- chair -->
+   <area shape="rect" 
+            coords="600,50,900,400"
+            onClick="state.updateDullKnife();gworld.update();"/>
+	<!-- photoalbum -->
+   <area shape="rect" 
+            coords="370,380,550,500"
+            onClick="state.updatePhotoAlbum();gworld.update();"/>
+	<!-- tv -->
+   <area shape="rect" 
+            coords="50,150,300,960"
+            onClick="state.updateTV();gworld.update();"/>
+</map>
+
+<map id="hallway" name="hallway" text="The hallway.">
+   <area shape="rect" 
+            coords="80,0,250,960"
+            targetscene="bathroom"/>
+   <area shape="rect" 
+            coords="750,0,850,500"
+            targetscene="kitchen"/>
+   <area shape="rect" 
+            coords="350,400,610,500"
+            targetscene="entrance"/>
+
+   <area shape="rect" 
+            coords="410,50,590,330"
+            onClick="state.checkBasement();gworld.update();"/>
+</map>
+
+<map id="bathroom" name="bathroom" text="A restroom." >
+   <area shape="rect" 
+            coords="860,200,960,300"
+            targetscene="hallway"/>
+   <area shape="rect" 
+            coords="300,250,600,450"
+            onClick="state.updateBathtub();gworld.update();"/>
+</map>
+<map id="bathroom2" name="bathroom2" text="A restroom." >
+   <area shape="rect" 
+            coords="0,0,300,100"
+            targetscene="hallway"/>
+   <area shape="rect" 
+            coords="300,250,600,450"
+            onClick="state.updateBathtub();gworld.update();"/>
+</map>
+
+<map id="kitchen" name="kitchen" text="" >
+   <area shape="rect" 
+            coords="0,0,200,100"
+            targetscene="hallway"/>
+   <area shape="rect" 
+            coords="250,0,550,500"
+            targetscene="fridge"/>
+	<!-- sharpener -->
+   <area shape="rect" 
+            coords="50,200,120,280"
+            onClick="state.updateShapener();gworld.update();"/>
+	<!-- cheese -->
+   <area shape="rect" 
+            coords="150,200,230,280"
+            onClick="state.updateCheese();gworld.update();"/>
+</map>
+<map id="fridge" name="fridge" text="The fridge." >
+   <area shape="rect" 
+            coords="0,0,300,100"
+			targetscene="kitchen"/>
+	<!-- mayo -->
+   <area shape="rect" 
+            coords="550,250,650,450"
+            onClick="state.mayo();gworld.update();"/>
+	<!-- x -->
+   <area shape="rect" 
+            coords="300,100,700,250"
+            onClick="state.ewgross();gworld.update();"/>
+	<!-- y -->
+   <area shape="rect" 
+            coords="250,250,550,450"
+            onClick="state.ewgross();gworld.update();"/>
+</map>
+<map id="stairdeath" name="stairdeath" text="Against your better judgement, you climb the rickety old stairs...but they aren't strong enough to support your not insignificant weight.<brFalling to your death, you think 'I should have done that diet'.">
+   <area shape="rect" 
+            coords="0,0,960,500"
+            onClick="window.location.reload()"/>
+</map>
+<map id="photodeath" name="photodeath" text="You thumb through the tattered old photo album and are struck with an overwhelming sadness.<br>Each photo is a snapshot of such immense sorrow that you can't stop crying.<br>No, literally, you can't stop. You cry until you die. Of sadness.">
+   <area shape="rect" 
+            coords="0,0,960,500"
+            onClick="window.location.reload()"/>
+</map>
+
+<map id="upstairs" name="upstairs" text="Gosh, it's warm up here." >
+   <area shape="rect" 
+            coords="0,400,300,500"
+			targetscene="entrance"/>
+   <area shape="rect" 
+            coords="0,0,300,100"
+			targetscene="kidsroom"/>
+   <area shape="rect" 
+            coords="600,0,900,100"
+			targetscene="bedroom"/>
+
+</map>
+<map id="kidsroom" name="kidsroom" text="D'awwww, how sweet." >
+   <area shape="rect" 
+            coords="0,400,300,500"
+			targetscene="upstairs"/>
+   <area shape="rect" 
+            coords="0,0,300,100"
+			onClick="state.updateKidBed();gworld.update();"/>
+   <area shape="rect" 
+            coords="600,0,900,100"
+			onClick="state.updateClothing();gworld.update();"/>
+</map>
+<map id="bedroom" name="bedroom" text="Wow, something crazy happened in here." >
+   <area shape="rect" 
+            coords="0,400,300,500"
+			targetscene="upstairs"/>
+   <area shape="rect" 
+            coords="0,0,300,100"
+			onClick="state.updateLeftDrawer();gworld.update();"/>
+   <area shape="rect" 
+            coords="300,0,600,100"
+			onClick="state.updateBed();gworld.update();"/>
+   <area shape="rect" 
+            coords="600,0,900,100"
+			onClick="state.updateRightDrawer();gworld.update();"/>
+</map>
+<map id="secretroom" name="secretroom" text="What's this? A hidden room? It reeks of motor oil in here." >
+   <area shape="rect" 
+            coords="0,400,300,500"
+			targetscene="kidsroom"/>
+   <area shape="rect" 
+            coords="0,0,300,100"
+			onClick="state.updateLeftDoll();gworld.update();"/>
+   <area shape="rect" 
+            coords="600,0,900,100"
+			onClick="state.updateRightDoll();gworld.update();"/>
+
+</map>
+<map id="basement" name="basement" text="You find yourself in a cold dark basement with handcuffs. It must be Tuesday." >
+   <area shape="rect" 
+            coords="0,400,300,500"
+			targetscene="hallway"/>
+   <area shape="rect" 
+            coords="0,0,300,100"
+			onClick="state.updateBucket();gworld.update();"/>
+   <area shape="rect" 
+            coords="600,0,900,100"
+			onClick="state.updateCautionDoor();gworld.update();"/>
+   <area shape="rect" 
+            coords="300,0,600,100"
+			onClick="state.updateBloodyDoor();gworld.update();"/>
+
+</map>
+<map id="chickendeath" name="chickendeath" text="You open the door slowly...and find a huge half-chicken half-bear half-lion on the other side!<br>He opens his giant beak and swallows you in one fantastic gulp.">
+   <area shape="rect" 
+            coords="0,0,960,500"
+            onClick="window.location.reload()"/>
+</map>
+<map id="laboratory" name="laboratory" text="You open the door slowly...and are attacked by a huge half-chicken half-bear half-lion. The creature goes directly for your bag in search of raw meat, but instead swallows THE SAD you had been carrying around with you. It feels as if a great weight has been lifted from your shoulders.">
+   <area shape="rect" 
+            coords="0,400,300,500"
+			targetscene="basement"/>
+   <area shape="rect" 
+            coords="0,0,300,100"
+			onClick="state.updateCabinet();gworld.update();"/>
+   <area shape="rect" 
+            coords="600,0,900,100"
+			onClick="state.updateComputer();gworld.update();"/>
+</map>
+<map id="sacrifice" name="sacrifice" text="What is this red stuff splattered all over the walls?">
+   <area shape="rect" 
+            coords="0,400,300,500"
+			onClick="state.updateSacrifice();gworld.update();"/>
+   <area shape="rect" 
+            coords="0,0,300,100"
+			onClick="state.updateSheets();gworld.update();"/>
+</map>
+<map id="sheets" name="sheets" text="You dive under the sheets and try to stay quiet. The sound of heavy boots stomp closer. Your heart begins to pound.<br>You reach for your knives.">
+   <area shape="rect" 
+            coords="0,400,300,500"
+			targetscene="sacrifice2"/>
+   <area shape="rect" 
+            coords="0,0,300,100"
+			onClick="state.updateSheets();gworld.update();"/>
+</map>
+<map id="sacrifice2" name="sacrifice2" text="As your attacker approaches you leap out and defend yourself, stabbing wildly in a blind rage. Standing over the eviscerated corpse, you are distressed to discover it was simply a house painter. You stabbed and innocent man. You stabbed him DEAD.">
+   <area shape="rect" 
+            coords="0,400,300,500"
+			targetscene="house2"/>
+</map>
+<map id="reveal" name="reveal" text="The police scream repeatedly 'PUT DOWN YOUR WEAPONS!' You look behind you for an escape. Funny, bloody tank tread marks lead from the house right to you. You look at your arms, which, now that you think about it, look a lot like giant knives. You suddenly realize...<br>YOU ARE KNIFETANK. Arms streatched to the heavens, you sink to your kneetreads and scream'NOOOOOOOOOOOOOOOOOOOOO!'">
+<area shape="rect" 
+            coords="0,0,960,500"
+			targetscene="credits"/>
+</map>
+<map id="credits" name="credits" text="Mike Hales: Art<br>Doctor Popular: Story<br>Lilia Markham: Programming<br>crashfaster: Music, Product Management<br><br>Knifetank was created by Doctor Popular 2009<br>">
+
+<area shape="rect" 
+            coords="0,0,960,500"
+			targetscene="credits"/>
+</map>
+<SCRIPT TYPE="text/javascript">
+<!--
+// Finish defining and activating the world
+
+var maps, i, j, name, text, target, item, cmd, newscene;
+maps = document.getElementsByTagName('Map');
+for (i=0; i < maps.length; ++i) {
+	name = maps[i].getAttribute('name');
+	text = maps[i].getAttribute('text');
+    item = maps[i].getAttribute('inventory');
+    
+    cmd="";
+    if (item) {
+    	cmd = "state.addto_inventory(" + item + ");";
+    }
+
+	exits = new Array();
+	areas = maps[i].getElementsByTagName('area');
+	for (j=0; j < areas.length; ++j) {
+		target = areas[j].getAttribute('targetscene');
+		exits[j] = target;
+		areas[j].setAttribute('onMouseOver', "this.focus();");
+        areas[j].setAttribute('onMouseOut', "this.blur();");
+        
+		if (!areas[j].getAttribute('onClick')){
+			cmd += "gworld.goto_scene(\'" + target + "\');gworld.update();";
+			areas[j].setAttribute('onClick', cmd);
+		}
+	}
+	newscene = new scene(name, text, exits, item);
+	gworld.add_scene(newscene);
+}
+
+
+// If you want some code to be called before or
+// after the slide is updated, define the functions here
+
+gworld.pre_update_hook = function() {
+  return;
+}
+
+gworld.post_update_hook = function() {
+  return;
+}
+if (document.images) {
+
+  // Which image object to use
+  gworld.image = document.images.currentImage;
+  
+  // The ID of the element that will contain the text for the slide
+  gworld.textid = "text_div";
+  state.inventoryid = "inventory_div";
+  
+  state.addto_inventory("inv_lighter");
+
+  // Update the image and the text
+  gworld.goto_scene("start");
+  gworld.update();
+  
+  state.busClicks = 0;
+
+}
+
+//
+-->
+</SCRIPT>
+
+
+</body>
+</html>
