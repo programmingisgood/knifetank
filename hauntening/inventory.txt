@@ -1,0 +1,33 @@
+These are the list of items that appear in the game, and where you can find them.
+
+A lighter (lighter icon) player starts with this
+
+A dull knife (knife icon) found in living
+
+A sharp knife (cleaner knife icon) found in kitchen
+
+A happy (smiley face icon) found in kitchen.
+
+A sad (sad face icon) found in living room.
+
+Tank Treads (tank treads icon) found in bathroom
+
+Red Key (red key icon) found in fridge
+
+Blue Key (blue key icon) found in secretroom
+
+A Green Knife (green knife) found in bedroom
+
+A Yellow Knife (yellow knife) found in bedroom
+
+A Big Knife (big knife) found in bedroom
+
+A Small Knife (small knife) found in Kidsroom
+
+An Argyle Knife (argyle knife) found in secretroom
+
+A Steak (steak icon) basement
+
+A Steak Knife (steak knife icon) basement
+
+RFID Circuit (circuit icon) Laboratory
