@@ -121,7 +121,7 @@ body {
             coords="860,200,960,300"
             targetscene="roadright"/>
    <area shape="rect" 
-            coords="100,60,830,440"
+            coords="150,100,750,440"
             onClick="state.updateBus();gworld.update();"/>
 </map>
 <map id="bus2" name="bus2" text="Thank goodness the cops are finally hear to protect you and the kids from that horrible KnifeTank creature..<br>Hopefully they haven't found the burning house yet." >
@@ -166,39 +166,39 @@ body {
 </map>
 <map id="door" name="door" text="The house is eerily silent. The door is ajar.">
    <area shape="rect" 
-            coords="0,200,100,300"
+            coords="0,0,200,100"
             targetscene="house"/>
    <area shape="rect" 
-            coords="300,200,400,300"
+            coords="400,50,600,300"
             targetscene="entrance"/>
    <area shape="rect" 
-            coords="600,200,900,300"
+            coords="400,300,600,380"
             onClick="state.updateDoor();gworld.update();"/>
 </map>
 
 <map id="entrance" name="entrance" text="The door was unlocked so you amble right on in. Seems kind of rude, but whatever.">
    <area shape="rect" 
-            coords="800,50,960,400"
+            coords="800,50,960,350"
             targetscene="living"/>
    <area shape="polygon" 
-            coords="220,50,600,460,600,500,250,500"
+            coords="270,50,600,400,300,500"
             targetscene="hallway"/>        
    <area shape="rect" 
-            coords="0,400,300,500"
+            coords="0,00,200,100"
             targetscene="door"/>
    <!-- stairs -->
    <area shape="polygon" 
-            coords="210,0,500,0,750,250,750,400,600,460,220,50"
+            coords="270,0,500,0,750,250,750,350,600,400,270,50"
             onClick="state.checkStairDeath();gworld.update();"/>
 </map>
 
 <map id="living" name="living" text="Smells kind of like...old people.">
    <area shape="rect" 
-            coords="0,200,100,300"
+            coords="0,0,200,100"
             targetscene="entrance"/>
 	<!-- chair -->
    <area shape="rect" 
-            coords="600,50,900,400"
+            coords="600,100,800,400"
             onClick="state.updateDullKnife();gworld.update();"/>
 	<!-- photoalbum -->
    <area shape="rect" 
@@ -248,15 +248,15 @@ body {
             coords="0,0,200,100"
             targetscene="hallway"/>
    <area shape="rect" 
-            coords="250,0,550,500"
+            coords="280,100,500,500"
             targetscene="fridge"/>
 	<!-- sharpener -->
    <area shape="rect" 
-            coords="50,200,120,280"
+            coords="100,220,160,280"
             onClick="state.updateShapener();gworld.update();"/>
 	<!-- cheese -->
    <area shape="rect" 
-            coords="150,200,230,280"
+            coords="170,220,250,280"
             onClick="state.updateCheese();gworld.update();"/>
 </map>
 <map id="fridge" name="fridge" text="The fridge." >
@@ -265,7 +265,7 @@ body {
 			targetscene="kitchen"/>
 	<!-- mayo -->
    <area shape="rect" 
-            coords="550,250,650,450"
+            coords="500,300,650,450"
             onClick="state.mayo();gworld.update();"/>
 	<!-- x -->
    <area shape="rect" 
