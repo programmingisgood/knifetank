@@ -564,7 +564,7 @@ function statehack() {
 		}
 		else {
 			this.addto_inventory("inv_key_blue","A blue key");
-			gworld.text = "You pick up the headless doll and notice its surprising weight.<br>Suddenly, a key falls out from underneath it.<br><i>You equip BLUE KEY.</i>";
+			gworld.text = "You pick up the doll's head and notice its surprising weight.<br>Suddenly, a key falls out from underneath it.<br><i>You equip BLUE KEY.</i>";
 		}
 	}
 	this.updateDoor = function() {
