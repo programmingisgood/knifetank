@@ -1,0 +1,12 @@
+Scene: the room is covered with splattered red blood and a drain in the center. There is also a white sheet laying on the ground.
+
+Text: "What is the red stuff splattered all over the walls?"
+
+If you click on the back button then show text "As you approach the door you hear someone coming right for you. Quick, hide!" [note: you do not leave the room when you click on the back button]
+
+If you click on the sheets but has not yet clicked the back button, show text "This seems like it could make a great place to hide."
+
+If you click on the sheet after you have tried to click the back button then go to Sheets.
+
+
+

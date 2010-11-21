@@ -1,0 +1,9 @@
+Scene: An open area at the top of the stairs. You see a door to the kid's bedroom, a door to the parents bedroom, and a back button.
+
+Text reads: "Gosh it's warm up here."
+
+If player clicks kids doorway go to Kidsroom.
+
+If player clicks parents room go to Bedroom.
+
+If player clicks back arrow go to Entrance.

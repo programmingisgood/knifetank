@@ -1,0 +1,5 @@
+Scene: You are back outside of the house on the hill, similar to the House scene from earlier, except the house on the hill is on fire.
+
+Text: Realizing your innocent mistake, you decide that our best option is to burn the entire house down.
+
+If Left or Right you are taken to bus2

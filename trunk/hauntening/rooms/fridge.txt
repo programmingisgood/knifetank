@@ -1,0 +1,7 @@
+Scene: An open refrigerator. The fridge is full of ketchup, mustard, and a big jar of mayonnaise, but has no actual food. There is an area at the bottom of the screen to signify to the player they can back out.
+
+If the player clicks on the jar of mayonnaise then show the text "You shovel a mouthful of mayonnaise down your throat and nearly choke on a key. Seriously, who leaves keys in a jar of mayonnaise?!" Then the text reads "You have red key." and the player gets Red Key added to their inventory.
+
+If they player clicks on another bottle of anything, the text "Ew, gross!"
+
+If the player clicks on the arrow he is taken back to Kitchen.
