@@ -551,7 +551,7 @@ function statehack() {
 				gworld.text = "I see I have your un-feta'd attention."
 			}
 			else if (this.cheeseClicks == 3) {
-				gworld.text = "Perhaps you Blue enough of your time here already."
+				gworld.text = "Perhaps you Bleu enough of your time here already."
 			}
 			else if (this.cheeseClicks == 4) {
 				gworld.text = "I've used a bunch of cheese puns already, but there are Stilton of puns left."
@@ -785,7 +785,7 @@ function statehack() {
 			this.doorClicks = (this.doorClicks+1)%2;
 		}
 		else {
-			gworld.text ="You lift up the map and slide your hand underneath.<br>You grab what feels like a door key...but it's just a centipede.";
+			gworld.text ="You lift up the mat and slide your hand underneath.<br>You grab what feels like a door key...but it's just a centipede.";
 			this.doneDoor = true;
 		}
 	}
