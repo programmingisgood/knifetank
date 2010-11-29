@@ -1,9 +1,0 @@
-On Knifetanks.com our main page will have three options:
-Knifetank: The Hauntening
-Knifetank (classic)
-Knifetank: The Albumhole
-
-Clicking on The Hauntening will open Knifetanks.com/hauntening
-
-On this page will be an image with a start button on it.
-

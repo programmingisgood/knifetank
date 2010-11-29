@@ -1,5 +1,0 @@
-Scene: An open photo album, filled with various sad scenes.
-
-The text reads ""You thumb throw the fragile old photo album and are struck with an overwhelming sadness. Each photo is a snapshot of such great sorrow that you can't stop crying. Literally, you keep crying and crying until you die."
-
-Clicking on the screen returns you to Main.
