@@ -1,0 +1,29 @@
+html
+{
+
+}
+
+a
+{
+	color: #000000;
+	text-decoration: none;
+}
+
+a:hover
+{
+	color: #b20000;
+	text-decoration: none;
+}
+
+
+body
+{
+	margin: 0px;
+	padding: 0px;	
+	background-color: #000000;
+	background-image: url(../images/bg_grad.png);
+	background-repeat: repeat-x;
+	font-family: arial; 
+	font-size: 21px;
+	color: #b20000;
+}
