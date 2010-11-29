@@ -1,0 +1,257 @@
+<html>
+<head>
+<title>Knifetank: The Haunting</title>  
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<SCRIPT TYPE="text/javascript" SRC="gadventure.js">
+<!--
+// JavaScript 'Adventure' style world w/ images
+// Based on Slideshow by Patrick Fitzgerald
+// http://slideshow.barelyfitz.com/
+// -->
+</SCRIPT>
+
+<SCRIPT TYPE="text/javascript">
+<!--
+var gworld;
+gworld = new world();
+gworld.prefetch = 1;
+
+var state;
+state = new statehack();
+-->
+</SCRIPT>
+
+<style type="text/css">
+body {
+	margin: 0px auto;
+	padding: 0px;
+	background: #000;
+	color: #FFF;
+	font-family: Helvetica, Arial;
+}
+
+#img_and_text {
+	text-align: center;
+}
+
+#img_div {
+	text-align: center;
+}
+
+#hud_div {
+	margin: 0px auto;
+	padding: 10px;
+	height: 36px;
+	width: 940px;
+	background: #666;
+}
+#inventory_div {
+	text-align: center;
+}
+#text_div {
+	position: relative;
+	bottom: 0px;
+	margin: 10px;
+	text-align: center;
+}
+</style>
+</head>
+<!--
+<body onload="gworld.restore_position('GW_POSITION');gworld.update();" onunload="gworld.save_position('GW_POSITION');">
+-->
+<body>
+
+<FORM ID="gw_form" NAME="gw_form" ACTION="" METHOD="GET">
+
+<div id="img_and_text">
+<div id="img_div">
+<img id="currentImage" name="currentImage" src="cubius.png" border=0 width=960 height=500>
+</div>
+<div id="text_div">(no text)</div>
+</div>
+
+<div id="hud_div">
+<div id="inventory_div">
+	<img id="inv1" name="inv1" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv2" name="inv2" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv3" name="inv3" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv4" name="inv4" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv5" name="inv5" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv6" name="inv6" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv7" name="inv7" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv8" name="inv8" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv9" name="inv9" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv10" name="inv10" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv11" name="inv11" src="images/empty.jpg" width=36 height=36 border=0>
+	<img id="inv12" name="inv11" src="images/empty.jpg" width=36 height=36 border=0>
+</div>
+
+</div>
+
+</FORM>
+
+<!-- Define the scenes as image maps with some bonus fields for inventory and other behaviors -->
+
+<map id="bus" name="bus" width=960 height=500 text="Your bus has broken down on the way back from the big game.<br>No one has a cell phone with them, but you need to call for a tow truck. Time to start walking.">
+   <area shape="rect" 
+            coords="0,0,100,50"
+            targetscene="roadleft"/>
+   <area shape="rect" 
+            coords="860,0,960,50"
+            targetscene="roadright"/>
+   <area shape="rect" 
+            coords="60,60,900,440"
+            onClick="state.updateBus();gworld.update();"/>
+</map>
+
+<map id="roadleft" name="roadleft" text="A long dark road (left).">
+   <area shape="rect" 
+            coords="0,0,100,50"
+            targetscene="house"/>
+   <area shape="rect" 
+            coords="860,0,960,50"
+            targetscene="bus"/>
+</map>
+
+<map id="roadright" name="roadright" text="A long dark road (right).">
+   <area shape="rect" 
+            coords="0,0,100,50"
+            targetscene="bus"/>
+   <area shape="rect" 
+            coords="860,0,960,50"
+            targetscene="house"/></map>	
+
+<map id="house" name="house" text="You see a house in the distance. It looks vacant.">
+   <area shape="rect" 
+            coords="0,0,100,50"
+            targetscene="roadright"/>
+   <area shape="rect" 
+            coords="860,0,960,50"
+            targetscene="roadleft"/>
+   <area shape="rect" 
+            coords="60,60,900,440"
+            targetscene="entrance"/>
+</map>
+<map id="entrance" name="entrance" text="The door was unlocked so you just walk right in. Seems kind of rude, but whatever.">
+   <area shape="rect" 
+            coords="0,0,300,100"
+            targetscene="living"/>
+   <area shape="rect" 
+            coords="600,0,900,100"
+            targetscene="hallway"/>        
+   <area shape="rect" 
+            coords="0,400,300,500"
+            targetscene="house"/>
+   <!-- stairs -->
+   <area shape="rect" 
+            coords="300,0,600,100"
+            onClick="state.checkStairDeath();gworld.update();"/>
+</map>
+
+<map id="living" name="living" text="Smells like old people." inventory="dullknife">
+   <area shape="rect" 
+            coords="0,0,300,100"
+            targetscene="entrance"/>
+	<!-- chair -->
+   <area shape="rect" 
+            coords="0,0,300,100"
+            onClick="state.updateDullKnife();gworld.update()"/>
+	<!-- photoalbum -->
+   <area shape="rect" 
+            coords="300,0,600,100"
+            onClick="state.updatePhotoAlbum();gworld.update()"/>
+	<!-- tv -->
+   <area shape="rect" 
+            coords="600,0,900,100"
+            onClick="state.updateTV();gworld.update()"/>
+
+</map>
+
+<map id="kitchen" name="kitchen" text="The kitchen." inventory="sharpknife">
+   <area shape="rect" 
+            coords="0,0,300,100"
+            targetscene="bathroom"/>
+</map>
+
+<map id="bathroom" name="bathroom" text="Don't forget to flush." inventory="treads">
+   <area shape="rect" 
+            coords="0,0,300,100"
+            targetscene="living"/>
+</map>
+<map id="stairdeath" name="stairdeath" text="You stairdied.">
+   <area shape="rect" 
+            coords="0,0,300,100"
+            onClick="window.location.reload()"/>
+</map>
+
+
+<SCRIPT TYPE="text/javascript">
+<!--
+// Finish defining and activating the world
+
+var maps, i, j, name, text, target, item, cmd, newscene;
+maps = document.getElementsByTagName('Map');
+for (i=0; i < maps.length; ++i) {
+	name = maps[i].getAttribute('name');
+	text = maps[i].getAttribute('text');
+    item = maps[i].getAttribute('inventory');
+    
+    cmd="";
+    if (item) {
+    	cmd = "state.addto_inventory(" + item + ");";
+    }
+
+	exits = new Array();
+	areas = maps[i].getElementsByTagName('area');
+	for (j=0; j < areas.length; ++j) {
+		target = areas[j].getAttribute('targetscene');
+		exits[j] = target;
+		areas[j].setAttribute('onMouseOver', "this.focus();");
+        areas[j].setAttribute('onMouseOut', "this.blur();");
+        
+		if (!areas[j].getAttribute('onClick')){
+			cmd += "gworld.goto_scene(\'" + target + "\');gworld.update();";
+			areas[j].setAttribute('onClick', cmd);
+		}
+	}
+	newscene = new scene(name, text, exits, item);
+	gworld.add_scene(newscene);
+}
+
+
+// If you want some code to be called before or
+// after the slide is updated, define the functions here
+
+gworld.pre_update_hook = function() {
+  return;
+}
+
+gworld.post_update_hook = function() {
+  return;
+}
+if (document.images) {
+
+  // Which image object to use
+  gworld.image = document.images.currentImage;
+  
+  // The ID of the element that will contain the text for the slide
+  gworld.textid = "text_div";
+  state.inventoryid = "inventory_div";
+  
+  state.addto_inventory("lighter");
+
+  // Update the image and the text
+  gworld.update();
+  
+  state.busClicks = 0;
+
+}
+
+//
+-->
+</SCRIPT>
+
+
+</body>
+</html>
