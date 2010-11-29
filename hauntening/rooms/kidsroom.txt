@@ -1,9 +1,0 @@
-Scene: a kids bedroom. there is a small bed, a closet door, and crayon drawings of happy family members. The bed's sheets have a skull print on them.
-
-Text: "Ah, how sweet."
-
-If player clicks on the bed and doesn't have A Small Knife then text reads "As you fondle the pillow, a tiny object falls out of it's cover." Add A Small Knife "You have A Small Knife"
-
-If player clicks on the bed and does have A Tiny Knife then text "The bed is too small."
-
-If player clicks on a closet then Closet.

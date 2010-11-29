@@ -1,5 +1,0 @@
-Scene: Your character is hiding under a sheet. You mostly see darkness, but there is a sliver of light and you can see a pair of boots.
-
-Text: "You dive under the sheets and try to stay quiet, but as the heavy boots come closer your heart starts pounding. You reach for your knife."
-
-If the player clicks the boots then sacrifice2

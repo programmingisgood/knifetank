@@ -1,5 +1,0 @@
-Scene: Your bus is parked here, with all of the kids inside, but there is a cop car outside now. 
-
-Text: Thank goodness the cops are finally hear to protect you and the kids from that horrible KnifeTank creature.. hopefully they haven't found the burning house yet.
-
-If you click on the cop car or the bus, you are taken to Reveal

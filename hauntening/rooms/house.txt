@@ -1,7 +1,0 @@
-Scene: We see a scary house on the hill in the distance. Near the front of the screen is a road with an arrow on the left and an arrow on the right.
-
-The text reads "You see a house in the distance. It looks vacant."
-
-If the player clicks on left take them to RoadRight. If the player clicks on the right arrow take them to RoadLeft.
-
-If the player clicks on the house take them to Entrance.

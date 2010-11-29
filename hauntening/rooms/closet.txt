@@ -1,9 +1,0 @@
-Scene: A closet with various clothes. The walls of the closet are red.
-
-Text: "As you lean into the closet you think you can hear the sound of an engine."
-
-If player clicks on any of the clothes and doesn't have A Red Key then "The wall behind the clothes feels a little flimsy."
-
-If player clicks on any of the clothes and does have A Red Key then Secretroom
-
-If player clicks on back button then Kidsroom.

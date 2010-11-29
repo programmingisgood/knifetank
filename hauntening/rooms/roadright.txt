@@ -1,3 +1,0 @@
-Scene: A road. There is no bus or house in sight. On either side of the screen is an arrow to signify to the player they can go left or right.
-
-If the player clicks the left arrow, take them to Bus. The Player clicks the right arrow take them to House.

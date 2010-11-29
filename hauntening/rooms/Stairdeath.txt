@@ -1,5 +1,0 @@
-Scene: the stairs have collapsed.
-
-Message: "You tried to to climb the rickety old steps but they weren't strong enough to support your not insignificant weight. For a moment you thought "Maybe I should diet." as you fell to your death."
-
-If the player touches anywhere on the screen they are taken back to Main page.
