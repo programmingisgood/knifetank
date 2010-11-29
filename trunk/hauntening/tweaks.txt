@@ -1,0 +1,75 @@
+Morgan music notes- Make sure music loops
+End song with detuning or some effect
+
+
+General notes: Change all "you has a" with "you have a"
+
+
+bus- 
+
+Your bus broke down on the way home from the big game.
+Oddly enough, none of the students brought a cell phone with them."
+Time to start walking.
+
+instead of saying "Wait here kids, I'm off" say "I think I saw a coffee shop 15 miles back."
+add this text to rotating bus- "I actually have my cell phone, but somehow it got all stabbed up."
+
+
+when bus is missing add this text to the screen: It seemed louder here earlier. 
+"I'm sure they'll pop up again." "Is this the same bus I was driving earlier."
+
+road left (or right)- Either my vision is blurry or the road is furry.
+alternate- I wonder if it's felt.
+alternate- It is now!
+alternate- You lick the furry trail.
+
+
+
+Living-  replace photo album with a happy text with- As you flip through this tragic collection of family photos, you are filled with sadness.
+Luckily you have a tiny bit of A HAPPY in your heart. Now you are just moderately sad.
+
+remove tv qoute about Hulu.
+
+Add clickable for snowdome- It's a beautiful scene of a Polar bear mauling a family of penguins.
+and add alternate text- Shake shake shake.
+
+
+Kitchen- add text over stove- Hmmm.. smells like burnt tomato sauce.  With alternate text on stove- Needs more salt.
+
+replace text when cheese with no knife- The cheese looks delicious, but you don't have anything to cut it with.
+
+replace text when cheese with no dull knife- You fail to cut the cheese. Your knife is dull. You aren't too sharp yourself.
+
+if cheese has been eaten then: 
+
+
+bathroom- add text to bathtub: Looks like someone left a kidney in there.
+
+
+upstairs- when first coming up the stairs write the text: With the help of those handy tank treads, you make it up the stairs with ease.
+
+Then after that happens the first time, show them the message: Gosh it's warm up here.
+
+
+bedroom text- replace bed text with: As you climb between the sheetholes you feel something poking against your thigh.
+To your surprise, you find a green-ish knife under the sheets. As usual, you are disappointed it isn't a Dorito chip.
+
+Replace text: You can sleep when you are dead.. in about fifteen minutes from now..
+
+
+Hidden room- replace text to say: What's this? A hidden room? Why does it reek of motor oil in here.
+
+add text to the doll: These headless dolls give girls unrealistic expectations about their bodies.
+
+No-body knows the troubles I've seen.
+
+
+Bedroom- replace bed text: You pick up the small pillow and hold it closely. It's squishiness reminds you of your childhood stuffed teddy bear, Butters. As you squeeze it tightly, a tiny knife pops out from it's cottony bosom. 
+
+
+chickendeath- replace text:   You open the door and find your self face to face with a giant mutated creature. It's appears to be half-chicken, half-bear, and half-lion. As you try to escape it attacks you with a fatal peck to the head. 
+ 
+basement- replace main text with-    You find yourself in a cold dark basement surrounded by shackles and weird masks. It's just like prom night.
+
+
+labratory- replace main text with-    You open the door slowly...and are attacked by a huge half-chicken half-bear half-lion. The creature goes directly for your bag in search of raw meat, but instead swallows THE SAD you had been carrying around with you.

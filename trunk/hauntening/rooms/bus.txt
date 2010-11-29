@@ -1,0 +1,14 @@
+Scene: A broken down bus full of kids on the side of the road. One of the tires is flat. There is also an arrow on the left and one on the right to show the player they can walk in that direction.
+
+The screen opens with the text "Your bus has broken down on the way back from the big game. No one has a cell phone with them, but you need to call for a tow truck. Time to start walking."
+
+
+If the player clicks on the bus, we see the message "Wait here kids, I'm off to get some help." 
+
+If the player clicks the bus again we see: "I'm going to leave you teenagers here for a few hours without any supervision for an hour or two." 
+
+If the player clicks the bus again we see: "Isn't it weird that we all forgot our cellphones today?"
+
+If the player clicks the left arrow, take them to RoadLeft. The Player clicks the right arrow take them to RoadRight.
+
+

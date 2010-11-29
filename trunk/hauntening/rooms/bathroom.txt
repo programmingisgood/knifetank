@@ -1,0 +1,11 @@
+Scene (if there is no Tank Tread in stock): A bathroom. You see a bathtub with sheets spread out upon it as if to dry. There are also towels on the wall and drops of blood on the floor.
+
+Text "A restroom".
+
+If player clicks on bathtub and there is no Tank Tread in stock then play message "These appear to be all purpose tank treads. Could come in handy." Then add Tank Treads to the stock and say "You have Tank Treads"
+
+Scene (if Tank Treads ARE in inventory): there is a bathtub, but no tank treads hanging on the tub.
+
+If player clicks on bathtub but doesn't have Tank Tread in stock, then show text "Now is not the time for a shower. Well, maybe a short shower couldn't hurt. No, definitely not the time!"
+
+If player selects back arrow then Hallway.

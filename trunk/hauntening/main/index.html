@@ -1,0 +1,639 @@
+<html>
+<head>
+<title>Knifetank: The Hauntening</title>  
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<script type="text/javascript">
+window.scrollTo(0, 1);
+window.onresize = window.scrollTo(0, 1);
+</script>
+
+<div id="player">
+</div>
+
+<script type="text/javascript">
+
+// Figure out which kind of audio file is compatible with this browser.
+var canPlayMp3 = true;
+var myAudio = new Audio();
+canPlayMp3 = ("no" != myAudio.canPlayType("audio/mpeg")) && ("" != myAudio.canPlayType("audio/mpeg"));
+
+
+var MUTED = false;
+
+function playAudio() {
+	var myAudio = document.getElementById('player').getElementsByTagName('audio')[0];
+	myAudio.play();
+}
+function toggleAudio() {
+	
+	var myButton = document.getElementById('mute_button');
+	var myAudio = document.getElementById('player').getElementsByTagName('audio')[0];
+	if (!MUTED) {
+//		myAudio.volume = 0;
+		myAudio.pause();
+		myButton.src = "images/audioOff.png";
+	}
+	else {
+//		myAudio.volume = 1;
+		myAudio.play();
+		myButton.src = "images/audioOn.png";
+	}
+	
+	MUTED = !MUTED;
+}
+
+function changeAudio(source, doplay) {
+		
+	var oldVolume = 1;
+	try{
+		// destroy the original audio tag if it exists
+		var myAudio = document.getElementById('player').getElementsByTagName('audio')[0];
+		if (myAudio)
+			oldVolume = myAudio.volume;
+		
+		document.getElementById('player').removeChild(document.getElementById('player').getElementsByTagName('audio')[0]);
+	}catch(e){}
+
+	// Create the player tags
+	var audioEl = document.createElement('AUDIO');
+	
+	if (canPlayMp3)
+		audioEl.src = source + ".mp3";
+	else
+		audioEl.src = source + ".ogg";
+
+	audioEl.autoplay = false;
+	audioEl.controls = false;
+	
+	// this works on Safari
+	audioEl.onEnded = "this.play();";
+
+	// this works on Firefox
+	audioEl.addEventListener('ended', function() {
+    	this.currentTime = 0;
+	    this.play();
+	}, false);
+
+	audioEl.volume = oldVolume;
+	
+	var myButton = document.getElementById('mute_button');
+	if (audioEl.volume) {
+		myButton.src = "images/audioOn.png";
+	}
+	else {
+		myButton.src = "images/audioOff.png";
+	}
+
+	
+	// Append the audio tag
+	document.getElementById('player').appendChild(audioEl);
+	//audioEl.play();
+	
+	if (doplay)
+		audioEl.play();
+}
+
+</script>
+
+<script type="text/javascript"> 
+    audioHack = function() {
+	var pElement = 	document.getElementById('player').getElementsByTagName('audio')[0];
+
+	//pElement.load();	
+	
+	// this works on Safari
+	pElement.onEnded = "this.play();";
+
+	// this works on Firefox
+	pElement.addEventListener('ended', function() {
+    	this.currentTime = 0;
+	    this.play();
+	}, false);
+
+	pElement.play();
+};
+
+</script> 
+
+
+<SCRIPT TYPE="text/javascript" SRC="gadventure.js">
+<!--
+// JavaScript 'Adventure' style world w/ images
+// Based on Slideshow by Patrick Fitzgerald
+// http://slideshow.barelyfitz.com/
+// -->
+</SCRIPT>
+
+
+<SCRIPT TYPE="text/javascript">	
+<!--
+var gworld;
+gworld = new world();
+gworld.prefetch = 1;
+
+var state;
+state = new statehack();
+
+-->
+
+
+
+</SCRIPT>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	padding: 0px;
+	background: #000;
+	color: #ffffff;
+	font-family: Helvetica, Arial;
+	text-align: center;
+}
+
+#img_div {
+	text-align: center;
+}
+
+#hud_div {
+	margin: 0px auto;
+	height: 36px;
+	width: 960px;
+	
+}
+
+#inventory_div {
+	float: left;
+	text-align: center;
+	height: 36px;
+	padding-left: 20px;
+
+}
+
+#img_and_text {
+	text-align: center;
+	height: 500px;
+	width: 960px;
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#text_div {
+	top: 0px;
+	width: 950px;
+	text-align: center;
+	position: absolute;
+	background: rgb(21,21,21);
+	background: rgba(21,21,21,0.9);	
+	font-size: 20px;
+	padding: 5px;
+}
+
+#audioCtrl {
+	float: right;
+	padding-right: 20px;	
+}
+</style>
+</head>
+<!--
+<body onload="gworld.restore_position('GW_POSITION');gworld.update();" onunload="gworld.save_position('GW_POSITION');">
+-->
+<body>
+
+<FORM ID="gw_form" NAME="gw_form" ACTION="" METHOD="GET" style="margin:0px; padding:0px;">
+
+<div id="img_and_text">
+	<div id="img_div"><img id="currentImage" name="currentImage" src="cubius.png" border=0 width=960 height=500></div>
+	<div id="text_div">(no text)</div>
+</div>
+
+<div id="hud_div">
+    <div id="inventory_div">
+        <img id="inv1" name="inv1" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv2" name="inv2" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv3" name="inv3" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv4" name="inv4" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv5" name="inv5" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv6" name="inv6" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv7" name="inv7" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv8" name="inv8" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv9" name="inv9" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv10" name="inv10" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv11" name="inv11" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv12" name="inv12" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv13" name="inv13" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv14" name="inv14" src="images/empty.png" width=36 height=36 border=0>
+        <img id="inv15" name="inv15" src="images/empty.png" width=36 height=36 border=0>
+    </div>
+    <div id="audioCtrl">
+    <img id="mute_button" src="images/audioOn.png" onClick="toggleAudio();" width=36 height=36 border=0>
+    </div>
+</div>
+
+</FORM>
+
+<!-- Define the scenes as image maps with some bonus fields for inventory and other behaviors -->
+
+<map id="main" name="main" text="">
+   <area shape="rect" 
+            coords="0,0,960,500"
+            onClick="audioHack();gworld.goto_scene('bus');gworld.update();"/>
+
+</map>
+<map id="bus" name="bus" text="Your bus broke down on the way home from the big game.<br>Oddly enough, none of the students brought a cell phone with them.<br>Time to start walking.<br><span style='color: #f7bc50'><i>You have a LIGHTER.</i></span>">
+   <area shape="rect" 
+            coords="0,220,30,280"
+            targetscene="roadleft"/>
+   <area shape="rect" 
+            coords="930,220,960,280"
+            targetscene="roadright"/>
+   <area shape="rect" 
+            coords="150,100,750,440"
+            onClick="state.updateBus();gworld.update();"/>
+</map>
+<map id="bus1" name="bus1" text="It seemed louder here earlier.">
+   <area shape="rect" 
+            coords="0,220,30,280"
+            targetscene="roadleft"/>
+   <area shape="rect" 
+            coords="930,220,960,280"
+            targetscene="roadright"/>
+   <area shape="rect" 
+            coords="150,100,750,440"
+            onClick="state.updateBus1();gworld.update();"/>
+</map>
+<map id="bus2" name="bus2" text="Thank goodness the cops are finally hear to protect you and the kids from that horrible KnifeTank creature..<br>Hopefully they haven't found the burning house yet." >
+   <area shape="rect" 
+            coords="200,120,830,440"
+            targetscene="reveal"/>
+</map>
+<map id="roadleft" name="roadleft" text="You head left down a long, dark road.">
+   <area shape="rect" 
+            coords="0,220,30,280"
+            targetscene="house"/>
+   <area shape="rect" 
+            coords="930,220,960,280"
+            targetscene="bus1"/>
+   <area shape="rect" 
+            coords="0,350,960,500"
+            onClick="state.updateRoad();gworld.update();"/>
+</map>
+<map id="roadright" name="roadright" text="You bank right down a long, dark road.">
+   <area shape="rect" 
+            coords="0,220,30,280"
+            targetscene="bus1"/>
+   <area shape="rect" 
+            coords="930,220,960,280"
+            targetscene="house"/>
+   <area shape="rect" 
+            coords="0,350,960,500"
+            onClick="state.updateRoad();gworld.update();"/>
+</map>	
+
+<map id="house" name="house" text="You see a house in the distance. It looks like it's been vacant for years.">
+   <area shape="rect" 
+            coords="0,220,30,280"
+            targetscene="roadright"/>
+   <area shape="rect" 
+            coords="930,220,960,280"
+            targetscene="roadleft"/>
+   <area shape="rect" 
+            coords="600,50,800,175"
+            targetscene="door"/>
+</map>
+<map id="house2" name="house2" text="It was an honest mistake, but you realize others may not see it quite so simply. So you burn the house down to destroy all evidence of tonight's terrible events.">
+   <area shape="rect" 
+            coords="0,220,30,280"
+            targetscene="bus2"/>
+   <area shape="rect" 
+            coords="930,220,960,280"
+            targetscene="bus2"/>
+</map>
+<map id="door" name="door" text="The house is eerily silent. The door is ajar.">
+   <area shape="rect" 
+            coords="450,470,510,500"
+            targetscene="house"/>
+   <area shape="rect" 
+            coords="400,50,600,300"
+            targetscene="entrance"/>
+   <area shape="rect" 
+            coords="400,300,600,380"
+            onClick="state.updateDoor();gworld.update();"/>
+</map>
+
+<map id="entrance" name="entrance" text="The door was unlocked so you amble right on in. Seems kind of rude, but whatever.">
+   <area shape="rect" 
+            coords="800,50,960,350"
+            onClick="state.updateEntrance();gworld.goto_scene('living');gworld.update()"/>
+   <area shape="polygon" 
+            coords="270,50,600,400,300,500"
+            onClick="state.updateEntrance();gworld.goto_scene('hallway');gworld.update()"/>
+   <area shape="rect" 
+            coords="450,470,510,500"
+            onClick="state.updateEntrance();gworld.goto_scene('door');gworld.update()"/>
+   <!-- stairs -->
+   <area shape="polygon" 
+            coords="270,0,500,0,750,250,750,350,600,400,270,50"
+            onClick="state.checkStairDeath();gworld.update();"/>
+</map>
+
+<map id="living" name="living" text="Smells kind of like...old people.">
+   <area shape="rect" 
+            coords="0,220,30,280"
+            targetscene="entrance"/>
+	<!-- chair -->
+   <area shape="rect" 
+            coords="150,75,360,400"
+            onClick="state.updateDullKnife();gworld.update();"/>
+	<!-- photoalbum -->
+   <area shape="rect" 
+            coords="430,375,600,475"
+            onClick="state.updatePhotoAlbum();gworld.update();"/>
+	<!-- tv -->
+   <area shape="rect" 
+            coords="675,175,960,960"
+            onClick="state.updateTV();gworld.update();"/>
+	<!-- snowglobe -->
+   <area shape="rect" 
+            coords="775,100,825,175"
+            onClick="state.updateSnowglobe();gworld.update();"/>
+
+</map>
+
+<map id="hallway" name="hallway" text="The hallway.">
+   <area shape="rect" 
+            coords="80,0,250,960"
+            targetscene="bathroom"/>
+   <area shape="rect" 
+            coords="750,0,850,500"
+            targetscene="kitchen"/>
+   <area shape="rect" 
+            coords="450,470,510,500"
+            targetscene="entrance"/>
+
+   <area shape="rect" 
+            coords="410,50,590,330"
+            onClick="state.checkBasement();gworld.update();"/>
+</map>
+
+<map id="bathroom" name="bathroom" text="A restroom." >
+   <area shape="rect" 
+            coords="450,470,510,500"
+            targetscene="hallway"/>
+   <area shape="rect" 
+            coords="300,250,600,450"
+            onClick="state.updateBathtub();gworld.update();"
+   <area shape="rect" 
+            coords="360,40,470,160"
+            onClick="state.updateTowel();gworld.update();"/>
+</map>
+<map id="bathroom2" name="bathroom2" text="A restroom." >
+   <area shape="rect" 
+            coords="450,470,510,500"
+            targetscene="hallway"/>
+   <area shape="rect" 
+            coords="300,250,600,450"
+            onClick="state.updateBathtub();gworld.update();"/>
+   <area shape="rect" 
+            coords="360,40,470,160"
+            onClick="state.updateTowel();gworld.update();"/>
+</map>
+
+<map id="kitchen" name="kitchen" text="" >
+   <area shape="rect" 
+            coords="450,470,510,500"
+            targetscene="hallway"/>
+   <area shape="rect" 
+            coords="280,100,500,500"
+            targetscene="fridge"/>
+	<!-- stove -->         
+   <area shape="rect" 
+            coords="500,175,700,275"
+            onClick="state.updateStove();gworld.update();"/>
+	<!-- sharpener -->
+   <area shape="rect" 
+            coords="100,220,160,280"
+            onClick="state.updateShapener();gworld.update();"/>
+	<!-- cheese -->
+   <area shape="rect" 
+            coords="170,220,250,280"
+            onClick="state.updateCheese();gworld.update();"/>
+</map>
+<map id="fridge" name="fridge" text="The fridge." >
+   <area shape="rect" 
+            coords="450,470,510,500"
+			targetscene="kitchen"/>
+	<!-- mayo -->
+   <area shape="rect" 
+            coords="500,300,650,450"
+            onClick="state.mayo();gworld.update();"/>
+	<!-- x -->
+   <area shape="rect" 
+            coords="300,100,700,250"
+            onClick="state.ewgross();gworld.update();"/>
+	<!-- y -->
+   <area shape="rect" 
+            coords="250,250,550,450"
+            onClick="state.ewgross();gworld.update();"/>
+</map>
+<map id="stairdeath" name="stairdeath" text="Against your better judgement, you climb the rickety old stairs...but they aren't strong enough to support your not insignificant weight.<brFalling to your death, you think 'I should have done that diet'.">
+   <area shape="rect" 
+            coords="0,0,960,500"
+            onClick="window.location.reload()"/>
+</map>
+<map id="photodeath" name="photodeath" text="You thumb through the tattered old photo album and are struck with an overwhelming sadness.<br>Each photo is a snapshot of such immense sorrow that you can't stop crying.<br>No, literally, you can't stop. You cry until you die. Of sadness.">
+   <area shape="rect" 
+            coords="0,0,960,500"
+            onClick="window.location.reload()"/>
+</map>
+
+<map id="upstairs" name="upstairs" text="Gosh, it's warm up here." >
+   <area shape="rect" 
+            coords="450,470,510,500"
+			targetscene="entrance"/>
+   <area shape="rect" 
+            coords="580,60,800,430"
+			targetscene="kidsroom"/>
+   <area shape="rect" 
+            coords="180,60,400,440"
+			targetscene="bedroom"/>
+
+</map>
+<map id="kidsroom" name="kidsroom" text="D'awwww, how sweet." >
+   <area shape="rect" 
+            coords="450,470,510,500"
+			targetscene="upstairs"/>
+   <area shape="rect" 
+            coords="200,200,400,450"
+			onClick="state.updateKidBed();gworld.update();"/>
+   <area shape="rect" 
+            coords="500,50,700,300"
+			onClick="state.updateClothing();gworld.update();"/>
+</map>
+<map id="bedroom" name="bedroom" text="Wow, something crazy happened in here." >
+   <area shape="rect" 
+            coords="450,470,510,500"
+   			targetscene="upstairs"/>
+   <area shape="rect" 
+            coords="90,280,220,350"
+			onClick="state.updateLeftDrawer();gworld.update();"/>
+   <area shape="rect" 
+            coords="300,250,750,400"
+			onClick="state.updateBed();gworld.update();"/>
+   <area shape="rect" 
+            coords="400,150,550,200"
+			onClick="state.updateRightDrawer();gworld.update();"/>
+</map>
+<map id="secretroom" name="secretroom" text="What's this? A hidden room? Why does it reek of motor oil in here." >
+   <area shape="rect" 
+            coords="100,180,200,400"
+			targetscene="kidsroom"/>
+   <area shape="rect" 	
+            coords="250,200,350,300"
+			onClick="state.updateLeftDoll();gworld.update();"/>
+   <area shape="rect" 
+            coords="450,350,550,400"
+			onClick="state.updateRightDoll();gworld.update();"/>
+
+</map>
+<map id="basement" name="basement" text="You find yourself in a cold dark basement surrounded by shackles and weird masks. It's just like prom night." >
+   <area shape="rect" 
+            coords="450,470,510,500"
+			targetscene="hallway"/>
+   <area shape="rect" 
+            coords="335,375,435,500"
+			onClick="state.updateBucket();gworld.update();"/>
+   <area shape="rect" 
+            coords="350,50,500,320"
+			onClick="state.updateCautionDoor();gworld.update();"/>
+   <area shape="rect" 
+            coords="130,30,300,350"
+			onClick="state.updateBloodyDoor();gworld.update();"/>
+
+</map>
+<map id="chickendeath" name="chickendeath" text="You open the door and find your self face to face with a giant mutated creature. It's appears to be half-chicken, half-bear, and half-lion. As you try to escape it attacks you with a fatal peck to the head.">
+   <area shape="rect" 
+            coords="0,0,960,500"
+            onClick="window.location.reload()"/>
+</map>
+<map id="laboratory" name="laboratory" text="You open the door slowly...and are attacked by a huge half-chicken half-bear half-lion. The creature goes directly for your bag in search of raw meat, but instead swallows THE SAD you had been carrying around with you.">
+   <area shape="rect" 
+            coords="0,0,180,400"
+			targetscene="basement"/>
+   <area shape="rect" 
+            coords="200,75,375,375	"
+			onClick="state.updateCabinet();gworld.update();"/>
+   <area shape="rect" 
+            coords="375,125,480,225"
+			onClick="state.updateComputer();gworld.update();"/>
+</map>
+<map id="sacrifice" name="sacrifice" text="What is this red stuff splattered all over the walls?">
+   <area shape="rect" 
+            coords="0,0,200,400"
+			onClick="state.updateSacrifice();gworld.update();"/>
+   <area shape="rect" 
+            coords="500,250,800,475"
+			onClick="state.updateSheets();gworld.update();"/>
+</map>
+<map id="sheets" name="sheets" text="You dive under the sheets and try to stay quiet. The sound of heavy boots stomp closer.<br>Your heart begins to pound. You reach for your knives.">
+   <area shape="rect" 
+            coords="100,200,860,500"
+			targetscene="sacrifice2"/>
+</map>
+<map id="sacrifice2" name="sacrifice2" text="As your attacker approaches you leap out and defend yourself, stabbing wildly in a blind rage. Standing over the eviscerated corpse, you are distressed to discover it was simply a house painter. You stabbed and innocent man. You stabbed him DEAD.">
+   <area shape="rect" 
+            coords="450,470,510,500"
+			targetscene="house2"/>
+</map>
+<map id="reveal" name="reveal" text="The police scream repeatedly 'PUT DOWN YOUR WEAPONS!' You look behind expecting to discover the terrifying figure of Knifetank behind you.. but you see nothing but bloody tank tread marks leading directly to where you stand. You look at your arms, which, now that you think about it, look a lot like giant knives.">
+<area shape="rect" 
+            coords="0,0,960,500"
+			targetscene="reveal2"/>
+</map>
+<map id="reveal2" name="reveal2" text="You suddenly realize...YOU ARE KNIFETANK. Arms streatched to the heavens, you sink to your kneetreads and scream, 'NOOOOOOOOOOOOOOOOOOOOO!'">
+<area shape="rect" 
+            coords="0,0,960,500"
+			targetscene="credits"/>
+</map>
+
+
+<map id="credits" name="credits">
+<area shape="rect" 
+            coords="0,0,960,500"
+            onClick="window.location.reload()"/>
+</map>
+<SCRIPT TYPE="text/javascript">
+<!--
+// Finish defining and activating the world
+
+var maps, i, j, name, text, target, item, cmd, newscene;
+maps = document.getElementsByTagName('Map');
+for (i=0; i < maps.length; ++i) {
+	name = maps[i].getAttribute('name');
+	text = maps[i].getAttribute('text');
+    item = maps[i].getAttribute('inventory');
+    
+    cmd="";
+    if (item) {
+    	cmd = "state.addto_inventory(" + item + ");";
+    }
+
+	exits = new Array();
+	areas = maps[i].getElementsByTagName('area');
+	for (j=0; j < areas.length; ++j) {
+		target = areas[j].getAttribute('targetscene');
+		exits[j] = target;
+		areas[j].setAttribute('onMouseOver', "this.focus();");
+        areas[j].setAttribute('onMouseOut', "this.blur();");
+        
+		if (!areas[j].getAttribute('onClick')){
+			cmd += "gworld.goto_scene(\'" + target + "\');gworld.update();";
+			areas[j].setAttribute('onClick', cmd);
+		}
+	}
+	newscene = new scene(name, text, exits, item);
+	gworld.add_scene(newscene);
+}
+
+
+// If you want some code to be called before or
+// after the slide is updated, define the functions here
+
+gworld.pre_update_hook = function() {
+  return;
+}
+
+gworld.post_update_hook = function() {
+  return;
+}
+if (document.images) {
+
+  // Which image object to use
+  gworld.image = document.images.currentImage;
+  
+  // The ID of the element that will contain the text for the slide
+  gworld.textid = "text_div";
+  state.inventoryid = "inventory_div";
+  
+  // Player starts with a lighter.
+  state.addto_inventory("inv_lighter", "A lighter");
+
+  // Update the image and the text
+  gworld.goto_scene("main");
+  gworld.update();
+
+  
+  state.busClicks = 0;
+  changeAudio("music/track1",false);
+
+}
+
+//
+-->
+</SCRIPT>
+
+
+</body>
+</html>
